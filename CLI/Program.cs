@@ -1,4 +1,5 @@
 ﻿using Engine;
+using System;
 
 // Initiate masks 
 MaskGenerator.GenerateAllMasks();
@@ -13,38 +14,35 @@ MaskGenerator.GenerateAllMasks();
 //    Console.WriteLine();
 //}
 
-var startCoordinate = "e5";
-var squareIndex = Globals.GetSquareIndex(startCoordinate);
-var destMoves = MoveGenenerator.GetKnightMoves(squareIndex);
+//var startCoordinate = "e5";
+//var squareIndex = Globals.GetSquareIndex(startCoordinate);
+//var destMoves = MoveGenenerator.GetKnightMoves(squareIndex);
 
-Console.WriteLine($"From square: {startCoordinate}:" );
-foreach (var move in destMoves)
-{
-    Console.WriteLine($"{Globals.GetSquareCoordinate(move)}");
-}
-Console.ReadLine(); 
+//Console.WriteLine($"From square: {startCoordinate}:" );
+//foreach (var move in destMoves)
+//{
+//    Console.WriteLine($"{Globals.GetSquareCoordinate(move)}");
+//}
+//Console.ReadLine(); 
 
 /// End of the ask tests 
 
 
 
-
-
-
-
-
-
-
-string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+string fen = "k7/8/8/8/8/8/8/7K w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }
-Globals board = Globals.FenReader(fen);
+
+// Creating a mock function to represent the FEN parsing loop in C#
+
+Globals globals = Globals.FenReader(fen);
 
 
 
-
+Perft.Calculate(globals.ChessBoard, 1, globals.Turn);
+Console.ReadLine();
 
 
 Run();
@@ -54,100 +52,107 @@ void Run()
     while (running)
     {
         Console.Clear();
-        printBoardWhiteDown(board);
+        printBoardBlackDown(globals.ChessBoard);
     }
 }
 
-void printBoardWhiteDown(Globals board)
+void printBoardWhiteDown(int[] board)
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
 
-    for (int rank = 7; rank >= 0; rank--)
+    for (int rank = 0; rank < 8; rank++)
     {
-        Console.Write((rank + 1) + " "); 
-        for (int file = 0; file < 8; file++)
+        Console.Write((rank + 1) + " ");  // Print rank number on the left of the board
+        foreach (var file in fileNames.Select((value, index) => new { value, index }))
         {
-            int index = rank * 8 + file;
-            char pieceChar = GetUnicodeCharacter(board.ChessBoard[index]);
-            Console.Write(pieceChar + " ");
+            int index = rank * 8 + file.index;  // Calculate the index for the current position using file index
+            char pieceChar = GetUnicodeCharacter(board[index]);  
+            Console.Write(pieceChar + " "); 
         }
-        Console.WriteLine();
+        Console.WriteLine(); 
     }
-    Console.Write("  ");
+
+    Console.Write("  ");  // Align file names with the board
     foreach (var fileName in fileNames)
     {
-        Console.Write(fileName + " ");
+        Console.Write(fileName + " ");  // Print file name
     }
-    // Value board
-    Console.WriteLine();
     Console.WriteLine();
     showBoardValuesWhite(board);
-    // TODO: user input 
-    Console.ReadKey(); 
+    
 }
 
-void printBoardBlackDown(Globals board)
+
+
+void printBoardBlackDown(int[] board)
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
-    string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" }; // Reversed file names
+    string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" }; 
 
-    for (int rank = 0; rank < 8; rank++)
+   
+    for (int rank = 7; rank >= 0; rank--)
     {
-        Console.Write((8 - rank) + " "); // Print the rank number (8-1) on the left
-        for (int file = 7; file >= 0; file--)
+        Console.Write((8 - rank) + " "); 
+        foreach (var file in fileNames.Select((value, index) => new { value, index }))
         {
-            int index = rank * 8 + file;
-            char pieceChar = GetUnicodeCharacter(board.ChessBoard[index]);
-            Console.Write(pieceChar + " ");
+            int index = rank * 8 + (7 - file.index); 
+            char pieceChar = GetUnicodeCharacter(board[index]);
+            Console.Write(pieceChar + " "); // Print the piece
         }
         Console.WriteLine();
     }
 
-    // Print reversed file names (H-A) at the bottom
-    Console.Write("  ");
+    Console.Write("  "); // Align file names with the board
     foreach (var fileName in fileNames)
     {
-        Console.Write(fileName + " ");
+        Console.Write(fileName + " "); // Print file names
     }
     Console.WriteLine();
-    Console.WriteLine();
-    showBoardValuesBlack(board);
-    // TODO: user input 
+    showBoardValuesBlack(board); 
     Console.ReadKey();
 }
 
+
 // Value boards 
-void showBoardValuesWhite(Globals board)
+void showBoardValuesWhite(int[] board)
 {
-    for (int rank = 7; rank >= 0; rank--)
+    Console.WriteLine();
+    for (int rank = 0; rank < 8; rank++)
     {
+        Console.Write((8 - rank) + " "); 
         for (int file = 0; file < 8; file++)
         {
             int index = rank * 8 + file;
-            int pieceValue = board.ChessBoard[index];
-            Console.Write(pieceValue.ToString().PadLeft(3)); // Pad each number to 3 characters wide
+            int pieceValue = board[index];
+            Console.Write(pieceValue.ToString().PadLeft(3));
         }
-        Console.WriteLine();
+        Console.WriteLine(); 
     }
     Console.ReadKey();
 }
 
-void showBoardValuesBlack(Globals board)
+
+
+void showBoardValuesBlack(int[] board)
 {
-    for (int rank = 0; rank < 8; rank++)
+    Console.WriteLine();
+    
+    for (int rank = 7; rank >= 0; rank--)
     {
+        
+        Console.Write((8 - rank) + " ");
+        // Loop through each file in reverse order using 'foreach'
         for (int file = 7; file >= 0; file--)
         {
-            int index = rank * 8 + file;
-            int pieceValue = board.ChessBoard[index];
-            Console.Write(pieceValue.ToString().PadLeft(3)); // Pad each number to 3 characters wide
+            int index = rank * 8 + file; 
+            int pieceValue = board[index]; // Get the value representing the piece
+            Console.Write(pieceValue.ToString().PadLeft(3) + " "); 
         }
-        Console.WriteLine();
+        Console.WriteLine(); 
     }
     Console.ReadKey();
 }
-
 
 
 

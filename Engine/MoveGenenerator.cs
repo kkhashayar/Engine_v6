@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Engine;
 
 public static class MoveGenenerator
 {
@@ -19,16 +21,38 @@ public static class MoveGenenerator
     
 
     #region MAIN LOOP 
-    public static List<MoveObject> GenerateAllMoves(int[] chessBoard)
+    public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn = 3)// this is returning raw moves
     {
         List<MoveObject> moves = new(); 
         
-        for (int square = 0;  square < chessBoard.Length; square++)
+        if(turn == 3)
         {
-            if (chessBoard[square] == whiteKing)  moves.AddRange(GenerateWKingMoves(square, chessBoard));
-            else if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
+            for (int square = 0; square < 64; square++)
+            {
+                if (chessBoard[square] == whiteKing) moves.AddRange(GenerateWKingMoves(square, chessBoard));
+                else if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
 
+            }
         }
+
+        else if(turn == 1)
+        {
+            for (int square = 0; square < 64; square++)
+            {
+                
+                if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
+
+            }
+        }
+
+        else if(turn == 0)
+        {
+            for (int square = 0; square < 64; square++)
+            {
+                if (chessBoard[square] == whiteKing) moves.AddRange(GenerateWKingMoves(square, chessBoard));
+            }
+        }
+        
         return moves;
     }
     #endregion
@@ -37,8 +61,9 @@ public static class MoveGenenerator
     #region GENERATING RAW MOVES FOR A PIECE ON GIVEN SQUARE
     public static IEnumerable<MoveObject> GenerateWKingMoves(int square, int[] board)
     {
-       
-        List<int> filteredMasksForSquare = WKingRules(GetKingMoves(square), board); 
+        
+        List<int> filteredMasksForSquare = WKingRules(GetKingRawMoves(square), board); 
+        
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
@@ -53,7 +78,8 @@ public static class MoveGenenerator
 
     public static IEnumerable<MoveObject> GenerateBKingMoves(int square, int[] board)
     {
-        List<int> filteredMasksForSquare = BKingRules(GetKingMoves(square), board);
+        List<int> filteredMasksForSquare = BKingRules(GetKingRawMoves(square), board);
+        
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
@@ -70,8 +96,8 @@ public static class MoveGenenerator
 
 
     #region RETRIEVING MASKS FOR PIECE ON GIVEN SQUARE  
-    public static List<int> GetKingMoves(int square) => MaskGenerator.KingMasks[square];
-    public static List<int> GetKnightMoves(int square) => MaskGenerator.KnightMasks[square];
+    public static List<int> GetKingRawMoves(int square) => MaskGenerator.KingMasks[square];
+    public static List<int> GetKnightRawMoves(int square) => MaskGenerator.KnightMasks[square];
     #endregion
 
 
@@ -81,21 +107,26 @@ public static class MoveGenenerator
     
     public static List<int> WKingRules(List<int> maskForSquare, int[] board)
     {
+       
+        List<int> blackKingInfluence = GetKingRawMoves(Array.IndexOf(board, blackKing));
+        List<int> result = new List<int>();
         foreach (int endSquare in maskForSquare)
         {
-            if(Piece.IsWhite(endSquare) || board[endSquare] == blackKing) maskForSquare.Remove(endSquare);
+            if (board[endSquare] == 0 && !blackKingInfluence.Contains(endSquare)) result.Add(endSquare);
         }
-        return maskForSquare;
+        return result;
     }
 
     public static List<int> BKingRules(List<int> maskForSquare, int[] board)
     {
+        List<int> whiteKingInfluence = GetKingRawMoves(Array.IndexOf(board, whiteKing));
+        List<int> result = new List<int>();
         foreach (int endSquare in maskForSquare)
         {
-            if (Piece.IsBlack(endSquare) || board[endSquare] == whiteKing) maskForSquare.Remove(endSquare); 
+            if (board[endSquare] == 0 && !whiteKingInfluence.Contains(endSquare)) result.Add(endSquare);
 
         }
-        return maskForSquare;
+        return result;
     }
 
     #endregion
