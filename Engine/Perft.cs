@@ -25,7 +25,8 @@ public static class Perft
 
         ulong nodes = 0;
         List<MoveObject> moves = MoveGenenerator.GenerateAllMoves(board, turn);
-
+        
+        
         foreach (MoveObject move in moves)
         {
             MakeMove(move, board);

@@ -4,6 +4,8 @@ namespace Engine;
 
 public static class MoveGenenerator
 {
+    public static int WhiteKingSquare { get; set; }
+    public static int BlackKingSquare { get; set; }
 
     public static readonly int whiteKing = Piece.King;
     public static readonly int whiteQueen = Piece.Queen;
@@ -19,9 +21,9 @@ public static class MoveGenenerator
     public static readonly int blackBishop = Piece.Bishop + Piece.BlackPieceOffset;
     public static readonly int blackPawn = Piece.Pawn + Piece.BlackPieceOffset;
 
-
+    
     #region MAIN LOOP 
-    public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn = 3)// this is returning raw moves
+    public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn)// this is returning raw moves
     {
         List<MoveObject> moves = new();
 
@@ -29,8 +31,34 @@ public static class MoveGenenerator
         {
             for (int square = 0; square < 64; square++)
             {
-                if (chessBoard[square] == whiteKing) moves.AddRange(GenerateWKingMoves(square, chessBoard));
-                else if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
+                // WHITE
+                if (chessBoard[square] == whiteKing)
+                {
+                    WhiteKingSquare = square;
+                    BlackKingSquare = square;
+                    moves.AddRange(GenerateWKingMoves(square, chessBoard));
+                }
+                else if (chessBoard[square] == whiteKnight)
+                {
+                    moves.AddRange(GenerateWKnightMoves(square, chessBoard));
+                }
+
+                else if (chessBoard[square] == whiteRook)
+                {
+                    moves.AddRange(GenerateWRookMoves(square, chessBoard));
+                }
+
+                // BLACK
+                else if (chessBoard[square] == blackKing) 
+                {
+                    WhiteKingSquare = square;
+                    BlackKingSquare = square;
+                    moves.AddRange(GenerateBKingMoves(square, chessBoard));
+                }
+                else if (chessBoard[square] == blackKnight)
+                {
+                    moves.AddRange(GenerateBKnightMoves(square, chessBoard));
+                }
 
             }
         }
@@ -39,8 +67,17 @@ public static class MoveGenenerator
         {
             for (int square = 0; square < 64; square++)
             {
-
-                if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
+                
+                if (chessBoard[square] == blackKing) 
+                {
+                    BlackKingSquare = square;
+                    WhiteKingSquare = square;
+                    moves.AddRange(GenerateBKingMoves(square, chessBoard));
+                }
+                else if (chessBoard[square] == blackKnight)
+                {
+                    moves.AddRange(GenerateBKingMoves(square, chessBoard));
+                }
 
             }
         }
@@ -49,12 +86,28 @@ public static class MoveGenenerator
         {
             for (int square = 0; square < 64; square++)
             {
-                if (chessBoard[square] == whiteKing) moves.AddRange(GenerateWKingMoves(square, chessBoard));
+                if (chessBoard[square] == whiteKing)
+                {
+                    WhiteKingSquare = square;
+                    BlackKingSquare = square;
+                    moves.AddRange(GenerateWKingMoves(square, chessBoard));
+                }
+                else if (chessBoard[square] == whiteKnight)
+                {
+                    moves.AddRange(GenerateWKnightMoves(square, chessBoard));
+                }
+
+                else if (chessBoard[square] == whiteRook)
+                {
+                    moves.AddRange(GenerateWRookMoves(square, chessBoard));
+                }
             }
         }
 
         return moves;
     }
+
+  
     #endregion
 
 
@@ -76,9 +129,59 @@ public static class MoveGenenerator
         }
     }
 
+    public static IEnumerable<MoveObject> GenerateWKnightMoves(int square, int[] board)
+    {
+        List<int> filteredMasksForSquare = WKnightRules(GetKnightRawMoves(square), board);
+
+        foreach(int endSquare in filteredMasksForSquare)
+        {
+            MoveObject move = new MoveObject
+            {
+                pieceType = whiteKnight,
+                StatrSquare = square,
+                EndSquare = endSquare
+            };
+            yield return move;
+        }
+    }
+
+    public static IEnumerable<MoveObject> GenerateWRookMoves(int square, int[] board)
+    {
+        List<int> filteredMasksForSquare = WRookRules(GetRookRawMoves(square), board);
+        foreach(int endSquare in filteredMasksForSquare)
+        {
+            MoveObject move = new MoveObject
+            {
+                pieceType = whiteRook,
+                StatrSquare = square,
+                EndSquare = endSquare
+            };
+            yield return move;
+        }
+    }
+
+
+
     public static IEnumerable<MoveObject> GenerateBKingMoves(int square, int[] board)
     {
         List<int> filteredMasksForSquare = BKingRules(GetKingRawMoves(square), board);
+
+        foreach (int endSquare in filteredMasksForSquare)
+        {
+            MoveObject move = new MoveObject
+            {
+                pieceType = blackKing,
+                StatrSquare = square,
+                EndSquare = endSquare
+            };
+            yield return move;
+        }
+    }
+
+
+    public static IEnumerable<MoveObject> GenerateBKnightMoves(int square, int[] board)
+    {
+        List<int> filteredMasksForSquare = BKnightRules(GetKingRawMoves(square), board);
 
         foreach (int endSquare in filteredMasksForSquare)
         {
@@ -97,6 +200,7 @@ public static class MoveGenenerator
 
     #region PIECE RULES AND CONDITIONS
 
+    ////////////////////////////////     KINGS 
     public static List<int> WKingRules(List<int> maskForSquare, int[] board)
     {
 
@@ -115,8 +219,46 @@ public static class MoveGenenerator
         List<int> result = new List<int>();
         foreach (int endSquare in maskForSquare)
         {
-            if (board[endSquare] == 0 && !whiteKingInfluence.Contains(endSquare)) result.Add(endSquare);
+            if (board[endSquare] == 0 && !whiteKingInfluence.Contains(endSquare))
+                result.Add(endSquare);
 
+        }
+        return result;
+    }
+
+    private static List<int> WRookRules(List<int> maskForSquare, int[] board)
+    {
+        List<int> result = new();
+        // Filters  
+        foreach (int endsquare in maskForSquare)
+        {
+            if (!Piece.IsWhite(board[endsquare]))
+                result.Add(endsquare);
+        }
+
+        return result;
+    }
+    //////////////////////////////// KNIGHT 
+
+    public static List<int> WKnightRules(List<int> maskForSquare, int[] board)
+    {
+
+        List<int> result = new();
+        foreach (int endSquare in maskForSquare)
+        {
+            if (!Piece.IsWhite(board[endSquare]))
+                result.Add(endSquare);
+        }
+        return result; 
+    }
+    
+    public static List<int>BKnightRules(List<int> maskForSquare, int[] board)
+    {
+        List<int> result = new();
+        foreach (int endSquare in maskForSquare)
+        {
+            if (!Piece.IsBlack(board[endSquare]))
+                result.Add(endSquare);
         }
         return result;
     }
@@ -128,5 +270,15 @@ public static class MoveGenenerator
     #region RETRIEVING MASKS FOR PIECE ON GIVEN SQUARE  
     private static List<int> GetKingRawMoves(int square) => MaskGenerator.KingMasks[square];
     private static List<int> GetKnightRawMoves(int square) => MaskGenerator.KnightMasks[square];
+    private static List<int> GetRookRawMoves(int square) => MaskGenerator.RookMasks[square];
+
+
     #endregion
+
+
+
+
+
+
+
 }
