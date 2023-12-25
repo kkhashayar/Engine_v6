@@ -41,7 +41,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 
-Perft.Calculate(globals.ChessBoard, 1, globals.Turn);
+Perft.Calculate(globals.ChessBoard, 2, globals.Turn);
 Console.ReadLine();
 
 
@@ -52,7 +52,7 @@ void Run()
     while (running)
     {
         Console.Clear();
-        printBoardBlackDown(globals.ChessBoard);
+        printBoardWhiteDown(globals.ChessBoard);
     }
 }
 
