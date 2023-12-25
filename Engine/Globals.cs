@@ -7,6 +7,7 @@ public sealed class Globals
     public bool WhiteLongCastle { get; set; }
     public bool BlackShortCastle { get; set; }
     public bool BlackLongCastle { get; set; }
+    public  int Turn { get; set; }
 
     public int[] ChessBoard = new int[64]
     {
@@ -19,6 +20,8 @@ public sealed class Globals
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0
     };
+
+
 
     public static readonly int[] BoardOfRanks = new int[64]
     {
@@ -92,12 +95,18 @@ public sealed class Globals
         return Coordinates[squareIndex];
     }
 
-    public Globals Clone()
+    public static Globals Clone(Globals instanceToClone)
     {
-        var newBoard = new Globals();
-        newBoard.ChessBoard = (int[])this.ChessBoard.Clone();
-        return newBoard;
+        var copy = new Globals();
+        copy.ChessBoard = (int[])instanceToClone.ChessBoard.Clone();
+        copy.WhiteShortCastle = instanceToClone.WhiteShortCastle;
+        copy.WhiteLongCastle = instanceToClone.WhiteLongCastle;
+        copy.BlackShortCastle = instanceToClone.BlackShortCastle;
+        copy.BlackLongCastle = instanceToClone.BlackLongCastle;
+        copy.Turn = instanceToClone.Turn;
+        return copy;
     }
+
 
 
     public static Globals FenReader(string fen)
@@ -107,29 +116,45 @@ public sealed class Globals
 
         // Parse board state
         string[] ranks = parts[0].Split('/');
-        for (int rank = 0; rank < ranks.Length; rank++)
-        {
-            int file = 0;
-            foreach (char c in ranks[rank])
-            {
-                if (char.IsDigit(c))
-                {
-                    file += (int)char.GetNumericValue(c);
-                }
-                else
-                {
-                    int index = (7 - rank) * 8 + file;
-                    board.ChessBoard[index] = FenCharToPieceCode(c);
-                    file++;
-                }
-            }
-        }
 
+        if (parts[1] == "w")
+        {
+            board.Turn = 0;
+        }
+        else if (parts[1] == "b")
+        {
+            board.Turn = 1;
+        }
         // Parse castling rights
         board.WhiteShortCastle = parts[2].Contains("K");
         board.WhiteLongCastle = parts[2].Contains("Q");
         board.BlackShortCastle = parts[2].Contains("k");
         board.BlackLongCastle = parts[2].Contains("q");
+
+        int index = 0;
+        foreach (var rank in ranks)
+        {
+            foreach (var square in rank)
+            {
+                if (char.IsDigit(square))
+                {
+                    // Empty squares indicated by digits in FEN
+                    int emptySquares = int.Parse(square.ToString());
+                    for (int i = 0; i < emptySquares; i++)
+                    {
+                        board.ChessBoard[index] = 0; // Empty square
+                        index++;
+                    }
+                }
+                else
+                {
+                    // If it's a piece, convert and place on the board
+                    board.ChessBoard[index] = FenCharToPieceCode(square);
+                    index++;
+                }
+            }
+        }
+
 
         //
 
@@ -139,18 +164,18 @@ public sealed class Globals
 
     private static int FenCharToPieceCode(char c)
     {
-        Piece piece = new(); 
+       
         int pieceCode;
 
         switch (char.ToLower(c))
         {
-            case 'p': pieceCode = piece.Pawn; break;
-            case 'n': pieceCode = piece.Knight; break;
-            case 'b': pieceCode = piece.Bishop; break;
-            case 'r': pieceCode = piece.Rook; break;
-            case 'q': pieceCode = piece.Queen; break;
-            case 'k': pieceCode = piece.King; break;
-            default: return piece.None; 
+            case 'p': pieceCode = Piece.Pawn; break;
+            case 'n': pieceCode = Piece.Knight; break;
+            case 'b': pieceCode = Piece.Bishop; break;
+            case 'r': pieceCode = Piece.Rook; break;
+            case 'q': pieceCode = Piece.Queen; break;
+            case 'k': pieceCode = Piece.King; break;
+            default: return Piece.None; 
         }
 
         if (char.IsUpper(c))
@@ -159,7 +184,7 @@ public sealed class Globals
         }
         else
         {
-            return pieceCode + piece.BlackPieceOffset; // Black pieces
+            return pieceCode + Piece.BlackPieceOffset; // Black pieces
         }
     }
 
