@@ -83,10 +83,7 @@ public static class MoveGenenerator
     {
         foreach (int endSquare in maskForSquare)
         {
-            if (board[endSquare] == whiteBishop || board[endSquare] == whiteRook ||
-                board[endSquare] == whiteKnight || board[endSquare] == whiteQueen ||
-                board[endSquare] == whitePawn || board[endSquare] == blackKing) maskForSquare.Remove(endSquare);
-
+            if(Piece.IsWhite(endSquare) || board[endSquare] == blackKing) maskForSquare.Remove(endSquare);
         }
         return maskForSquare;
     }
@@ -95,9 +92,7 @@ public static class MoveGenenerator
     {
         foreach (int endSquare in maskForSquare)
         {
-            if (board[endSquare] == blackBishop || board[endSquare] == blackRook ||
-                board[endSquare] == blackKnight || board[endSquare] == blackQueen ||
-                board[endSquare] == blackPawn || board[endSquare] == whiteKing) maskForSquare.Remove(endSquare);
+            if (Piece.IsBlack(endSquare) || board[endSquare] == whiteKing) maskForSquare.Remove(endSquare); 
 
         }
         return maskForSquare;

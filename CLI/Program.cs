@@ -35,7 +35,7 @@ Console.ReadLine();
 
 
 
-string fen = "4k3/8/8/8/8/8/4K3/8 w - - 0 1";
+string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

@@ -2,14 +2,23 @@
 
 public class Piece
 {
-    public int Pawn { get; set; } = 1;
-    public int Knight { get; set; } = 3;
-    public int Bishop { get; set; } = 4;
-    public int Rook { get; set; } = 5;
-    public int Queen { get; set; } = 9;
-    public int King { get; set; } = 99;
-    public int None { get; set; } = 0;
-    public int BlackPieceOffset { get; set; } = 10;
+    public int Pawn     = 1;
+    public int Knight   = 3;
+    public int Bishop   = 4;
+    public int Rook     = 5;
+    public int Queen    = 9;
+    public int King     = 99;
+    public int None     = 0;
+    public int BlackPieceOffset = 10;
+
+    public static bool IsBlack(int pieceValue)
+    {
+        return pieceValue >= 11 && pieceValue <= 109; 
+    }
+    public static bool IsWhite(int pieceValue)
+    {
+        return pieceValue >= 1 && pieceValue <= 99;
+    }
 
 }
 
