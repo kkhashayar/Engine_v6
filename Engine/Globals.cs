@@ -1,6 +1,6 @@
 ﻿namespace Engine;
 
-public sealed class Board
+public sealed class Globals
 {
     
     public bool WhiteShortCastle { get; set; }
@@ -8,7 +8,7 @@ public sealed class Board
     public bool BlackShortCastle { get; set; }
     public bool BlackLongCastle { get; set; }
 
-    public int[] ChessBoard = new int[]
+    public int[] ChessBoard = new int[64]
     {
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
@@ -20,7 +20,7 @@ public sealed class Board
         0, 0, 0, 0, 0, 0, 0, 0
     };
 
-    public static readonly int[] BoardOfRanks = new int[]
+    public static readonly int[] BoardOfRanks = new int[64]
     {
         8, 8, 8, 8, 8, 8, 8, 8,
         7, 7, 7, 7, 7, 7, 7, 7,
@@ -32,7 +32,7 @@ public sealed class Board
         1, 1, 1, 1, 1, 1, 1, 1
     };
 
-    public static readonly int[] BoardOfFiles = new int[]
+    public static readonly int[] BoardOfFiles = new int[64]
     {
         1, 2, 3, 4, 5, 6, 7, 8,
         1, 2, 3, 4, 5, 6, 7, 8,
@@ -44,18 +44,32 @@ public sealed class Board
         1, 2, 3, 4, 5, 6, 7, 8
     };
 
-    public static readonly int[] LightSquares = new int[]
+    public static readonly int[] LightSquares = new int[32]
     {
         0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
         32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63
     };
-    public static readonly int[] DarkSquares = new int[]
+    public static readonly int[] DarkSquares = new int[32]
     {
         1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30,
         33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62
     };
 
-    public static readonly string[] Coordinates = new string[]
+    public static readonly int[] BoardIndices = new int[64]
+   {
+        0,  1,   2,   3,   4,   5,   6,   7, 
+        8,  9,  10,  11,  12,  13,  14,  15,
+       16, 17,  18,  19,  20,  21,  22,  23, 
+       24, 25,  26,  27,  28,  29,  30,  31,
+       32, 33,  34,  35,  36,  37,  38,  39, 
+       40, 41,  42,  43,  44,  45,  46,  47,
+       48, 49,  50,  51,  52,  53,  54,  55, 
+       56, 57,  58,  59,  60,  61,  62,  63
+   };
+
+  
+
+    public static readonly string[] Coordinates = new string[64]
     {
         "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
         "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
@@ -67,17 +81,28 @@ public sealed class Board
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
 
-    public Board Clone()
+
+    public static int GetSquareIndex(string coordinate)
     {
-        var newBoard = new Board();
+        return Array.IndexOf(Coordinates, coordinate);
+    }
+
+    public static string GetSquareCoordinate(int squareIndex)
+    {
+        return Coordinates[squareIndex];
+    }
+
+    public Globals Clone()
+    {
+        var newBoard = new Globals();
         newBoard.ChessBoard = (int[])this.ChessBoard.Clone();
         return newBoard;
     }
 
 
-    public static Board FenReader(string fen)
+    public static Globals FenReader(string fen)
     {
-        var board = new Board();
+        var board = new Globals();
         string[] parts = fen.Split(' ');
 
         // Parse board state

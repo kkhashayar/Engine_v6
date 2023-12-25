@@ -1,18 +1,51 @@
 ﻿using Engine;
 
-List<char> Unicodes = new List<char>
-        {
-            '\u2659','\u2658','\u2657','\u2656',
-            '\u2655','\u2654','\u265F','\u265E',
-            '\u265D','\u265C','\u265B','\u265A'
-        };
+// Initiate masks 
+MaskGenerator.GenerateAllMasks();
 
-string fen = "";
+// Console.WriteLine($"{MaskGenerators.KingMasks.Count}");
+//foreach (var mask in MaskGenerators.KingMasks)
+//{
+//    foreach (var position in mask)
+//    {
+//        Console.Write(position);
+//    }
+//    Console.WriteLine();
+//}
+
+var startCoordinate = "e5";
+var squareIndex = Globals.GetSquareIndex(startCoordinate);
+var destMoves = MoveGenenerator.GetKnightMoves(squareIndex);
+
+Console.WriteLine($"From square: {startCoordinate}:" );
+foreach (var move in destMoves)
+{
+    Console.WriteLine($"{Globals.GetSquareCoordinate(move)}");
+}
+Console.ReadLine(); 
+
+/// End of the ask tests 
+
+
+
+
+
+
+
+
+
+
+string fen = "4k3/8/8/8/8/8/4K3/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }
-Board board = Board.FenReader(fen);
+Globals board = Globals.FenReader(fen);
+
+
+
+
+
 
 Run();
 void Run()
@@ -25,7 +58,7 @@ void Run()
     }
 }
 
-void printBoardWhiteDown(Board board)
+void printBoardWhiteDown(Globals board)
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
@@ -54,7 +87,7 @@ void printBoardWhiteDown(Board board)
     Console.ReadKey(); 
 }
 
-void printBoardBlackDown(Board board)
+void printBoardBlackDown(Globals board)
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" }; // Reversed file names
@@ -85,7 +118,7 @@ void printBoardBlackDown(Board board)
 }
 
 // Value boards 
-void showBoardValuesWhite(Board board)
+void showBoardValuesWhite(Globals board)
 {
     for (int rank = 7; rank >= 0; rank--)
     {
@@ -100,7 +133,7 @@ void showBoardValuesWhite(Board board)
     Console.ReadKey();
 }
 
-void showBoardValuesBlack(Board board)
+void showBoardValuesBlack(Globals board)
 {
     for (int rank = 0; rank < 8; rank++)
     {
@@ -137,4 +170,11 @@ char GetUnicodeCharacter(int pieceCode)
         default: return '.'; // Empty square
     }
 }
+
+List<char> Unicodes = new List<char>
+        {
+            '\u2659','\u2658','\u2657','\u2656',
+            '\u2655','\u2654','\u265F','\u265E',
+            '\u265D','\u265C','\u265B','\u265A'
+        };
 

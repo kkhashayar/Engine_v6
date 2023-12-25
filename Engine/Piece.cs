@@ -9,6 +9,7 @@ public class Piece
     public int Queen { get; set; } = 9;
     public int King { get; set; } = 99;
     public int None { get; set; } = 0;
-    public int BlackPieceOffset { get; set; } = 10; 
+    public int BlackPieceOffset { get; set; } = 10;
+
 }
 
