@@ -164,18 +164,18 @@ public sealed class Globals
 
     private static int FenCharToPieceCode(char c)
     {
-        Piece piece = new(); 
+       
         int pieceCode;
 
         switch (char.ToLower(c))
         {
-            case 'p': pieceCode = piece.Pawn; break;
-            case 'n': pieceCode = piece.Knight; break;
-            case 'b': pieceCode = piece.Bishop; break;
-            case 'r': pieceCode = piece.Rook; break;
-            case 'q': pieceCode = piece.Queen; break;
-            case 'k': pieceCode = piece.King; break;
-            default: return piece.None; 
+            case 'p': pieceCode = Piece.Pawn; break;
+            case 'n': pieceCode = Piece.Knight; break;
+            case 'b': pieceCode = Piece.Bishop; break;
+            case 'r': pieceCode = Piece.Rook; break;
+            case 'q': pieceCode = Piece.Queen; break;
+            case 'k': pieceCode = Piece.King; break;
+            default: return Piece.None; 
         }
 
         if (char.IsUpper(c))
@@ -184,7 +184,7 @@ public sealed class Globals
         }
         else
         {
-            return pieceCode + piece.BlackPieceOffset; // Black pieces
+            return pieceCode + Piece.BlackPieceOffset; // Black pieces
         }
     }
 

@@ -4,28 +4,28 @@ namespace Engine;
 
 public static class MoveGenenerator
 {
-    public static readonly int whiteKing   = new Piece().King;
-    public static readonly int whiteQueen  = new Piece().Queen;
-    public static readonly int whiteRook   = new Piece().Rook;
-    public static readonly int whiteKnight = new Piece().Knight;
-    public static readonly int whiteBishop = new Piece().Bishop;
-    public static readonly int whitePawn   = new Piece().Pawn;
-    
-    public static readonly int blackKing   = new Piece().King   + new Piece().BlackPieceOffset;
-    public static readonly int blackQueen  = new Piece().Queen  + new Piece().BlackPieceOffset;
-    public static readonly int blackRook   = new Piece().Rook   + new Piece().BlackPieceOffset;
-    public static readonly int blackKnight = new Piece().Knight + new Piece().BlackPieceOffset;
-    public static readonly int blackBishop = new Piece().Bishop + new Piece().BlackPieceOffset;
-    public static readonly int blackPawn   = new Piece().Pawn   + new Piece().BlackPieceOffset;
 
-    
+    public static readonly int whiteKing = Piece.King;
+    public static readonly int whiteQueen = Piece.Queen;
+    public static readonly int whiteRook = Piece.Rook;
+    public static readonly int whiteKnight = Piece.Knight;
+    public static readonly int whiteBishop = Piece.Bishop;
+    public static readonly int whitePawn = Piece.Pawn;
+
+    public static readonly int blackKing = Piece.King + Piece.BlackPieceOffset;
+    public static readonly int blackQueen = Piece.Queen + Piece.BlackPieceOffset;
+    public static readonly int blackRook = Piece.Rook + Piece.BlackPieceOffset;
+    public static readonly int blackKnight = Piece.Knight + Piece.BlackPieceOffset;
+    public static readonly int blackBishop = Piece.Bishop + Piece.BlackPieceOffset;
+    public static readonly int blackPawn = Piece.Pawn + Piece.BlackPieceOffset;
+
 
     #region MAIN LOOP 
     public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn = 3)// this is returning raw moves
     {
-        List<MoveObject> moves = new(); 
-        
-        if(turn == 3)
+        List<MoveObject> moves = new();
+
+        if (turn == 3)
         {
             for (int square = 0; square < 64; square++)
             {
@@ -35,24 +35,24 @@ public static class MoveGenenerator
             }
         }
 
-        else if(turn == 1)
+        else if (turn == 1)
         {
             for (int square = 0; square < 64; square++)
             {
-                
+
                 if (chessBoard[square] == blackKing) moves.AddRange(GenerateBKingMoves(square, chessBoard));
 
             }
         }
 
-        else if(turn == 0)
+        else if (turn == 0)
         {
             for (int square = 0; square < 64; square++)
             {
                 if (chessBoard[square] == whiteKing) moves.AddRange(GenerateWKingMoves(square, chessBoard));
             }
         }
-        
+
         return moves;
     }
     #endregion
@@ -61,9 +61,9 @@ public static class MoveGenenerator
     #region GENERATING RAW MOVES FOR A PIECE ON GIVEN SQUARE
     public static IEnumerable<MoveObject> GenerateWKingMoves(int square, int[] board)
     {
-        
-        List<int> filteredMasksForSquare = WKingRules(GetKingRawMoves(square), board); 
-        
+
+        List<int> filteredMasksForSquare = WKingRules(GetKingRawMoves(square), board);
+
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
@@ -79,7 +79,7 @@ public static class MoveGenenerator
     public static IEnumerable<MoveObject> GenerateBKingMoves(int square, int[] board)
     {
         List<int> filteredMasksForSquare = BKingRules(GetKingRawMoves(square), board);
-        
+
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
@@ -95,19 +95,11 @@ public static class MoveGenenerator
     #endregion
 
 
-    #region RETRIEVING MASKS FOR PIECE ON GIVEN SQUARE  
-    public static List<int> GetKingRawMoves(int square) => MaskGenerator.KingMasks[square];
-    public static List<int> GetKnightRawMoves(int square) => MaskGenerator.KnightMasks[square];
-    #endregion
-
-
-
-
     #region PIECE RULES AND CONDITIONS
-    
+
     public static List<int> WKingRules(List<int> maskForSquare, int[] board)
     {
-       
+
         List<int> blackKingInfluence = GetKingRawMoves(Array.IndexOf(board, blackKing));
         List<int> result = new List<int>();
         foreach (int endSquare in maskForSquare)
@@ -129,5 +121,12 @@ public static class MoveGenenerator
         return result;
     }
 
+    #endregion
+
+
+
+    #region RETRIEVING MASKS FOR PIECE ON GIVEN SQUARE  
+    private static List<int> GetKingRawMoves(int square) => MaskGenerator.KingMasks[square];
+    private static List<int> GetKnightRawMoves(int square) => MaskGenerator.KnightMasks[square];
     #endregion
 }
