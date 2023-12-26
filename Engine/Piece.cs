@@ -20,5 +20,11 @@ public static class Piece
         return pieceValue >= 1 && pieceValue <= 99;
     }
 
+    public static int GetColor(int pieceValue)
+    {
+        if (pieceValue >= 11 && pieceValue <= 109) return 2;
+        else if (pieceValue >= 1 && pieceValue <= 99) return 1;
+        return 0;   
+    }
 }
 

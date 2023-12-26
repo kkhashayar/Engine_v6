@@ -131,41 +131,41 @@ public static class MoveGenerator
     }
 
 
-    private static bool IsPathClear(int startSquare, int endSquare, int[] board)
+    public static bool IsPathClear(int startSquare, int endSquare, int[] board)
     {
         int direction = GetDirection(startSquare, endSquare);
         int currentSquare = startSquare + direction;
 
+
         while (currentSquare != endSquare)
         {
-            if (board[currentSquare] != 0) // Check if the square is not empty
+            currentSquare += direction;
+            var targetPieceColor = Piece.GetColor(board[currentSquare]);
+
+            if (board[currentSquare] != 0)
                 return false;
 
-            currentSquare += direction;
         }
-
-        return true; // The path is clear if no pieces are found
+        
+        return true;
     }
 
-    private static int GetDirection(int startSquare, int endSquare)
+
+    public static int GetDirection(int startSquare, int endSquare)
     {
-        // Determine the direction of movement
-        // This will be specific to your board representation and coordinate system
         if (endSquare > startSquare) // Moving up or right
         {
             if (endSquare % 8 == startSquare % 8) // Vertical move
-                return 8; // Adjust based on your board's indexing
+                return 8; 
             else // Horizontal move
                 return 1;
         }
         else // Moving down or left
         {
             if (endSquare % 8 == startSquare % 8) // Vertical move
-                return -8; // Adjust based on your board's indexing
+                return -8; 
             else // Horizontal move
                 return -1;
         }
     }
-
-
 }

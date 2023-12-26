@@ -30,6 +30,10 @@ public static class Perft
         foreach (MoveObject move in moves)
         {
             MakeMove(move, board);
+            
+            count++;
+            DebugPerft(board);
+            
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
             UnmakeMove(move, board);
 
@@ -50,7 +54,7 @@ public static class Perft
             Console.Beep(1500, 50); // Optional beep
         }
 
-        //DebugPerft(board);
+        
         return nodes;
     }
 
@@ -97,7 +101,7 @@ public static class Perft
         }
         Console.WriteLine();
         Console.WriteLine($"Ply:{count}");
-        Thread.Sleep(200);
+        Thread.Sleep(400);
         
     }
 

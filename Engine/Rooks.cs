@@ -5,7 +5,7 @@ internal static class Rooks
 {
     public static IEnumerable<MoveObject> GenerateWRookMoves(int square, int[] board)
     {
-        List<int> filteredMasksForSquare = WRookRules(GetRookRawMoves(square), board);
+        List<int> filteredMasksForSquare = WRookRules(GetRookRawMoves(square), board, square); // Notice the addition of square to the method call
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
@@ -20,16 +20,16 @@ internal static class Rooks
 
 
 
-    private static List<int> WRookRules(List<int> maskForSquare, int[] board)
+    private static List<int> WRookRules(List<int> maskForSquare, int[] board, int startSquare)
     {
+        // Might be better to send the whole list 
         List<int> result = new();
-        // Filters  
-        foreach (int endsquare in maskForSquare)
+        foreach (int endSquare in maskForSquare)
         {
-            if (!Piece.IsWhite(board[endsquare]))
-                result.Add(endsquare);
+            //!Piece.IsWhite(board[endSquare]) &&
+            if ( MoveGenerator.IsPathClear(startSquare, endSquare, board))
+                result.Add(endSquare);
         }
-
         return result;
     }
 
