@@ -189,4 +189,35 @@ public sealed class Globals
     }
 
 
+
+
+    public static char GetUnicodeCharacter(int pieceCode)
+    {
+        switch (pieceCode)
+        {
+            case 1: return '\u2659'; // White Pawn
+            case 3: return '\u2658'; // White Knight
+            case 4: return '\u2657'; // White Bishop
+            case 5: return '\u2656'; // White Rook
+            case 9: return '\u2655'; // White Queen
+            case 99: return '\u2654'; // White King
+            case 11: return '\u265F'; // Black Pawn
+            case 13: return '\u265E'; // Black Knight
+            case 14: return '\u265D'; // Black Bishop
+            case 15: return '\u265C'; // Black Rook
+            case 19: return '\u265B'; // Black Queen
+            case 109: return '\u265A'; // Black King
+            default: return '.'; // Empty square
+        }
+    }
+
+    static List<char> Unicodes = new List<char>
+        {
+            '\u2659','\u2658','\u2657','\u2656',
+            '\u2655','\u2654','\u265F','\u265E',
+            '\u265D','\u265C','\u265B','\u265A'
+        };
+
+
+
 }

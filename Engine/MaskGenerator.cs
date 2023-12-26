@@ -101,25 +101,25 @@ public static class MaskGenerator
 
     public static IEnumerable<int> GenerateRookMasks(int square)
     {
-        int[] directions = { 1, -1, 8, -8 };
-        foreach (int direction in directions) 
+        int[] directions = { 1, -1, 8, -8 }; // right, left, up, down
+        int originalRank = square / 8;
+        int originalFile = square % 8;
+
+        foreach (int direction in directions)
         {
-            int currentSquare = square;
-            while (true)
+            int currentSquare = square + direction;
+            while (IsValidSquare(currentSquare) && !IsVerHorBreaksMask(currentSquare, direction, originalRank, originalFile))
             {
-                currentSquare += direction;
-                if (!IsValidSquare(currentSquare) || !IsVerHorBreaksMask(currentSquare, direction))
-                {
-                    break;
-                }
                 yield return currentSquare;
+                currentSquare += direction;
             }
         }
     }
-    
-    
-    
-    
+
+
+
+
+
     ////////////////////////////////    HELPERS 
 
     // Only checks if square is in the board
@@ -130,25 +130,31 @@ public static class MaskGenerator
 
 
     // Checks if vertical / Horizontal slider pattern breaks the mast or not 
-    private static bool IsVerHorBreaksMask(int square, int direction)
+    private static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
-        int originalRank = (square - direction) / 8;
-        int originalFile = (square - direction) % 8;
-
-        // Calculate the new row and column after moving in the direction
         int newRank = square / 8;
         int newFile = square % 8;
 
-        // Check for wrapping to a new row for vertical movements
-        if ((direction == 8 || direction == -8) && (newRank > 7 || newRank < 0))
-            return true;
-
-        // Check for wrapping to a new column for horizontal movements
-        if ((direction == 1 || direction == -1) && Math.Abs(newFile - originalFile) > 1)
-            return true;
+        // Vertical movement check
+        if (direction == 8 || direction == -8)
+        {
+            // Break the mask if it's off-board vertically
+            if (newRank < 0 || newRank > 7) return true;
+            // Ensure vertical movement stays in the same file
+            if (newFile != originalFile) return true;
+        }
+        // Horizontal movement check
+        else if (direction == 1 || direction == -1)
+        {
+            // Break the mask if it's off-board horizontally
+            if (newFile < 0 || newFile > 7) return true;
+            // Ensure horizontal movement stays in the same rank
+            if (newRank != originalRank) return true;
+        }
 
         return false;
     }
+
 
 
 }
