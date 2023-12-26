@@ -26,36 +26,35 @@ public static class Perft
 
         ulong nodes = 0;
         List<MoveObject> moves = MoveGenenerator.GenerateAllMoves(board, turn);
-        
-        
+
         foreach (MoveObject move in moves)
         {
             MakeMove(move, board);
-
-            count++;    
-            DebugPerft(board);
-
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
             UnmakeMove(move, board);
 
-            // Print each move and nodes at the final layer of the desired depth
-            if (depth == maxDepth)
+            // Increment the nodes count
+            nodes += childNodes;
+
+            
+            if (depth == 2) 
             {
                 Console.WriteLine($"{Globals.GetSquareCoordinate(move.StatrSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}: {childNodes}");
             }
-
-            nodes += childNodes;
         }
 
         // Print the total nodes at the end of the top call
         if (depth == maxDepth)
         {
             Console.WriteLine($"Nodes searched: {nodes}");
-            Console.Beep(1500, 50);
+            Console.Beep(1500, 50); // Optional beep
         }
 
+        //DebugPerft(board);
         return nodes;
     }
+
+
 
     private static void MakeMove(MoveObject move, int[] board)
     {
