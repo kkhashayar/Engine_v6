@@ -29,7 +29,7 @@ MaskGenerator.GenerateAllMasks();
 
 
 
-string fen = "k7/8/8/8/3R4/8/8/7K w - - 0 1";
+string fen = "k7/7R/8/8/8/8/8/K7 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -66,7 +66,7 @@ void printBoardWhiteDown(int[] board)
         foreach (var file in fileNames.Select((value, index) => new { value, index }))
         {
             int index = rank * 8 + file.index;  // Calculate the index for the current position using file index
-            char pieceChar = GetUnicodeCharacter(board[index]);  
+            char pieceChar = Globals.GetUnicodeCharacter(board[index]);  
             Console.Write(pieceChar + " "); 
         }
         Console.WriteLine(); 
@@ -96,7 +96,7 @@ void printBoardBlackDown(int[] board)
         foreach (var file in fileNames.Select((value, index) => new { value, index }))
         {
             int index = rank * 8 + (7 - file.index); 
-            char pieceChar = GetUnicodeCharacter(board[index]);
+            char pieceChar = Globals.GetUnicodeCharacter(board[index]);
             Console.Write(pieceChar + " "); // Print the piece
         }
         Console.WriteLine();
@@ -154,31 +154,4 @@ void showBoardValuesBlack(int[] board)
 }
 
 
-
-char GetUnicodeCharacter(int pieceCode)
-{
-    switch (pieceCode)
-    {
-        case 1: return '\u2659'; // White Pawn
-        case 3: return '\u2658'; // White Knight
-        case 4: return '\u2657'; // White Bishop
-        case 5: return '\u2656'; // White Rook
-        case 9: return '\u2655'; // White Queen
-        case 99: return '\u2654'; // White King
-        case 11: return '\u265F'; // Black Pawn
-        case 13: return '\u265E'; // Black Knight
-        case 14: return '\u265D'; // Black Bishop
-        case 15: return '\u265C'; // Black Rook
-        case 19: return '\u265B'; // Black Queen
-        case 109: return '\u265A'; // Black King
-        default: return '.'; // Empty square
-    }
-}
-
-List<char> Unicodes = new List<char>
-        {
-            '\u2659','\u2658','\u2657','\u2656',
-            '\u2655','\u2654','\u265F','\u265E',
-            '\u265D','\u265C','\u265B','\u265A'
-        };
 
