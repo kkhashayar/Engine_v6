@@ -7,8 +7,8 @@ public static class MoveGenerator
     public static int WhiteKingSquare { get; set; }
     public static int BlackKingSquare { get; set; }
 
-    public static List<int> BlackAttackSquares { get; set; }
-    public static List<int> WhiteAttackSquares { get; set; }
+    public static List<int>? BlackAttackSquares { get; set; }
+    public static List<int>? WhiteAttackSquares { get; set; }
 
     public static readonly int whiteKing = Piece.King;
     public static readonly int whiteQueen = Piece.Queen;
@@ -33,6 +33,7 @@ public static class MoveGenerator
         List<MoveObject> moves = new();
         WhiteAttackSquares = new List<int>();
         BlackAttackSquares = new List<int>();
+
 
         if (turn == 3)
         {
@@ -71,6 +72,11 @@ public static class MoveGenerator
                     moves.AddRange(Knights.GenerateBKnightMoves(square, chessBoard));
                     BlackAttackSquares.Add(square);  
                 }
+                else if (chessBoard[square] == blackRook)
+                {
+                    moves.AddRange(Rooks.GenerateBRookMoves(square, chessBoard));
+                    BlackAttackSquares.Add(square);
+                }
 
             }
         }
@@ -89,6 +95,11 @@ public static class MoveGenerator
                 else if (chessBoard[square] == blackKnight)
                 {
                     moves.AddRange(Kings.GenerateBKingMoves(square, chessBoard));
+                    BlackAttackSquares.Add(square);
+                }
+                else if (chessBoard[square] == blackRook)
+                {
+                    moves.AddRange(Rooks.GenerateBRookMoves(square, chessBoard));
                     BlackAttackSquares.Add(square);
                 }
 
@@ -163,9 +174,6 @@ public static class MoveGenerator
 
         return true;
     }
-
-
-
 
     public static int GetDirection(int startSquare, int endSquare)
     {

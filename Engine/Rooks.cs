@@ -17,9 +17,6 @@ internal static class Rooks
             yield return move;
         }
     }
-
-
-
     private static List<int> WRookRules(List<int> maskForSquare, int[] board, int startSquare)
     {
         // Might be better to send the whole list 
@@ -27,7 +24,35 @@ internal static class Rooks
         foreach (int endSquare in maskForSquare)
         {
             //!Piece.IsWhite(board[endSquare]) &&
-            if ( MoveGenerator.IsPathClear(startSquare, endSquare, board))
+            if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
+                result.Add(endSquare);
+        }
+        return result;
+    }
+
+    public static IEnumerable<MoveObject> GenerateBRookMoves(int square, int[] board)
+    {
+        List<int> filteredMasksForSquare = BRookRules(GetRookRawMoves(square), board, square); // Notice the addition of square to the method call
+        foreach (int endSquare in filteredMasksForSquare)
+        {
+            MoveObject move = new MoveObject
+            {
+                pieceType = MoveGenerator.blackRook,
+                StatrSquare = square,
+                EndSquare = endSquare
+            };
+            yield return move;
+        }
+    }
+
+    private static List<int> BRookRules(List<int> maskForSquare, int[] board, int startSquare)
+    {
+        // Might be better to send the whole list 
+        List<int> result = new();
+        foreach (int endSquare in maskForSquare)
+        {
+            //!Piece.IsWhite(board[endSquare]) &&
+            if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
                 result.Add(endSquare);
         }
         return result;

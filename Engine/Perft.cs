@@ -26,15 +26,18 @@ public static class Perft
 
         ulong nodes = 0;
         List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn);
-
+        List<MoveObject> sideMoves = new();
+        //if(turn == 0) sideMoves.AddRange(moves.Where(mo => Piece.IsWhite(mo.pieceType)));
+        //else if(turn == 1) sideMoves.AddRange(moves.Where(mo => Piece.IsBlack(mo.pieceType)));
+        //if(sideMoves.Count > 0)
         foreach (MoveObject move in moves)
         {
             MakeMove(move, board);
 
-            //count++;
-            //DebugPerft(board);
+                count++;
+                DebugPerft(board);
 
-            ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
+                ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
             UnmakeMove(move, board);
 
             // Increment the nodes count

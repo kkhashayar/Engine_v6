@@ -189,8 +189,6 @@ public sealed class Globals
     }
 
 
-
-    
     public static char GetUnicodeCharacter(int pieceCode)
     {
         switch (pieceCode)
