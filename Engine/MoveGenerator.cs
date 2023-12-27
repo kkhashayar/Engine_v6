@@ -89,7 +89,7 @@ public static class MoveGenerator
                 else if (chessBoard[square] == blackKnight)
                 {
                     moves.AddRange(Kings.GenerateBKingMoves(square, chessBoard));
-                    WhiteAttackSquares.Add(square);
+                    BlackAttackSquares.Add(square);
                 }
 
             }
@@ -124,9 +124,12 @@ public static class MoveGenerator
 
 
     //////////////////////////////////////   HELPERS 
-    private static bool IsWhiteKingInCheck(int[] board, int kingposition)
+    private static bool IsWhiteKingInCheck(int turn)
     {
+        if(turn == 0)
+        {
 
+        }
         return false; 
     }
 
@@ -135,20 +138,33 @@ public static class MoveGenerator
     {
         int direction = GetDirection(startSquare, endSquare);
         int currentSquare = startSquare + direction;
-
+        bool pieceColor = Piece.IsBlack(board[startSquare]); 
 
         while (currentSquare != endSquare)
         {
-            currentSquare += direction;
-            var targetPieceColor = Piece.GetColor(board[currentSquare]);
-
             if (board[currentSquare] != 0)
+            {
                 return false;
-
+            }
+            currentSquare += direction;
         }
-        
+        if (board[endSquare] != 0) // If the end square is occupied
+        {
+            bool targetPieceColor = Piece.IsBlack(board[endSquare]);
+            if (pieceColor != targetPieceColor)
+            {
+                return true; // Can capture
+            }
+            else
+            {
+                return false; // Blocked by own piece
+            }
+        }
+
         return true;
     }
+
+
 
 
     public static int GetDirection(int startSquare, int endSquare)

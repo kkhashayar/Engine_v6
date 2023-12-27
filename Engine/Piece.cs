@@ -13,18 +13,16 @@ public static class Piece
 
     public static bool IsBlack(int pieceValue)
     {
-        return pieceValue >= 11 && pieceValue <= 109; 
+        if(pieceValue == 11 || pieceValue == 13 || pieceValue == 14 || pieceValue == 15 || pieceValue == 19 || pieceValue == 109)
+            return true;
+        return false;
+         
     }
     public static bool IsWhite(int pieceValue)
     {
-        return pieceValue >= 1 && pieceValue <= 99;
-    }
-
-    public static int GetColor(int pieceValue)
-    {
-        if (pieceValue >= 11 && pieceValue <= 109) return 2;
-        else if (pieceValue >= 1 && pieceValue <= 99) return 1;
-        return 0;   
+        if (pieceValue == 1 || pieceValue == 3 || pieceValue == 4 || pieceValue == 5 || pieceValue == 9 || pieceValue == 1)
+            return true;
+        return false;
     }
 }
 

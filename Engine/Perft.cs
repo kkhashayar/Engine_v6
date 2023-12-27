@@ -30,10 +30,10 @@ public static class Perft
         foreach (MoveObject move in moves)
         {
             MakeMove(move, board);
-            
-            count++;
-            DebugPerft(board);
-            
+
+            //count++;
+            //DebugPerft(board);
+
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
             UnmakeMove(move, board);
 
