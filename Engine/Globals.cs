@@ -31,7 +31,6 @@ public sealed class Globals
     };
 
 
-
     public static readonly int[] BoardOfRanks = new int[64]
     {
         8, 8, 8, 8, 8, 8, 8, 8,
@@ -113,8 +112,6 @@ public sealed class Globals
         copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
         copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
         copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
-        //copy.CheckWhite         = instanceToClone.CheckWhite;
-        //copy.CheckBlack         = instanceToClone.CheckBlack;
         copy.CheckmateWhite     = instanceToClone.CheckmateWhite;
         copy.CheckmateBlack     = instanceToClone.CheckmateBlack; 
         copy.Stalemate          = instanceToClone.Stalemate;

@@ -29,7 +29,7 @@ public static class MoveGenerator
     public static bool BlackKingIsCheck { get; set; } = false;
 
 
-    static Globals currentState = new Globals(); // LazyInitializer 
+    static Globals currentState = new Globals(); // LazyInitializer need to think about it 
     //////////////////////////////////////   ENGINE CORE LOOP 
 
     public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
