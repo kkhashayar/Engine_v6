@@ -11,7 +11,7 @@ internal static class Rooks
             MoveObject move = new MoveObject
             {
                 pieceType = MoveGenerator.whiteRook,
-                StatrSquare = square,
+                StartSquare = square,
                 EndSquare = endSquare
             };
             yield return move;
@@ -38,7 +38,7 @@ internal static class Rooks
             MoveObject move = new MoveObject
             {
                 pieceType = MoveGenerator.blackRook,
-                StatrSquare = square,
+                StartSquare = square,
                 EndSquare = endSquare
             };
             yield return move;

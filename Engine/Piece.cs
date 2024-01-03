@@ -24,5 +24,20 @@ public static class Piece
             return true;
         return false;
     }
+
+    public static string GetColor(int pieceValue)
+    {
+        // Black pieces have specific values
+        if (pieceValue == 11 || pieceValue == 13 || pieceValue == 14 || pieceValue == 15 || pieceValue == 19 || pieceValue == 109)
+            return "Black";
+
+        // White pieces have specific values
+        if (pieceValue == 1 || pieceValue == 3 || pieceValue == 4 || pieceValue == 5 || pieceValue == 9 || pieceValue == 99) 
+            return "White";
+
+
+        return "None";
+    }
+
 }
 

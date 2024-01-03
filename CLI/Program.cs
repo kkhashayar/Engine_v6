@@ -29,7 +29,7 @@ MaskGenerator.GenerateAllMasks();
 
 
 
-string fen = "k7/7R/8/8/8/8/8/K7 b - - 0 1";
+string fen = "4k3/8/8/8/8/8/8/4K3 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -38,7 +38,7 @@ if (String.IsNullOrEmpty(fen))
 // Creating a mock function to represent the FEN parsing loop in C#
 
 Globals globals = Globals.FenReader(fen);
-int fenDept = 1;
+int fenDept = 9;
 
 Perft.Calculate(globals.ChessBoard, fenDept, globals.Turn);
 Console.ReadLine();

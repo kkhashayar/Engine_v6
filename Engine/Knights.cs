@@ -11,7 +11,7 @@ internal static class Knights
             MoveObject move = new MoveObject
             {
                 pieceType = MoveGenerator.whiteKnight,
-                StatrSquare = square,
+                StartSquare = square,
                 EndSquare = endSquare
             };
             yield return move;
@@ -32,14 +32,14 @@ internal static class Knights
 
     public static IEnumerable<MoveObject> GenerateBKnightMoves(int square, int[] board)
     {
-        List<int> filteredMasksForSquare = BKnightRules(Kings.GetKingRawMoves(square), board);
+        List<int> filteredMasksForSquare = BKnightRules(Kings.GetMaskForSquare(square), board);
 
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
             {
                 pieceType = MoveGenerator.blackKing,
-                StatrSquare = square,
+                StartSquare = square,
                 EndSquare = endSquare
             };
             yield return move;
