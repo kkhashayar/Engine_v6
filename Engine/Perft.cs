@@ -39,6 +39,9 @@ public static class Perft
             int[] boardCopy = (int[])board.Clone();
             MakeMove(move, boardCopy);
 
+            //count++;    
+            //ShowDebugBoard(boardCopy, 2000);
+
             ulong childNodes = CalculateNodes(boardCopy, depth - 1, turn ^ 1, maxDepth);
             nodes += childNodes;
 
@@ -75,16 +78,10 @@ public static class Perft
         
     }
 
-    private static void UnmakeMove(MoveObject move, int[] board)
-    {
-        board[move.EndSquare] = move.CapturedPiece;
-        board[move.StartSquare] = move.pieceType;
-    }
 
 
 
-
-    public static void DebugPerft(int []board)
+    public static void ShowDebugBoard(int []board, int speedMs)
     {
         Console.Clear();
         Console.OutputEncoding = System.Text.Encoding.Unicode;
@@ -109,7 +106,7 @@ public static class Perft
         }
         Console.WriteLine();
         Console.WriteLine($"Ply:{count}");
-        Thread.Sleep(1500);
+        Thread.Sleep(speedMs);
         
     }
 
