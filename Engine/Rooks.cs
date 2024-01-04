@@ -3,23 +3,43 @@ namespace Engine;
 
 internal static class Rooks
 {
-    public static IEnumerable<MoveObject> GenerateWRookMoves(int square, int[] board)
+    public static List<MoveObject> GenerateMovesForSquare(int square,int turn ,int[] board)
     {
-        List<int> filteredMasksForSquare = WRookRules(GetRookRawMoves(square), board, square); // Notice the addition of square to the method call
+        List<MoveObject> moves = new(); 
+        int piece = Piece.None;
+
+        string pieceColor = ""; 
+
+        if (turn == 0)     piece = MoveGenerator.whiteRook;
+        else if(turn == 1) piece = MoveGenerator.blackRook;
+       
+        pieceColor = Piece.GetColor(piece); 
+        List<int> filteredMasksForSquare = Rules(GetmasksForSquare(square), board, turn, square); 
+
         foreach (int endSquare in filteredMasksForSquare)
         {
             MoveObject move = new MoveObject
             {
-                pieceType = MoveGenerator.whiteRook,
-                StatrSquare = square,
+                pieceType = piece,
+                StartSquare = square,
                 EndSquare = endSquare
             };
-            yield return move;
+            moves.Add(move);
         }
+        return moves;
     }
-    private static List<int> WRookRules(List<int> maskForSquare, int[] board, int startSquare)
+
+    public static List<int> Rules(List<int> maskForSquare, int[] board, int turn, int startSquare)
     {
-        // Might be better to send the whole list 
+        string pieceColor = "";
+        if(turn == 0)
+        {
+            pieceColor = "White";
+        }
+        else if (turn == 1)
+        {
+            pieceColor = "Black";
+        }
         List<int> result = new();
         foreach (int endSquare in maskForSquare)
         {
@@ -28,37 +48,19 @@ internal static class Rooks
                 result.Add(endSquare);
         }
         return result;
+
     }
 
-    public static IEnumerable<MoveObject> GenerateBRookMoves(int square, int[] board)
+   
+    private static List<int> GetmasksForSquare(int square)
     {
-        List<int> filteredMasksForSquare = BRookRules(GetRookRawMoves(square), board, square); // Notice the addition of square to the method call
-        foreach (int endSquare in filteredMasksForSquare)
-        {
-            MoveObject move = new MoveObject
-            {
-                pieceType = MoveGenerator.blackRook,
-                StatrSquare = square,
-                EndSquare = endSquare
-            };
-            yield return move;
-        }
+      return MaskGenerator.RookMasks[square];
     }
 
-    private static List<int> BRookRules(List<int> maskForSquare, int[] board, int startSquare)
+    public static List<int> GetAttackSquares(int square)
     {
-        // Might be better to send the whole list 
-        List<int> result = new();
-        foreach (int endSquare in maskForSquare)
-        {
-            //!Piece.IsWhite(board[endSquare]) &&
-            if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
-                result.Add(endSquare);
-        }
-        return result;
+        return MaskGenerator.RookMasks[square];
     }
 
-
-    private static List<int> GetRookRawMoves(int square) => MaskGenerator.RookMasks[square];
 
 }

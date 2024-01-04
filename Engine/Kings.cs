@@ -2,65 +2,48 @@
 
 internal static class Kings
 {
-    public static IEnumerable<MoveObject> GenerateWKingMoves(int square, int[] board)
+    public static IEnumerable<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
+        List<int> masks = GetMasksForSquare(square);
+        
+        int piece = Piece.None;
+        string pieceColor = "";
+       
+        if (turn == 0)      piece = MoveGenerator.whiteKing;
+     
+        else if (turn == 1) piece = MoveGenerator.blackKing;
+            
+        
+        pieceColor = Piece.GetColor(piece);
 
-        List<int> filteredMasksForSquare = WKingRules(GetKingRawMoves(square), board);
+        List<MoveObject> moves = new();
 
-        foreach (int endSquare in filteredMasksForSquare)
+        foreach (int endSquare in masks )
         {
-            MoveObject move = new MoveObject
+            if (Piece.GetColor(board[endSquare]) != pieceColor || board[endSquare] == 0)
             {
-                pieceType = MoveGenerator.whiteKing,
-                StatrSquare = square,
-                EndSquare = endSquare
-            };
-            yield return move;
+                MoveObject move = new MoveObject
+                {
+                    pieceType = piece,
+                    StartSquare = square,
+                    EndSquare = endSquare
+                };
+                moves.Add(move);
+            }
+                
         }
+        return moves;
     }
-
-    public static List<int> WKingRules(List<int> maskForSquare, int[] board)
+    
+    public static List<int> GetMasksForSquare(int square)
     {
-        List<int> blackKingInfluence = GetKingRawMoves(Array.IndexOf(board, MoveGenerator.blackKing));
-        List<int> result = new List<int>();
-        foreach (int endSquare in maskForSquare)
-        {
-            if (board[endSquare] == 0 && !blackKingInfluence.Contains(endSquare)) result.Add(endSquare);
-        }
-        return result;
+        return MaskGenerator.KingMasks[square];
     }
 
-
-
-    public static IEnumerable<MoveObject> GenerateBKingMoves(int square, int[] board)
+    public static List<int> GetAttackSquares(int square)
     {
-        List<int> filteredMasksForSquare = BKingRules(GetKingRawMoves(square), board);
-
-        foreach (int endSquare in filteredMasksForSquare)
-        {
-            MoveObject move = new MoveObject
-            {
-                pieceType = MoveGenerator.blackKing,
-                StatrSquare = square,
-                EndSquare = endSquare
-            };
-            yield return move;
-        }
+        return MaskGenerator.KingMasks[square];
     }
 
-    public static List<int> BKingRules(List<int> maskForSquare, int[] board)
-    {
-        List<int> whiteKingInfluence = GetKingRawMoves(Array.IndexOf(board, MoveGenerator.whiteKing));
-        List<int> result = new List<int>();
-        foreach (int endSquare in maskForSquare)
-        {
-            if (board[endSquare] == 0 && !whiteKingInfluence.Contains(endSquare))
-                result.Add(endSquare);
-
-        }
-        return result;
-    }
-
-
-    public static List<int> GetKingRawMoves(int square) => MaskGenerator.KingMasks[square];
 }
+

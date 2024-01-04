@@ -2,11 +2,20 @@
 
 public sealed class Globals
 {
-    
+    const int MOVECAPKING = 8;
     public bool WhiteShortCastle { get; set; }
     public bool WhiteLongCastle { get; set; }
     public bool BlackShortCastle { get; set; }
     public bool BlackLongCastle { get; set; }
+
+    public bool CheckmateWhite { get; set; } = false;
+    public bool CheckmateBlack { get; set; } = false;
+    public static bool CheckWhite { get; set; } = false;
+    public static bool CheckBlack { get; set; } = false;
+
+    public bool Stalemate { get; set; } = false;
+
+
     public  int Turn { get; set; }
 
     public int[] ChessBoard = new int[64]
@@ -20,7 +29,6 @@ public sealed class Globals
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0
     };
-
 
 
     public static readonly int[] BoardOfRanks = new int[64]
@@ -98,12 +106,17 @@ public sealed class Globals
     public static Globals Clone(Globals instanceToClone)
     {
         var copy = new Globals();
-        copy.ChessBoard = (int[])instanceToClone.ChessBoard.Clone();
-        copy.WhiteShortCastle = instanceToClone.WhiteShortCastle;
-        copy.WhiteLongCastle = instanceToClone.WhiteLongCastle;
-        copy.BlackShortCastle = instanceToClone.BlackShortCastle;
-        copy.BlackLongCastle = instanceToClone.BlackLongCastle;
-        copy.Turn = instanceToClone.Turn;
+        
+        copy.ChessBoard         = (int[])instanceToClone.ChessBoard.Clone();
+        copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
+        copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
+        copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
+        copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
+        copy.CheckmateWhite     = instanceToClone.CheckmateWhite;
+        copy.CheckmateBlack     = instanceToClone.CheckmateBlack; 
+        copy.Stalemate          = instanceToClone.Stalemate;
+        copy.Turn               = instanceToClone.Turn;
+        
         return copy;
     }
 

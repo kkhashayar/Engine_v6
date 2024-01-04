@@ -4,6 +4,9 @@ using System;
 // Initiate masks 
 MaskGenerator.GenerateAllMasks();
 
+
+//////////////////////////////////////////////////////////////// Mask simple test
+
 // Console.WriteLine($"{MaskGenerators.KingMasks.Count}");
 //foreach (var mask in MaskGenerators.KingMasks)
 //{
@@ -25,20 +28,19 @@ MaskGenerator.GenerateAllMasks();
 //}
 //Console.ReadLine(); 
 
-/// End of the ask tests 
+//////////////////////////////////////////////////////////////// End of Mask simple test 
 
 
 
-string fen = "k7/7R/8/8/8/8/8/K7 b - - 0 1";
+string fen = "k3n3/3r4/5r2/3R4/8/5R2/8/K3N3 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }
 
-// Creating a mock function to represent the FEN parsing loop in C#
 
 Globals globals = Globals.FenReader(fen);
-int fenDept = 1;
+int fenDept = 2;
 
 Perft.Calculate(globals.ChessBoard, fenDept, globals.Turn);
 Console.ReadLine();
