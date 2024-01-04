@@ -32,7 +32,7 @@ MaskGenerator.GenerateAllMasks();
 
 
 
-string fen = "k3n3/8/8/8/8/8/8/K3N3 w - - 0 1";
+string fen = "k3n3/3r4/5r2/3R4/8/5R2/8/K3N3 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
