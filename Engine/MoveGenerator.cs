@@ -98,7 +98,7 @@ public static class MoveGenerator
                 if (piece == whiteKing)
                 {
                     WhiteKingSquare = square;
-                    pseudoMoves.AddRange(Kings.GenerateWKingMoves(square, chessBoard));
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, color, chessBoard));
                 }
                 else if (piece == whiteRook)
                 {
@@ -116,7 +116,7 @@ public static class MoveGenerator
                 if (piece == blackKing)
                 {
                     BlackKingSquare = square;
-                    pseudoMoves.AddRange(Kings.GenerateBKingMoves(square, chessBoard));
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, color, chessBoard));
                 }
                 else if (piece == blackRook)
                 {

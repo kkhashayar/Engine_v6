@@ -8,7 +8,7 @@ public static class MaskGenerator
 
     public static void GenerateAllMasks()
     {
-        KingMasks = new List<List<int>>();
+        KingMasks = new(); 
         GenerateAllKingMasks();
         
         KnightMasks = new List<List<int>>();
