@@ -2,35 +2,45 @@
 
 internal static class Kings
 {
-    public static IEnumerable<MoveObject> GenerateMovesForSquare(int square, int color, int[] board)
+    public static IEnumerable<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        int piece = Piece.None; 
-        List<int> masks = GetMaskForSquare(square);
+        List<int> masks = GetMasksForSquare(square);
+        
+        int piece = Piece.None;
+        string pieceColor = "";
+       
+        if (turn == 0)      piece = MoveGenerator.whiteKing;
+     
+        else if (turn == 1) piece = MoveGenerator.blackKing;
+            
+        
+        pieceColor = Piece.GetColor(piece);
 
-        if(color == 0) piece = MoveGenerator.whiteKing;
-        else if(color == 1) piece = MoveGenerator.blackKing;
+        List<MoveObject> moves = new();
 
-        List<MoveObject> moves = new(); 
-
-        foreach (int endSquare in masks)
+        foreach (int endSquare in masks )
         {
-            MoveObject move = new MoveObject
+            if (Piece.GetColor(board[endSquare]) != pieceColor || board[endSquare] == 0)
             {
-                pieceType = piece,
-                StartSquare = square,
-                EndSquare = endSquare
-            };
-            moves.Add(move);    
+                MoveObject move = new MoveObject
+                {
+                    pieceType = piece,
+                    StartSquare = square,
+                    EndSquare = endSquare
+                };
+                moves.Add(move);
+            }
+                
         }
         return moves;
     }
     
-    public static List<int> GetMaskForSquare(int square)
+    public static List<int> GetMasksForSquare(int square)
     {
         return MaskGenerator.KingMasks[square];
     }
 
-    public static List<int> GetAttackMasksForSquare(int square)
+    public static List<int> GetAttacksForSquare(int square)
     {
         return MaskGenerator.KingMasks[square];
     }

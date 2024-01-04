@@ -32,7 +32,7 @@ internal static class Knights
 
     public static IEnumerable<MoveObject> GenerateBKnightMoves(int square, int[] board)
     {
-        List<int> filteredMasksForSquare = BKnightRules(Kings.GetMaskForSquare(square), board);
+        List<int> filteredMasksForSquare = BKnightRules(Kings.GetMasksForSquare(square), board);
 
         foreach (int endSquare in filteredMasksForSquare)
         {
