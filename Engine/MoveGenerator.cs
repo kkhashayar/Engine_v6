@@ -84,7 +84,7 @@ public static class MoveGenerator
         return moves;
     }
 
-    private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int color)
+    private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int turn)
     {
         List<MoveObject> pseudoMoves = new List<MoveObject>();
 
@@ -93,38 +93,38 @@ public static class MoveGenerator
             int piece = chessBoard[square];
 
             // Generate moves for white pieces
-            if (color == 0)
+            if (turn == 0)
             {
                 if (piece == whiteKing)
                 {
                     WhiteKingSquare = square;
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, color, chessBoard));
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
                 }
                 else if (piece == whiteRook)
                 {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, color, chessBoard));
+                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
                 }
                 else if (piece == whiteKnight)
                 {
-                    pseudoMoves.AddRange(Knights.GenerateWKnightMoves(square, chessBoard));
+                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
             }
             // Generate moves for black pieces
-            else if (color == 1)
+            else if (turn == 1)
             {
                 if (piece == blackKing)
                 {
                     BlackKingSquare = square;
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, color, chessBoard));
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
                 }
                 else if (piece == blackRook)
                 {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, color, chessBoard));
+                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
                 }
                 else if (piece == blackKnight)
                 {
-                    pseudoMoves.AddRange(Knights.GenerateBKnightMoves(square, chessBoard));
+                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
                 }            
                
             }

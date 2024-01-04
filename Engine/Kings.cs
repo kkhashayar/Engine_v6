@@ -40,7 +40,7 @@ internal static class Kings
         return MaskGenerator.KingMasks[square];
     }
 
-    public static List<int> GetAttacksForSquare(int square)
+    public static List<int> GetAttackSquares(int square)
     {
         return MaskGenerator.KingMasks[square];
     }

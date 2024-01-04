@@ -57,7 +57,7 @@ internal static class Rooks
       return MaskGenerator.RookMasks[square];
     }
 
-    public static List<int> GetAttacksForSquare(int square)
+    public static List<int> GetAttackSquares(int square)
     {
         return MaskGenerator.RookMasks[square];
     }
