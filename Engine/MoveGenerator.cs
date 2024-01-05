@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 using System.Net.NetworkInformation;
+using System.Security.Principal;
 
 namespace Engine;
 
@@ -48,7 +50,7 @@ public static class MoveGenerator
                 // Filter out illegal white moves using black's pseudo-legal moves
                 foreach (var move in whitePseudoMoves)
                 {
-                    if (IsMoveLegal(move, blackPseudoMoves, chessBoard))
+                    if (IsMoveLegal(move, blackPseudoMoves, chessBoard, turn))
                     {
                         moves.Add(move);
                     }
@@ -59,7 +61,7 @@ public static class MoveGenerator
                 // Filter out illegal black moves using white's pseudo-legal moves
                 foreach (var move in blackPseudoMoves)
                 {
-                    if (IsMoveLegal(move, whitePseudoMoves, chessBoard))
+                    if (IsMoveLegal(move, whitePseudoMoves, chessBoard, turn))
                     {
                         moves.Add(move);
                     }
@@ -80,7 +82,7 @@ public static class MoveGenerator
             }
 
         }
-        
+
         return moves;
     }
 
@@ -125,8 +127,8 @@ public static class MoveGenerator
                 else if (piece == blackKnight)
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                }            
-               
+                }
+
             }
         }
 
@@ -135,12 +137,28 @@ public static class MoveGenerator
 
 
     //////////////////////////////////////   HELPERS 
-    private static bool IsMoveLegal(MoveObject move, List<MoveObject> opponentMoves, int[] board)
+    private static bool IsMoveLegal(MoveObject move, List<MoveObject> opponentMoves, int[] board, int turn)
     {
-        // int[] boardCopy = (int[])board.Clone();
 
-        Globals shadowState = Globals.Clone(currentState);
-        MakeMove(move, shadowState.ChessBoard);
+        int[] shadowBoard = (int[])board.Clone();
+
+
+
+        if ((move.pieceType == whiteKing || move.pieceType == blackKing) && shadowBoard[move.EndSquare] != 0)
+        {
+            shadowBoard[move.EndSquare] = 0;
+            int side = turn;
+            side ^= 1;
+
+            var deeperMoves = GeneratePseudoLegalMoves(shadowBoard, side);
+
+            if (deeperMoves.Any(mo => mo.EndSquare == move.EndSquare)) return false;
+        }
+
+        MakeMove(move, shadowBoard, turn);
+
+        //Globals shadowState = Globals.Clone(currentState);
+        //MakeMove(move, shadowState.ChessBoard, turn);
 
         int kingSquare = 0;
         kingSquare = GetCurrentColor(move, kingSquare);
@@ -189,19 +207,24 @@ public static class MoveGenerator
         return kingSquare;
     }
 
-    private static void MakeMove(MoveObject move, int[] board)
+    private static void MakeMove(MoveObject move, int[] shadowBoard, int turn)
     {
-        // Apply the move
-        board[move.EndSquare] = move.pieceType;
-        board[move.StartSquare] = 0;
-    }
 
+        move.CapturedPiece = shadowBoard[move.EndSquare];
+        shadowBoard[move.EndSquare] = move.pieceType;
+        shadowBoard[move.StartSquare] = 0;
+
+
+    }
 
     public static bool IsPathClear(int startSquare, int endSquare, int[] board)
     {
         int direction = GetDirection(startSquare, endSquare);
         int currentSquare = startSquare + direction;
         bool pieceColor = Piece.IsBlack(board[startSquare]);
+
+
+
 
         while (currentSquare != endSquare)
         {
@@ -244,4 +267,12 @@ public static class MoveGenerator
                 return -1;
         }
     }
+
+
+    private static int GetKingPosition(int color, int[] board)
+    {
+        int king = color == 0 ? 99 : 199;
+        return Array.FindIndex(board, b => b == king);
+    }
+
 }

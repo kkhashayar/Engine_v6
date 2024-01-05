@@ -4,7 +4,8 @@ namespace Engine;
 
 public static class Perft
 {
-    public static int count = 0; 
+    
+    public static int count = 0;
     public static ulong Calculate(int[] board, int depth, int turn)
     {
         Stopwatch stopwatch = new Stopwatch();
@@ -14,9 +15,7 @@ public static class Perft
 
         stopwatch.Stop();
 
-        // Output results
         Console.WriteLine($"Depth: {depth}, Nodes: {nodes}, Time: {stopwatch.Elapsed.TotalSeconds} seconds");
-
         return nodes;
     }
 
@@ -25,49 +24,47 @@ public static class Perft
         if (depth == 0) return 1;
 
         ulong nodes = 0;
-        Dictionary<string, ulong> moveDetails = new Dictionary<string, ulong>();
         List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn, true);
 
-        if(moves.Count == 0 && (Globals.CheckBlack || Globals.CheckWhite))
+        if (moves.Count == 0 && (Globals.CheckBlack || Globals.CheckWhite))
         {
-            return 1; 
+            return 1;
         }
 
         foreach (MoveObject move in moves)
         {
-            
-            int[] boardCopy = (int[])board.Clone();
-            MakeMove(move, boardCopy);
+            int[] shadowBoard = (int[])board.Clone();
+            MakeMove(move, shadowBoard); 
 
-            //count++;    
-            //ShowDebugBoard(boardCopy, 2000);
 
-            ulong childNodes = CalculateNodes(boardCopy, depth - 1, turn ^ 1, maxDepth);
+            //////////////////////////////////////   DEBUG BOARD 
+            //        //count++;
+            //        //ShowDebugBoard(shadowBoard, 2000);
+            //        //////////////////////////////////////   DEBUG BOARD 
+
+
+            ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
             nodes += childNodes;
 
-            if (depth == 1)
+            if (depth == maxDepth)
             {
-                string moveNotation = $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}";
-                moveDetails[moveNotation] = moveDetails.TryGetValue(moveNotation, out ulong existingCount) ? existingCount + childNodes : childNodes;
+                // Output each move and its nodes
+                Console.WriteLine($"{MoveToString(move)}: {childNodes}"); 
             }
         }
 
-        // Print the move details only at the top layer (root's immediate children)
-        if (depth == maxDepth && maxDepth > 1)
-        {
-            foreach (var detail in moveDetails.OrderBy(d => d.Key))
-            {
-                Console.WriteLine($"{detail.Key}: {detail.Value}");
-            }
-        }
-
-        // Print the total nodes at the end of the top call
         if (depth == maxDepth)
         {
+            // Output total nodes searched at the initial call
             Console.WriteLine($"Nodes searched: {nodes}");
         }
 
         return nodes;
+    }
+
+    private static string MoveToString(MoveObject move)
+    {
+       return $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}"; 
     }
 
     private static void MakeMove(MoveObject move, int[] board)
@@ -75,11 +72,7 @@ public static class Perft
         move.CapturedPiece = board[move.EndSquare];
         board[move.EndSquare] = move.pieceType;
         board[move.StartSquare] = 0;
-        
     }
-
-
-
 
     public static void ShowDebugBoard(int []board, int speedMs)
     {

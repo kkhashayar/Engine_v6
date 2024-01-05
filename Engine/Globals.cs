@@ -2,7 +2,7 @@
 
 public sealed class Globals
 {
-    const int MOVECAPKING = 8;
+    
     public bool WhiteShortCastle { get; set; }
     public bool WhiteLongCastle { get; set; }
     public bool BlackShortCastle { get; set; }
