@@ -3,59 +3,44 @@ namespace Engine;
 
 internal static class Rooks
 {
-    public static List<MoveObject> GenerateMovesForSquare(int square,int turn ,int[] board)
+    public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        List<MoveObject> moves = new(); 
-        int piece = Piece.None;
+        List<MoveObject> moves = new List<MoveObject>();
+        int piece = (turn == 0) ? MoveGenerator.whiteRook : MoveGenerator.blackRook;
 
-        string pieceColor = ""; 
-
-        if (turn == 0)     piece = MoveGenerator.whiteRook;
-        else if(turn == 1) piece = MoveGenerator.blackRook;
-       
-        pieceColor = Piece.GetColor(piece); 
-        List<int> filteredMasksForSquare = Rules(GetmasksForSquare(square), board, turn, square); 
+        List<int> filteredMasksForSquare = Rules(GetMasksForSquare(square), board, square);
 
         foreach (int endSquare in filteredMasksForSquare)
         {
-            MoveObject move = new MoveObject
+            moves.Add(new MoveObject
             {
                 pieceType = piece,
                 StartSquare = square,
                 EndSquare = endSquare
-            };
-            moves.Add(move);
+            });
         }
         return moves;
     }
 
-    public static List<int> Rules(List<int> maskForSquare, int[] board, int turn, int startSquare)
+    public static List<int> Rules(List<int> maskForSquare, int[] board, int startSquare)
     {
-        string pieceColor = "";
-        if(turn == 0)
-        {
-            pieceColor = "White";
-        }
-        else if (turn == 1)
-        {
-            pieceColor = "Black";
-        }
-        List<int> result = new();
+        List<int> validMoves = new List<int>();
         foreach (int endSquare in maskForSquare)
         {
-            //!Piece.IsWhite(board[endSquare]) &&
             if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
-                result.Add(endSquare);
+            {
+                if (board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != Piece.IsBlack(board[startSquare]))
+                    validMoves.Add(endSquare);
+            }
         }
-        return result;
-
+        return validMoves;
     }
 
-   
-    private static List<int> GetmasksForSquare(int square)
+    private static List<int> GetMasksForSquare(int square)
     {
-      return MaskGenerator.RookMasks[square];
+        return MaskGenerator.RookMasks[square];
     }
+
 
     public static List<int> GetAttackSquares(int square)
     {

@@ -34,13 +34,13 @@ public static class Perft
         foreach (MoveObject move in moves)
         {
             int[] shadowBoard = (int[])board.Clone();
-            MakeMove(move, shadowBoard); 
+            MakeMove(move, shadowBoard);
 
 
             //////////////////////////////////////   DEBUG BOARD 
-            //        //count++;
-            //        //ShowDebugBoard(shadowBoard, 2000);
-            //        //////////////////////////////////////   DEBUG BOARD 
+            count++;
+            ShowDebugBoard(shadowBoard, 2000);
+            //////////////////////////////////////   DEBUG BOARD 
 
 
             ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);

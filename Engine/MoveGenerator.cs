@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Data.SqlTypes;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Net.NetworkInformation;
 using System.Security.Principal;
@@ -44,10 +45,8 @@ public static class MoveGenerator
 
         if (filter is true)
         {
-
             if (turn == 0) // White's turn
             {
-                // Filter out illegal white moves using black's pseudo-legal moves
                 foreach (var move in whitePseudoMoves)
                 {
                     if (IsMoveLegal(move, blackPseudoMoves, chessBoard, turn))
@@ -58,7 +57,6 @@ public static class MoveGenerator
             }
             else // Black's turn
             {
-                // Filter out illegal black moves using white's pseudo-legal moves
                 foreach (var move in blackPseudoMoves)
                 {
                     if (IsMoveLegal(move, whitePseudoMoves, chessBoard, turn))
@@ -74,22 +72,18 @@ public static class MoveGenerator
             if (turn == 0)
             {
                 moves = whitePseudoMoves;
-
             }
             else
             {
                 moves = blackPseudoMoves;
             }
-
         }
-
         return moves;
     }
 
     private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int turn)
     {
         List<MoveObject> pseudoMoves = new List<MoveObject>();
-
         for (int square = 0; square < 64; square++)
         {
             int piece = chessBoard[square];
@@ -128,42 +122,21 @@ public static class MoveGenerator
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
                 }
-
             }
         }
-
         return pseudoMoves;
     }
 
 
-    //////////////////////////////////////   HELPERS 
     private static bool IsMoveLegal(MoveObject move, List<MoveObject> opponentMoves, int[] board, int turn)
     {
-
         int[] shadowBoard = (int[])board.Clone();
+        MakeMove(move, shadowBoard); // Apply the move to the shadow board
 
+        // Find current king's position after the move
+        int kingSquare = GetKingSquare(move, shadowBoard);
 
-
-        if ((move.pieceType == whiteKing || move.pieceType == blackKing) && shadowBoard[move.EndSquare] != 0)
-        {
-            shadowBoard[move.EndSquare] = 0;
-            int side = turn;
-            side ^= 1;
-
-            var deeperMoves = GeneratePseudoLegalMoves(shadowBoard, side);
-
-            if (deeperMoves.Any(mo => mo.EndSquare == move.EndSquare)) return false;
-        }
-
-        MakeMove(move, shadowBoard, turn);
-
-        //Globals shadowState = Globals.Clone(currentState);
-        //MakeMove(move, shadowState.ChessBoard, turn);
-
-        int kingSquare = 0;
-        kingSquare = GetCurrentColor(move, kingSquare);
-
-        // Check if any opponent move can capture the king
+        // Check if any opponent move can capture the king, implying check or checkmate
         foreach (var oppMove in opponentMoves)
         {
             if (oppMove.EndSquare == kingSquare)
@@ -175,47 +148,36 @@ public static class MoveGenerator
         return true; // The move is legal
     }
 
-    private static int GetCurrentColor(MoveObject move, int kingSquare)
+
+    private static int GetKingSquare(MoveObject move, int[] board)
     {
-        var color = Piece.GetColor(move.pieceType);
-
-        if (color == "White")
+        // If the moved piece is a king, its new position is the end square.
+        if (move.pieceType == whiteKing || move.pieceType == blackKing)
         {
-            if (move.pieceType == whiteKing)
-            {
-                kingSquare = move.EndSquare;
-            }
-
-            else
-            {
-                kingSquare = WhiteKingSquare;
-            }
-        }
-        else if (color == "Black")
-        {
-            if (move.pieceType == blackKing)
-            {
-                kingSquare = move.EndSquare;
-            }
-
-            else
-            {
-                kingSquare = BlackKingSquare;
-            }
+            return move.EndSquare;
         }
 
-        return kingSquare;
+        // For other pieces, find the king's position from the board
+        int kingValue = move.pieceType > 0 ? whiteKing : blackKing;
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (board[i] == kingValue)
+            {
+                return i;
+            }
+        }
+        return -1; // Error state, king not found
     }
 
-    private static void MakeMove(MoveObject move, int[] shadowBoard, int turn)
-    {
 
+    private static void MakeMove(MoveObject move, int[] shadowBoard)
+    {
         move.CapturedPiece = shadowBoard[move.EndSquare];
-        shadowBoard[move.EndSquare] = move.pieceType;
-        shadowBoard[move.StartSquare] = 0;
-
-
+        shadowBoard[move.EndSquare] = move.pieceType; // Place the moving piece in the end square
+        shadowBoard[move.StartSquare] = 0; // Clear the start square
     }
+
+
 
     public static bool IsPathClear(int startSquare, int endSquare, int[] board)
     {
@@ -223,32 +185,15 @@ public static class MoveGenerator
         int currentSquare = startSquare + direction;
         bool pieceColor = Piece.IsBlack(board[startSquare]);
 
-
-
-
         while (currentSquare != endSquare)
         {
-            if (board[currentSquare] != 0)
-            {
-                return false;
-            }
+            if (board[currentSquare] != 0) return false;
             currentSquare += direction;
         }
-        if (board[endSquare] != 0) // If the end square is occupied
-        {
-            bool targetPieceColor = Piece.IsBlack(board[endSquare]);
-            if (pieceColor != targetPieceColor)
-            {
-                return true; // Can capture
-            }
-            else
-            {
-                return false; // Blocked by own piece
-            }
-        }
 
-        return true;
+        return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
     }
+
 
     public static int GetDirection(int startSquare, int endSquare)
     {
