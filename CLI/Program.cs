@@ -32,7 +32,7 @@ MaskGenerator.GenerateAllMasks();
 
 
 
-string fen = "1k6/8/1K1N4/8/8/8/8/8 w - - 0 1";
+string fen = "8/8/k7/n7/K7/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -40,7 +40,7 @@ if (String.IsNullOrEmpty(fen))
 
 
 Globals globals = Globals.FenReader(fen);
-int perftDepth = 2;
+int perftDepth = 7;
 
 Perft.Calculate(globals.ChessBoard, perftDepth, globals.Turn);
 Console.ReadLine();
