@@ -1,38 +1,10 @@
 ﻿using Engine;
 using System;
 
-// Initiate masks 
-MaskGenerator.GenerateAllMasks();
-
-
-//////////////////////////////////////////////////////////////// Mask simple test
-
-// Console.WriteLine($"{MaskGenerators.KingMasks.Count}");
-//foreach (var mask in MaskGenerators.KingMasks)
-//{
-//    foreach (var position in mask)
-//    {
-//        Console.Write(position);
-//    }
-//    Console.WriteLine();
-//}
-
-//var startCoordinate = "e5";
-//var squareIndex = Globals.GetSquareIndex(startCoordinate);
-//var destMoves = MoveGenenerator.GetKnightMoves(squareIndex);
-
-//Console.WriteLine($"From square: {startCoordinate}:" );
-//foreach (var move in destMoves)
-//{
-//    Console.WriteLine($"{Globals.GetSquareCoordinate(move)}");
-//}
-//Console.ReadLine(); 
-
-//////////////////////////////////////////////////////////////// End of Mask simple test 
 
 
 
-string fen = "4k3/2r5/2K5/8/8/8/8/8 w - - 0 1";
+string fen = "8/5n2/3k4/8/3K1N2/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -40,7 +12,7 @@ if (String.IsNullOrEmpty(fen))
 
 
 Globals globals = Globals.FenReader(fen);
-int perftDepth = 1;
+int perftDepth = 6;
 
 Perft.Calculate(globals.ChessBoard, perftDepth, globals.Turn);
 Console.ReadLine();
@@ -83,8 +55,6 @@ void printBoardWhiteDown(int[] board)
     showBoardValuesWhite(board);
     
 }
-
-
 
 void printBoardBlackDown(int[] board)
 {

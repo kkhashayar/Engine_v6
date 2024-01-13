@@ -46,7 +46,7 @@ public static class MaskGenerator
             // Check if move is within one rank/file step from the original position
             if (Math.Abs(newRank - originalRank) <= 1 && Math.Abs(newFile - originalFile) <= 1)
             {
-                if (IsValidSquare(desSquare))
+                if (Globals.IsValidSquare(desSquare))
                 {
                     yield return desSquare;
                 }
@@ -108,7 +108,7 @@ public static class MaskGenerator
         foreach (int direction in directions)
         {
             int currentSquare = square + direction;
-            while (IsValidSquare(currentSquare) && !IsVerHorBreaksMask(currentSquare, direction, originalRank, originalFile))
+            while (Globals.IsValidSquare(currentSquare) && !Globals.IsVerHorBreaksMask(currentSquare, direction, originalRank, originalFile))
             {
                 yield return currentSquare;
                 currentSquare += direction;
@@ -116,46 +116,6 @@ public static class MaskGenerator
         }
     }
 
-
-
-
-
-    ////////////////////////////////    HELPERS 
-
-    // Only checks if square is in the board
-    static bool IsValidSquare(int square)
-    {
-        return square >= 0 && square < 64;
-    }
-
-
-    // Checks if vertical / Horizontal slider pattern breaks the mast or not 
-    private static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
-    {
-        int newRank = square / 8;
-        int newFile = square % 8;
-
-        // Vertical movement check
-        if (direction == 8 || direction == -8)
-        {
-            // Break the mask if it's off-board vertically
-            if (newRank < 0 || newRank > 7) return true;
-            // Ensure vertical movement stays in the same file
-            if (newFile != originalFile) return true;
-        }
-        // Horizontal movement check
-        else if (direction == 1 || direction == -1)
-        {
-            // Break the mask if it's off-board horizontally
-            if (newFile < 0 || newFile > 7) return true;
-            // Ensure horizontal movement stays in the same rank
-            if (newRank != originalRank) return true;
-        }
-
-        return false;
-    }
-
-
-
+    
 }
 

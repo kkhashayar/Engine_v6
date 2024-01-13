@@ -3,49 +3,37 @@ namespace Engine;
 
 internal static class Rooks
 {
+    public static List<int>? DefendingSquares { get; set; }
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        List<MoveObject> moves = new List<MoveObject>();
-        int piece = (turn == 0) ? MoveGenerator.whiteRook : MoveGenerator.blackRook;
+        List<int> targetSquares = GetMasksForSquare(square);
 
-        List<int> filteredMasksForSquare = Rules(GetMasksForSquare(square), board, square);
+        List<MoveObject> moves = new();
 
-        foreach (int endSquare in filteredMasksForSquare)
-        {
-            moves.Add(new MoveObject
-            {
-                pieceType = piece,
-                StartSquare = square,
-                EndSquare = endSquare
-            });
-        }
-        return moves;
+
+        return moves;   
     }
 
-    public static List<int> Rules(List<int> maskForSquare, int[] board, int startSquare)
+
+
+    public static List<int> GetMasksForSquare(int square)
     {
-        List<int> validMoves = new List<int>();
-        foreach (int endSquare in maskForSquare)
+        List<int> squares = new();
+        
+        int[] directions = { 1, -1, 8, -8 }; // right, left, up, down
+        int originalRank = square / 8;
+        int originalFile = square % 8;
+
+        foreach (int direction in directions)
         {
-            if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
+            int currentSquare = square + direction;
+            while (Globals.IsValidSquare(currentSquare) && !Globals.IsVerHorBreaksMask(currentSquare, direction, originalRank, originalFile))
             {
-                if (board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != Piece.IsBlack(board[startSquare]))
-                    validMoves.Add(endSquare);
+                squares.Add(currentSquare);
+                currentSquare += direction;
             }
         }
-        return validMoves;
+
+        return squares; 
     }
-
-    private static List<int> GetMasksForSquare(int square)
-    {
-        return MaskGenerator.RookMasks[square];
-    }
-
-
-    public static List<int> GetAttackSquares(int square)
-    {
-        return MaskGenerator.RookMasks[square];
-    }
-
-
 }

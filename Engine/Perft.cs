@@ -38,8 +38,8 @@ public static class Perft
 
 
             //////////////////////////////////////   DEBUG BOARD 
-            count++;
-            ShowDebugBoard(shadowBoard, 2000);
+            //count++;
+            //ShowDebugBoard(shadowBoard, 2000);
             //////////////////////////////////////   DEBUG BOARD 
 
 

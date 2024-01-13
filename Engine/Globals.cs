@@ -2,7 +2,6 @@
 
 public sealed class Globals
 {
-    
     public bool WhiteShortCastle { get; set; }
     public bool WhiteLongCastle { get; set; }
     public bool BlackShortCastle { get; set; }
@@ -92,7 +91,10 @@ public sealed class Globals
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
 
-
+    public static bool IsValidSquare(int square)
+    {
+        return square >= 0 && square < 64;
+    }
     public static int GetSquareIndex(string coordinate)
     {
         return Array.IndexOf(Coordinates, coordinate);
@@ -200,7 +202,63 @@ public sealed class Globals
             return pieceCode + Piece.BlackPieceOffset; // Black pieces
         }
     }
+    public static bool IsCrossSliderPathClear(int startSquare, int endSquare, int[] board)
+    {
+        int direction = GetCrossDirection(startSquare, endSquare);
+        int currentSquare = startSquare + direction;
+        bool pieceColor = Piece.IsBlack(board[startSquare]);
 
+        while (currentSquare != endSquare)
+        {
+            if (board[currentSquare] != 0) return false;
+            currentSquare += direction;
+        }
+
+        return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
+    }
+
+
+    public static int GetCrossDirection(int startSquare, int endSquare)
+    {
+        if (endSquare > startSquare) // Moving up or right
+        {
+            if (endSquare % 8 == startSquare % 8) // Vertical move
+                return 8;
+            else // Horizontal move
+                return 1;
+        }
+        else // Moving down or left
+        {
+            if (endSquare % 8 == startSquare % 8) // Vertical move
+                return -8;
+            else // Horizontal move
+                return -1;
+        }
+    }
+    public static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
+    {
+        int newRank = square / 8;
+        int newFile = square % 8;
+
+        // Vertical movement check
+        if (direction == 8 || direction == -8)
+        {
+            // Break the mask if it's off-board vertically
+            if (newRank < 0 || newRank > 7) return true;
+            // Ensure vertical movement stays in the same file
+            if (newFile != originalFile) return true;
+        }
+        // Horizontal movement check
+        else if (direction == 1 || direction == -1)
+        {
+            // Break the mask if it's off-board horizontally
+            if (newFile < 0 || newFile > 7) return true;
+            // Ensure horizontal movement stays in the same rank
+            if (newRank != originalRank) return true;
+        }
+
+        return false;
+    }
 
     public static char GetUnicodeCharacter(int pieceCode)
     {
