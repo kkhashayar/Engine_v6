@@ -2,21 +2,18 @@
 
 internal static class Knights
 {
-    public static List<int>? DefendingSquares { get; set; }
+    // public static List<int>? DefendingSquares { get; set; }
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
-
         List<MoveObject> moves = new();
-       
 
         if(turn == 0)
         {
-            DefendingSquares = new();
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
-                if (targetsquareColor == "White") DefendingSquares.Add(targetSquare);
+                if (targetsquareColor == "White") continue;
                 else
                     {
                         moves.Add(new MoveObject
@@ -31,11 +28,10 @@ internal static class Knights
         }
         else if(turn == 1)
         {
-            DefendingSquares = new();
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
-                if (targetsquareColor == "Black") DefendingSquares.Add(targetSquare);
+                if (targetsquareColor == "Black") continue;
                 else 
                     {
                         moves.Add(new MoveObject

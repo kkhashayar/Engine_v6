@@ -101,20 +101,23 @@ public static class MoveGenerator
                 if (piece == whiteKing)
                 {
                     pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                    if (Kings.DefendingSquares is not null) WhiteDefenedSquares.AddRange(Kings.DefendingSquares);
+                    
                 }
                 
                 else if(piece == whiteKnight)
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                    if (Knights.DefendingSquares is not null) WhiteDefenedSquares.AddRange(Knights.DefendingSquares);
+                    
                 }
 
                 else if(piece == whiteRook)
                 {
                     pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                    
 
                 }
+
+   
                 
 
             }
@@ -124,19 +127,21 @@ public static class MoveGenerator
                 if (piece == blackKing)
                 {
                     pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                    if (Kings.DefendingSquares is not null) BlackDefendedSquares.AddRange(Kings.DefendingSquares);
+                    
                 }
                 
                 else if(piece == blackKnight)
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                    if (Knights.DefendingSquares is not null) BlackDefendedSquares.AddRange(Knights.DefendingSquares);
+                    
                 }
 
                 else if(piece == blackRook)
                 {
                     pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                    
                 }
+
                
             }
         }
@@ -145,38 +150,38 @@ public static class MoveGenerator
 
 
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
-    {
-        
-
-        // Early exit in case of capture deffended piece 
+    { 
         if(turn == 0)
         {
+            // Make a move
             var capturedPieceForWhite = board[move.EndSquare];
             board[move.EndSquare] = move.pieceType;
             board[move.StartSquare] = 0;
 
+            // Get a king position on new board
             int whiteKingSquare = GetWhiteKingSquare(board);
-            // In case of capturing, can be useful for early exit before generating opposite moves
-            if (BlackDefendedSquares is not null && BlackDefendedSquares.Any(s => s == whiteKingSquare)) return false;
             
+            // flip the turn
             int blackResponseTurn = turn;
-            blackResponseTurn ^= 1; 
+            blackResponseTurn ^= 1;
+            // generate black sseudo moves
             var blackResponseMoves = GeneratePseudoLegalMoves(board, blackResponseTurn);
 
+            // Take back the move
             board[move.EndSquare] = capturedPieceForWhite;
             board[move.StartSquare] = move.pieceType;
 
+            // Check if any black piece can hit the king 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false; 
 
-            return true;
+            return true; // Move is legal 
         }
 
+        // Same algorithm goes for black.
         var capturedPieceForBlack = board[move.EndSquare];
         board[move.EndSquare] = move.pieceType;
         board[move.StartSquare] = 0;
         int blackKingSquare = GetBlackKingSquare(board);
-        // In case of capturing, can be useful for early exit before generating opposite moves
-        if (WhiteDefenedSquares is not null && WhiteDefenedSquares.Any(s => s == blackKingSquare)) return false;
 
         int whiteResponseTurn = turn;
         whiteResponseTurn ^= 1;
@@ -187,7 +192,7 @@ public static class MoveGenerator
 
         if (WhiteResponseMoves.Any(bMove => bMove.EndSquare == blackKingSquare)) return false;
 
-        return true; // The move is legal
+        return true;
     }
 
     private static int GetBlackKingSquare(int[] board)

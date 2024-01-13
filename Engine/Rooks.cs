@@ -3,13 +3,62 @@ namespace Engine;
 
 internal static class Rooks
 {
-    public static List<int>? DefendingSquares { get; set; }
+    // public static List<int>? DefendingSquares { get; set; }
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
 
+        /*
+            foreach (int endSquare in maskForSquare)
+            {
+                //!Piece.IsWhite(board[endSquare]) &&
+                if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
+                    result.Add(endSquare);
+            }
+         */
+        if(turn == 0)
+        {
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
+                {
+                    if (targetsquareColor == "White") continue; 
+                    else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.whiteRook,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+                }
+            }
+            return moves;
+        }
+        else if(turn == 1)
+        {
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
+                {
+                    if (targetsquareColor == "Black") continue;
+                    else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.blackRook,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+                }
+            }
+        }
 
         return moves;   
     }
