@@ -2,48 +2,83 @@
 
 internal static class Kings
 {
-    public static IEnumerable<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
+    // public static List<int>? DefendingSquares { get; set; }
+    public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        List<int> masks = GetMasksForSquare(square);
-        
-        int piece = Piece.None;
-        string pieceColor = "";
-       
-        if (turn == 0)      piece = MoveGenerator.whiteKing;
-     
-        else if (turn == 1) piece = MoveGenerator.blackKing;
-            
-        
-        pieceColor = Piece.GetColor(piece);
+        List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
 
-        foreach (int endSquare in masks )
+        if (turn == 0)
         {
-            if (Piece.GetColor(board[endSquare]) != pieceColor || board[endSquare] == 0)
+            foreach (int targetSquare in targetSquares)
             {
-                MoveObject move = new MoveObject
-                {
-                    pieceType = piece,
-                    StartSquare = square,
-                    EndSquare = endSquare
-                };
-                moves.Add(move);
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+
+                if (targetsquareColor == "White") continue; //  DefendingSquares.Add(targetSquare);
+                else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.whiteKing,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
             }
-                
+            return moves;
+        }
+        else if (turn == 1)
+        {
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if (targetsquareColor == "Black") continue;
+                else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.blackKing,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+            }
         }
         return moves;
     }
-    
-    public static List<int> GetMasksForSquare(int square)
+
+    // 
+    static List<int> GetMasksForSquare(int square)
     {
-        return MaskGenerator.KingMasks[square];
+        List<int> squares = new();
+
+        int[] KingDirections = new int[8] { 9, 8, 7, 1, -9, -7, -8, -1 };
+
+        int originalRank = square / 8;
+        int originalFile = square % 8;
+
+        foreach (int direction in KingDirections)
+        {
+            int desSquare = square + direction;
+
+            // Calculate rank and file after the move
+            int newRank = desSquare / 8;
+            int newFile = desSquare % 8;
+
+            // Check if move is within one rank/file step from the original position
+            if (Math.Abs(newRank - originalRank) <= 1 && Math.Abs(newFile - originalFile) <= 1)
+            {
+                if (Globals.IsValidSquare(desSquare))
+                {
+                    squares.Add(desSquare);
+                }
+            }
+        }
+
+        return squares;
     }
 
-    public static List<int> GetAttackSquares(int square)
-    {
-        return MaskGenerator.KingMasks[square];
-    }
 
 }
 

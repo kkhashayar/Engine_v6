@@ -3,64 +3,86 @@ namespace Engine;
 
 internal static class Rooks
 {
-    public static List<MoveObject> GenerateMovesForSquare(int square,int turn ,int[] board)
+    // public static List<int>? DefendingSquares { get; set; }
+    public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        List<MoveObject> moves = new(); 
-        int piece = Piece.None;
+        List<int> targetSquares = GetMasksForSquare(square);
 
-        string pieceColor = ""; 
+        List<MoveObject> moves = new();
 
-        if (turn == 0)     piece = MoveGenerator.whiteRook;
-        else if(turn == 1) piece = MoveGenerator.blackRook;
-       
-        pieceColor = Piece.GetColor(piece); 
-        List<int> filteredMasksForSquare = Rules(GetmasksForSquare(square), board, turn, square); 
-
-        foreach (int endSquare in filteredMasksForSquare)
-        {
-            MoveObject move = new MoveObject
+        /*
+            foreach (int endSquare in maskForSquare)
             {
-                pieceType = piece,
-                StartSquare = square,
-                EndSquare = endSquare
-            };
-            moves.Add(move);
-        }
-        return moves;
-    }
-
-    public static List<int> Rules(List<int> maskForSquare, int[] board, int turn, int startSquare)
-    {
-        string pieceColor = "";
+                //!Piece.IsWhite(board[endSquare]) &&
+                if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
+                    result.Add(endSquare);
+            }
+         */
         if(turn == 0)
         {
-            pieceColor = "White";
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
+                {
+                    if (targetsquareColor == "White") continue; 
+                    else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.whiteRook,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+                }
+            }
+            return moves;
         }
-        else if (turn == 1)
+        else if(turn == 1)
         {
-            pieceColor = "Black";
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
+                {
+                    if (targetsquareColor == "Black") continue;
+                    else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.blackRook,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+                }
+            }
         }
-        List<int> result = new();
-        foreach (int endSquare in maskForSquare)
+
+        return moves;   
+    }
+
+
+
+    public static List<int> GetMasksForSquare(int square)
+    {
+        List<int> squares = new();
+        
+        int[] directions = { 1, -1, 8, -8 }; // right, left, up, down
+        int originalRank = square / 8;
+        int originalFile = square % 8;
+
+        foreach (int direction in directions)
         {
-            //!Piece.IsWhite(board[endSquare]) &&
-            if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
-                result.Add(endSquare);
+            int currentSquare = square + direction;
+            while (Globals.IsValidSquare(currentSquare) && !Globals.IsVerHorBreaksMask(currentSquare, direction, originalRank, originalFile))
+            {
+                squares.Add(currentSquare);
+                currentSquare += direction;
+            }
         }
-        return result;
 
+        return squares; 
     }
-
-   
-    private static List<int> GetmasksForSquare(int square)
-    {
-      return MaskGenerator.RookMasks[square];
-    }
-
-    public static List<int> GetAttackSquares(int square)
-    {
-        return MaskGenerator.RookMasks[square];
-    }
-
-
 }

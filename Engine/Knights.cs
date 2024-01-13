@@ -2,64 +2,75 @@
 
 internal static class Knights
 {
+    // public static List<int>? DefendingSquares { get; set; }
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
+        List<int> targetSquares = GetMasksForSquare(square);
         List<MoveObject> moves = new();
-        int piece = Piece.None;
 
-        List<int> filteredMasksForSquare = Rules(GetKnightRawMoves(square), turn, board);
-
-
-        if (turn == 0) piece = MoveGenerator.whiteKnight;
-        else if (turn == 1) piece = MoveGenerator.blackKnight;
-
-        foreach (int endSquare in filteredMasksForSquare)
+        if(turn == 0)
         {
-            MoveObject move = new MoveObject
+            foreach (int targetSquare in targetSquares)
             {
-                pieceType = piece,
-                StartSquare = square,
-                EndSquare = endSquare
-            };
-            moves.Add(move);
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if (targetsquareColor == "White") continue;
+                else
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.whiteKnight,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+            }
+            return moves;
+        }
+        else if(turn == 1)
+        {
+            foreach (int targetSquare in targetSquares)
+            {
+                var targetsquareColor = Piece.GetColor(board[targetSquare]);
+                if (targetsquareColor == "Black") continue;
+                else 
+                    {
+                        moves.Add(new MoveObject
+                        {
+                            pieceType = MoveGenerator.blackKnight,
+                            StartSquare = square,
+                            EndSquare = targetSquare
+                        });
+                    }
+            }
         }
         return moves;
     }
 
-    public static List<int> Rules(List<int> maskForSquare, int turn, int[] board)
-    {
-        string pieceColor = "";
-        List<int> result = new();
 
-        if (turn == 0)
+    public static List<int> GetMasksForSquare(int square)
+    {
+        // 8 possible moves for a knight at given square
+        (int, int)[] KnightMoves = {(2, 1), (1, 2), (-1, 2), (-2, 1),
+                                    (-2, -1), (-1, -2), (1, -2), (2, -1)};
+
+        List<int> moves = new List<int>();
+        int originalRow = square / 8;  // Calculating the row of the square
+        int originalCol = square % 8;  // Calculating the file of the square
+
+        foreach (var (rowChange, colChange) in KnightMoves)
         {
-            pieceColor = "White";
-            foreach (int endSquare in maskForSquare)
+            int newRow = originalRow + rowChange;  // New row after making the move
+            int newCol = originalCol + colChange;  // New column after making the move
+
+            // Check if the new position is still on the board
+            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8)
             {
-
-                if (!Piece.IsWhite(board[endSquare]))
-                    result.Add(endSquare);
+                int targetSquare = newRow * 8 + newCol;
+                if (Globals.IsValidSquare(targetSquare)) moves.Add(targetSquare);
             }
-            return result;
         }
 
-        pieceColor = "Black";
-        foreach (int endSquare in maskForSquare)
-        {
-
-            if (!Piece.IsBlack(board[endSquare]))
-                result.Add(endSquare);
-        }
-        return result;
+        return moves;
     }
-
-    private static List<int> GetKnightRawMoves(int square) 
-    {
-      return MaskGenerator.KnightMasks[square];
-    } 
-
-    private static List<int> GetAttackSquares(int square)
-    {
-        return MaskGenerator.KingMasks[square];
-    }
+    
 }
