@@ -2,7 +2,7 @@
 
 internal static class Bishops
 {
-    // Lets try to compress the code even I dont like it 
+    // Lets try to compress the code even the fact I don't like it 
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
@@ -32,7 +32,7 @@ internal static class Bishops
     public static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new List<int>();
-        int[] directions = { 7, 9, -7, -9 }; // Diagonal directions: NE, NW, SE, SW
+        int[] directions = { 7, 9, -7, -9 }; //  NorthEast, NorthWest, SouthEast, SouthWest
         int originalRank = square / 8;
         int originalFile = square % 8;
 
