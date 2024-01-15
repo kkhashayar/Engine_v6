@@ -235,6 +235,55 @@ public sealed class Globals
                 return -1;
         }
     }
+
+    public static bool IsDiagonalPathClear(int startSquare, int endSquare, int[] board)
+    {
+        int direction = GetDiagonalDirection(startSquare, endSquare);
+        int currentSquare = startSquare + direction;
+        bool pieceColor = Piece.IsBlack(board[startSquare]);
+
+        while (currentSquare != endSquare)
+        {
+            if (board[currentSquare] != 0) return false;
+            currentSquare += direction;
+        }
+
+        // The path is clear if the end square is empty or occupied by an opponent's piece
+        return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
+    }
+
+    public static int GetDiagonalDirection(int startSquare, int endSquare)
+    {
+        int rankDifference = (endSquare / 8) - (startSquare / 8);
+        int fileDifference = (endSquare % 8) - (startSquare % 8);
+
+        if (rankDifference > 0 && fileDifference > 0)
+            return 9; // Moving up-right
+        else if (rankDifference > 0 && fileDifference < 0)
+            return 7; // Moving up-left
+        else if (rankDifference < 0 && fileDifference > 0)
+            return -7; // Moving down-right
+        else
+            return -9; // Moving down-left
+    }
+
+
+    public static bool IsDiagBreaksMask(int square, int direction, int originalRank, int originalFile)
+    {
+        int newRank = square / 8;
+        int newFile = square % 8;
+
+        // Check if the square is outside the bounds of the board
+        if (newRank < 0 || newRank > 7 || newFile < 0 || newFile > 7)
+            return true;
+
+        // Check for diagonal consistency
+        int rankDifference = Math.Abs(newRank - originalRank);
+        int fileDifference = Math.Abs(newFile - originalFile);
+
+        return rankDifference != fileDifference;
+    }
+
     public static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
         int newRank = square / 8;
