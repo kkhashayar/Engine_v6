@@ -117,6 +117,11 @@ public static class MoveGenerator
 
                 }
 
+                else if(piece == whiteBishop)
+                {
+                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                }
+
    
                 
 
@@ -142,7 +147,12 @@ public static class MoveGenerator
                     
                 }
 
-               
+                else if (piece == blackBishop)
+                {
+                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                }
+
+
             }
         }
         return pseudoMoves;
