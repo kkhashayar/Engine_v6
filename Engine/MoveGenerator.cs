@@ -123,6 +123,11 @@ public static class MoveGenerator
                     pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
+                else if(piece == whitePawn)
+                {
+                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                }
+
             }
             // Generate moves for black pieces
             else if (turn == 1)
@@ -150,6 +155,11 @@ public static class MoveGenerator
                 else if (piece == blackQueen)
                 {
                     pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
+                }
+
+                else if (piece == blackPawn)
+                {
+                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
                 }
             }
         }

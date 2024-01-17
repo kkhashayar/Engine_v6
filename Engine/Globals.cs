@@ -179,9 +179,7 @@ public sealed class Globals
 
     private static int FenCharToPieceCode(char c)
     {
-       
         int pieceCode;
-
         switch (char.ToLower(c))
         {
             case 'p': pieceCode = Piece.Pawn; break;
