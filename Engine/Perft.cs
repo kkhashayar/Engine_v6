@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Engine;
 
 public static class Perft
 {
-    
+
     public static int count = 0;
     public static ulong Calculate(int[] board, int depth, int turn)
     {
@@ -34,23 +35,30 @@ public static class Perft
         foreach (MoveObject move in moves)
         {
             int[] shadowBoard = (int[])board.Clone();
+
             MakeMove(move, shadowBoard);
 
+            if (move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) Globals.LastMoveWasPawn = true;
+            else Globals.LastMoveWasPawn = false;
 
+            // only last end Square 
+            Globals.LastendSquare = move.EndSquare;
             //////////////////////////////////////   DEBUG BOARD 
             count++;
-            ShowDebugBoard(shadowBoard, 1000);
+            ShowDebugBoard(shadowBoard, 50);
             //////////////////////////////////////   DEBUG BOARD 
 
 
             ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
+           
             nodes += childNodes;
 
             if (depth == maxDepth)
             {
                 // Output each move and its nodes
-                Console.WriteLine($"{MoveToString(move)}: {childNodes}"); 
+                Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
+
         }
 
         if (depth == maxDepth)
@@ -64,17 +72,61 @@ public static class Perft
 
     private static string MoveToString(MoveObject move)
     {
-       return $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}"; 
+        return $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}";
     }
 
-    private static void MakeMove(MoveObject move, int[] board)
+    private static void MakeMove(MoveObject move, int[] shadowBoard)
     {
-        move.CapturedPiece = board[move.EndSquare];
-        board[move.EndSquare] = move.pieceType;
-        board[move.StartSquare] = 0;
+        // White castlings 
+        if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+        {
+            move.CapturedPiece = 0;
+            shadowBoard[62] = move.pieceType;
+            shadowBoard[60] = 0;
+            shadowBoard[63] = 0;
+            shadowBoard[61] = MoveGenerator.whiteRook;
+
+        }
+        else if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
+        {
+            move.CapturedPiece = 0;
+            shadowBoard[58] = move.pieceType;
+            shadowBoard[60] = 0;
+            shadowBoard[56] = 0;
+            shadowBoard[59] = MoveGenerator.whiteRook;
+        }
+
+        // Black castlings 
+        else if(move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
+        {
+            move.CapturedPiece = 0;
+            shadowBoard[6] = move.pieceType;
+            shadowBoard[4] = 0;
+            shadowBoard[7] = 0;
+            shadowBoard[5] = MoveGenerator.blackRook;
+        }
+        else if(move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+        {
+            move.CapturedPiece = 0;
+            shadowBoard[move.EndSquare] = move.pieceType;
+            shadowBoard[4] = 0;
+            shadowBoard[0] = 0;
+            shadowBoard[3] = MoveGenerator.blackRook;
+        }
+        
+        // Applying normal moves 
+        else
+        {
+            move.CapturedPiece = shadowBoard[move.EndSquare];
+            //if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion) move.pieceType = MoveGenerator.whitePawn;
+            //else if(move.pieceType == MoveGenerator.blackPawn && move.IsPromotion) move.pieceType = MoveGenerator.blackPawn;
+            shadowBoard[move.EndSquare] = move.pieceType;
+            shadowBoard[move.StartSquare] = 0;
+        }
+        
     }
 
-    public static void ShowDebugBoard(int []board, int speedMs)
+    public static void ShowDebugBoard(int[] board, int speedMs)
     {
         Console.Clear();
         Console.OutputEncoding = System.Text.Encoding.Unicode;
@@ -100,7 +152,7 @@ public static class Perft
         Console.WriteLine();
         Console.WriteLine($"Ply:{count}");
         Thread.Sleep(speedMs);
-        
+
     }
 
 }

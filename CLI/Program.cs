@@ -1,9 +1,6 @@
 ﻿using Engine;
 
-
-
-
-string fen = "8/k4P2/8/8/8/8/K6p/8 w - - 0 1";
+string fen = "8/7P/2k5/8/2K5/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -11,7 +8,7 @@ if (String.IsNullOrEmpty(fen))
 
 
 Globals globals = Globals.FenReader(fen);
-int perftDepth = 2;
+int perftDepth = 3;
 
 Perft.Calculate(globals.ChessBoard, perftDepth, globals.Turn);
 Console.ReadLine();

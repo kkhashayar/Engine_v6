@@ -2,10 +2,11 @@
 
 public sealed class Globals
 {
-    public bool WhiteShortCastle { get; set; }
-    public bool WhiteLongCastle { get; set; }
-    public bool BlackShortCastle { get; set; }
-    public bool BlackLongCastle { get; set; }
+
+    public static bool WhiteShortCastle { get; set; } = false;
+    public static bool WhiteLongCastle { get; set; } = false; 
+    public static bool BlackShortCastle { get; set; } = false;
+    public static bool BlackLongCastle { get; set; } = false; 
 
     public bool CheckmateWhite { get; set; } = false;
     public bool CheckmateBlack { get; set; } = false;
@@ -14,7 +15,11 @@ public sealed class Globals
 
     public bool Stalemate { get; set; } = false;
 
+    public static bool LastMoveWasPawn { get; set; } = false;
+    // Tracking enpassant 
+    public static int LastendSquare { get; set; } = -1; 
 
+    public static List<MoveObject> moveHistory = new List<MoveObject>();    
     public  int Turn { get; set; }
 
     public int[] ChessBoard = new int[64]
@@ -110,10 +115,10 @@ public sealed class Globals
         var copy = new Globals();
         
         copy.ChessBoard         = (int[])instanceToClone.ChessBoard.Clone();
-        copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
-        copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
-        copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
-        copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
+        // copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
+        // copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
+        // copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
+        // copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
         copy.CheckmateWhite     = instanceToClone.CheckmateWhite;
         copy.CheckmateBlack     = instanceToClone.CheckmateBlack; 
         copy.Stalemate          = instanceToClone.Stalemate;
@@ -126,7 +131,7 @@ public sealed class Globals
 
     public static Globals FenReader(string fen)
     {
-        var board = new Globals();
+        var globals = new Globals();
         string[] parts = fen.Split(' ');
 
         // Parse board state
@@ -134,17 +139,17 @@ public sealed class Globals
 
         if (parts[1] == "w")
         {
-            board.Turn = 0;
+            globals.Turn = 0;
         }
         else if (parts[1] == "b")
         {
-            board.Turn = 1;
+            globals.Turn = 1;
         }
         // Parse castling rights
-        board.WhiteShortCastle = parts[2].Contains("K");
-        board.WhiteLongCastle = parts[2].Contains("Q");
-        board.BlackShortCastle = parts[2].Contains("k");
-        board.BlackLongCastle = parts[2].Contains("q");
+        Globals.WhiteShortCastle = parts[2].Contains("K");
+        Globals.WhiteLongCastle = parts[2].Contains("Q");
+        Globals.BlackShortCastle = parts[2].Contains("k");
+        Globals.BlackLongCastle = parts[2].Contains("q");
 
         int index = 0;
         foreach (var rank in ranks)
@@ -157,25 +162,20 @@ public sealed class Globals
                     int emptySquares = int.Parse(square.ToString());
                     for (int i = 0; i < emptySquares; i++)
                     {
-                        board.ChessBoard[index] = 0; // Empty square
+                        globals.ChessBoard[index] = 0; // Empty square
                         index++;
                     }
                 }
                 else
                 {
                     // If it's a piece, convert and place on the board
-                    board.ChessBoard[index] = FenCharToPieceCode(square);
+                    globals.ChessBoard[index] = FenCharToPieceCode(square);
                     index++;
                 }
             }
         }
-
-
-        //
-
-        return board;
+        return globals;
     }
-
 
     private static int FenCharToPieceCode(char c)
     {
@@ -214,7 +214,6 @@ public sealed class Globals
 
         return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
     }
-
 
     public static int GetCrossDirection(int startSquare, int endSquare)
     {

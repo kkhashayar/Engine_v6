@@ -2,12 +2,14 @@
 
 internal static class Kings
 {
-    // public static List<int>? DefendingSquares { get; set; }
+ 
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
+
+        Globals globals = new Globals();    
 
         if (turn == 0)
         {
@@ -25,6 +27,30 @@ internal static class Kings
                             EndSquare = targetSquare
                         });
                     }
+            }
+
+            // Kingside castling
+            if (Globals.WhiteShortCastle && board[square + 1] == 0 && board[square + 2] == 0)
+            {
+                moves.Add(new MoveObject
+                {
+                    pieceType = MoveGenerator.whiteKing,
+                    StartSquare = square,
+                    EndSquare = square + 2,
+                    ShortCastle = true
+                });
+            }
+
+            // Queenside castling
+            if (Globals.WhiteLongCastle && board[square - 1] == 0 && board[square - 2] == 0)
+            {
+                moves.Add(new MoveObject
+                {
+                    pieceType = MoveGenerator.whiteKing,
+                    StartSquare = square,
+                    EndSquare = square - 2,
+                    LongCastle = true
+                });
             }
             return moves;
         }
@@ -44,7 +70,32 @@ internal static class Kings
                         });
                     }
             }
+            // kingside castling
+            if (Globals.BlackShortCastle && board[square + 1] == 0 && board[square + 2] == 0)
+            {
+                moves.Add(new MoveObject
+                {
+                    pieceType = MoveGenerator.blackKing,
+                    StartSquare = square,
+                    EndSquare = square + 2,
+                    ShortCastle = true
+                });
+            }
+
+            // Queenside castling
+            if (Globals.BlackLongCastle && board[square - 1] == 0 && board[square - 2] == 0)
+            {
+                moves.Add(new MoveObject
+                {
+                    pieceType = MoveGenerator.blackKing,
+                    StartSquare = square,
+                    EndSquare = square - 2,
+                    LongCastle = true
+                });
+            }
         }
+
+
         return moves;
     }
 

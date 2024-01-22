@@ -31,7 +31,7 @@ public static class MoveGenerator
     public static List<int>? BlackDefendedSquares { get; set; }
     public static List<int>? WhiteDefenedSquares { get; set; }
 
-
+    
 
     static Globals currentState = new Globals();
 
@@ -160,6 +160,8 @@ public static class MoveGenerator
                 else if (piece == blackPawn)
                 {
                     pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                    
+                 
                 }
             }
         }
@@ -168,9 +170,30 @@ public static class MoveGenerator
 
 
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
-    { 
-        if(turn == 0)
+    {
+        if (turn == 0) // TODO: REFACTOR REPEATED CODE 
         {
+            // Castlings 
+            if (move.LongCastle)
+            {
+                int blackResponseTurnonCastle = turn;
+                blackResponseTurnonCastle ^= 1;
+                // generate black sseudo moves
+                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(board, blackResponseTurnonCastle);
+                // checks reserved squares in long castle position 
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58)) return false;
+            }
+            else if (move.ShortCastle)
+            {
+                int blackResponseTurnonCastle = turn;
+                blackResponseTurnonCastle ^= 1;
+                // generate black sseudo moves
+                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(board, blackResponseTurnonCastle);
+                // checks reserved squares in long castle position
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62)) return false;
+            }
+
+            // normal moves 
             // Make a move
             var capturedPieceForWhite = board[move.EndSquare];
             board[move.EndSquare] = move.pieceType;
@@ -187,12 +210,33 @@ public static class MoveGenerator
 
             // Take back the move
             board[move.EndSquare] = capturedPieceForWhite;
+            if(move.pieceType == MoveGenerator.whitePawn && move.IsPromotion) move.pieceType = MoveGenerator.whitePawn;
             board[move.StartSquare] = move.pieceType;
 
             // Check if any black piece can hit the king 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false; 
 
             return true; // Move is legal 
+
+
+
+        }
+        // Black Castlings
+        if (move.LongCastle)
+        {
+            int whiteResponseTurnCastle = turn;
+            whiteResponseTurnCastle ^= 1;
+            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(board, whiteResponseTurnCastle);
+            // checks reserved squares in long castle position 
+            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 3 || wMove.EndSquare == 4)) return false;
+        }
+        else if (move.ShortCastle)
+        {
+            int whiteResponseTurnCastle = turn;
+            whiteResponseTurnCastle ^= 1;
+            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(board, whiteResponseTurnCastle);
+            // checks reserved squares in long castle position
+            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6)) return false;
         }
 
         // Same algorithm goes for black.
@@ -206,9 +250,10 @@ public static class MoveGenerator
         var WhiteResponseMoves = GeneratePseudoLegalMoves(board, whiteResponseTurn);
 
         board[move.EndSquare] = capturedPieceForBlack;
+        if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion) move.pieceType = MoveGenerator.blackPawn;
         board[move.StartSquare] = move.pieceType;
 
-        if (WhiteResponseMoves.Any(bMove => bMove.EndSquare == blackKingSquare)) return false;
+        if (WhiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
         return true;
     }

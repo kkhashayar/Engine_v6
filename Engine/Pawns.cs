@@ -25,33 +25,63 @@ internal static class Pawns
                 }
             }
         }
-
         // Capturing
         int[] captureDirections = { direction - 1, direction + 1 }; // Diagonal capture
         foreach (int captureDirection in captureDirections)
         {
-            int captureSquare = square + captureDirection;
-            if (Globals.IsValidSquare(captureSquare))
+            int potentialCaptureSquare = square + captureDirection;
+            if (Globals.IsValidSquare(potentialCaptureSquare))
             {
                 // Regular capture
-                if (board[captureSquare] != 0 && Piece.GetColor(board[captureSquare]) != (turn == 0 ? "White" : "Black"))
+                if (board[potentialCaptureSquare] != 0)
                 {
-                    AddPawnMove(square, captureSquare, promotionRank, moves, turn);
+                    string colorOfCapturedPiece = Piece.GetColor(board[potentialCaptureSquare]);
+                    if ((turn == 0 && colorOfCapturedPiece == "Black") || (turn == 1 && colorOfCapturedPiece == "White"))
+                    {
+                        AddPawnMove(square, potentialCaptureSquare, promotionRank, moves, turn);
+                    }
                 }
 
-                // En Passant
-                if (captureSquare == enPassantSquare)
+                // En Passant capture
+                if(Globals.LastMoveWasPawn is true)
                 {
-                    moves.Add(new MoveObject
+                    //Console.WriteLine($"Last move is pawn {Globals.LastMoveWasPawn}");
+                    //Thread.Sleep(2000);
+                   
+                    int currentPawnRank = Globals.BoardOfRanks[square];
+                    if ((turn == 0 && currentPawnRank == 5) || (turn == 1 && currentPawnRank == 4))
                     {
-                        pieceType = turn == 0 ? MoveGenerator.whitePawn : MoveGenerator.blackPawn,
-                        StartSquare = square,
-                        EndSquare = captureSquare,
-                        IsEnPassant = true
-                    });
+                        if(currentPawnRank == 5)
+                        {
+                            enPassantSquare = Globals.LastendSquare - 8;
+                        }
+                        else if(currentPawnRank == 4)
+                        {
+                            enPassantSquare = Globals.LastendSquare + 8 ;
+                        }
+                        if (potentialCaptureSquare == enPassantSquare)
+                        {
+                            int pawnBeingCapturedSquare = turn == 0 ? enPassantSquare + 8 : enPassantSquare - 8;
+                            if (board[pawnBeingCapturedSquare] == (turn == 0 ? MoveGenerator.blackPawn : MoveGenerator.whitePawn))
+                            {
+                                MoveObject enPassantMove = new MoveObject
+                                {
+                                    pieceType = turn == 0 ? MoveGenerator.whitePawn : MoveGenerator.blackPawn,
+                                    StartSquare = square,
+                                    EndSquare = enPassantSquare,
+                                    IsEnPassant = true
+                                };
+                                // board[Globals.LastendSquare] = 0;
+                                moves.Add(enPassantMove);
+                            }
+                        }
+                    }
                 }
+                
             }
         }
+
+
 
         return moves;
     }
@@ -60,15 +90,30 @@ internal static class Pawns
     {
         if ((endSquare / 8) == promotionRank)
         {
-            // TODO: Have to fix promotion 
-            string piecePrefix = turn == 0 ? "white" : "black";
-            moves.AddRange(new[]
+            // Potential bug
+            if (turn == 0)
             {
-                new MoveObject { StartSquare = startSquare, EndSquare = endSquare, Promotion = piecePrefix + "Queen" },
-                new MoveObject { StartSquare = startSquare, EndSquare = endSquare, Promotion = piecePrefix + "Rook" },
-                new MoveObject { StartSquare = startSquare, EndSquare = endSquare, Promotion = piecePrefix + "Bishop" },
-                new MoveObject { StartSquare = startSquare, EndSquare = endSquare, Promotion = piecePrefix + "Knight" }
-});
+                moves.AddRange(new[]
+                {
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteQueen, IsPromotion = true},
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteRook, IsPromotion = true },
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteBishop, IsPromotion = true },
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteKnight, IsPromotion = true }
+                });
+
+            }
+            // Bug: black pawn in original square before promotion changes to Knight :|
+            else if (turn == 1)
+            {
+                moves.AddRange(new[]
+                {
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackQueen, IsPromotion = true },
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackRook, IsPromotion = true },
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackBishop , IsPromotion = true},
+                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackKnight, IsPromotion = true }
+                });
+            }
+
         }
         else
         {
@@ -80,5 +125,6 @@ internal static class Pawns
                 EndSquare = endSquare
             });
         }
+        
     }
 }
