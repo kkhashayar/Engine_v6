@@ -44,8 +44,8 @@ public static class Perft
             // only last end Square 
             Globals.LastendSquare = move.EndSquare;
             //////////////////////////////////////   DEBUG BOARD 
-            count++;
-            ShowDebugBoard(shadowBoard, 50);
+            //count++;
+            //ShowDebugBoard(shadowBoard, 50);
             //////////////////////////////////////   DEBUG BOARD 
 
 
