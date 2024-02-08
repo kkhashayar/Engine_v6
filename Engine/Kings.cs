@@ -30,7 +30,7 @@ internal static class Kings
             }
 
             // Kingside castling
-            if (Globals.WhiteShortCastle && board[square + 1] == 0 && board[square + 2] == 0)
+            if (Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0)
             {
                 moves.Add(new MoveObject
                 {
@@ -42,7 +42,7 @@ internal static class Kings
             }
 
             // Queenside castling
-            if (Globals.WhiteLongCastle && board[square - 1] == 0 && board[square - 2] == 0)
+            if (Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0)
             {
                 moves.Add(new MoveObject
                 {
@@ -71,7 +71,7 @@ internal static class Kings
                     }
             }
             // kingside castling
-            if (Globals.BlackShortCastle && board[square + 1] == 0 && board[square + 2] == 0)
+            if (Globals.BlackShortCastle && board[5] == 0 && board[6] == 0)
             {
                 moves.Add(new MoveObject
                 {
@@ -83,7 +83,7 @@ internal static class Kings
             }
 
             // Queenside castling
-            if (Globals.BlackLongCastle && board[square - 1] == 0 && board[square - 2] == 0)
+            if (Globals.BlackLongCastle && board[3] == 0 && board[2] == 0)
             {
                 moves.Add(new MoveObject
                 {
