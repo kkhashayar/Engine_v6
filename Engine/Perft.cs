@@ -5,7 +5,7 @@ namespace Engine;
 
 public static class Perft
 {
-
+    public static Globals globals  = new Globals();
     public static int count = 0;
     public static ulong Calculate(int[] board, int depth, int turn)
     {
@@ -34,9 +34,13 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
-            int[] shadowBoard = (int[])board.Clone();
+            // int[] shadowBoard = (int[])board.Clone();
 
-            MakeMove(move, shadowBoard);
+            // MakeMove(move, shadowBoard);
+
+            ///////////// I was here, need to pass the board to MoveHandler /////////////
+            
+            MoveHandler.MakeMove(ref globals, move);
 
             if (move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) Globals.LastMoveWasPawn = true;
             else Globals.LastMoveWasPawn = false;
@@ -49,8 +53,10 @@ public static class Perft
             //////////////////////////////////////   DEBUG BOARD 
 
 
+            ///////////// I was here, need to use MoveHandler, Not using the cloaning.
             ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
            
+            
             nodes += childNodes;
 
             if (depth == maxDepth)
