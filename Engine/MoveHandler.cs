@@ -2,59 +2,142 @@
 
 internal static class MoveHandler
 {
-    public static void MakeMove(ref Globals globals, MoveObject move)
+    public static void MakeMove(ref Globals globals, MoveObject move, int[]board)
     {
-        
-        globals.ChessBoard[move.EndSquare] = globals.ChessBoard[move.StartSquare];
-        globals.ChessBoard[move.StartSquare] = 0;
+        if(move.LongCastle || move.ShortCastle)
+        {
+            HandleCastlingMove(ref globals, move, board);
+            
+        }
+        else if (move.IsEnPassant)
+        {
+            HandleEnpassantMove(ref globals, move, board);
+            
+        }
+        else if (move.IsPromotion)
+        {
+            HandlePromotionMove(ref globals, move, board);  
+            
+        }
 
-        // Handle special moves: Castling, En Passant, Promotion
-        // Update game state flags like castling rights, en passant possibilities
-
-        UpdateCastlingRights(ref globals, move);
-
-        // Other situations?!
+        else
+        {
+            move.CapturedPiece = board[move.EndSquare];
+            board[move.EndSquare] = move.pieceType;
+            board[move.StartSquare] = 0;
+        }
+         
     }
 
-    public static void UndoMove(ref Globals globals, MoveObject move)
+    public static void UndoMove(ref Globals globals, MoveObject move, int[]board)
     {
-        // Reverse the move
-        globals.ChessBoard[move.StartSquare] = globals.ChessBoard[move.EndSquare];
-        if (move.CapturedPiece != 0)
+        if (move.LongCastle || move.ShortCastle)
         {
-            globals.ChessBoard[move.EndSquare] = move.CapturedPiece;
+            HandleCastlingUndo(ref globals, move, board);
+            
+        }
+        else if (move.IsEnPassant)
+        {
+            HandleEnPassantUndo(ref globals, move, board);
+            
+        }
+        else if (move.IsPromotion)
+        {
+            HandlePromotionUndo(ref globals, move, board);
+            
         }
         else
         {
-            globals.ChessBoard[move.EndSquare] = 0;
+            board[move.EndSquare] = move.CapturedPiece;
+            board[move.StartSquare] = move.pieceType;
         }
-
-        // Reverse castling rights if necessary
-        // Reverse any additional flags or game state changes
-
-        // Special handling to reverse en passant, promotion, etc.
+        
     }
 
-    private static void UpdateCastlingRights(ref Globals globals, MoveObject move)
+
+    private static void HandleCastlingMove(ref Globals globals, MoveObject move, int[] board)
     {
-        // Check if the move involves a rook or king and update the corresponding castling rights
-        if (move.pieceType == Piece.King)
+        if(move.pieceType == MoveGenerator.whiteKing)
         {
-            if (globals.Turn == 0) // White
+            if(move.LongCastle)
             {
-                Globals.WhiteShortCastle = Globals.WhiteLongCastle = false;
+                move.CastleStatus = Globals.WhiteShortCastle; 
+
+                board[56] = 0; board[58] = MoveGenerator.whiteKing; board[59] = MoveGenerator.whiteRook;
+                Globals.WhiteShortCastle = false; Globals.WhiteLongCastle = false;
             }
-            else // Black
+            else if (move.ShortCastle)
             {
-                Globals.BlackShortCastle = Globals.BlackLongCastle = false;
+                move.CastleStatus = Globals.WhiteLongCastle;
+
+                board[63] = 0; board[62] = MoveGenerator.whiteKing; board[61] = MoveGenerator.whiteRook;
+                Globals.WhiteShortCastle = false; Globals.WhiteLongCastle= false;   
             }
         }
-        else if (move.pieceType == Piece.Rook)
+
+        else if (move.pieceType == MoveGenerator.blackKing)
         {
-            // Determine if the rook at the initial position moved and update castling rights accordingly
-            if (move.StartSquare == 0 || move.StartSquare == 7) Globals.BlackShortCastle = false;
-            if (move.StartSquare == 56 || move.StartSquare == 63) Globals.WhiteShortCastle = false;
+            if (move.LongCastle)
+            {
+                board[0] = 0; board[2] = MoveGenerator.blackKing; board[3] = MoveGenerator.blackRook;
+                Globals.BlackLongCastle = false; Globals.BlackShortCastle = false; 
+            }
+            else if (move.ShortCastle)
+            {
+                board[7] = 0; board[6] = MoveGenerator.blackKing; board[5] = MoveGenerator.blackRook;
+                Globals.BlackLongCastle = false; Globals.BlackShortCastle = false;
+            }
         }
     }
 
+    private static void HandleCastlingUndo(ref Globals globals, MoveObject move, int[] board)
+    {
+        if(move.pieceType == MoveGenerator.whiteKing)
+        {
+            if (move.LongCastle)
+            {
+                board[59] = 0; board[56] = MoveGenerator.whiteRook; board[58] = 0; board[60] = MoveGenerator.whiteKing;
+                Globals.WhiteLongCastle = true; Globals.WhiteShortCastle = move.CastleStatus;
+                return;
+            }
+            else if (move.ShortCastle)
+            {
+                board[61] = 0; board[63] = MoveGenerator.whiteRook; board[62] = 0; board[60] = MoveGenerator.whiteKing;
+                Globals.WhiteShortCastle = true; Globals.WhiteLongCastle = move.CastleStatus;
+                return;
+            }
+        }
+
+        else if(move.pieceType == MoveGenerator.blackKing)
+        {
+            if (move.LongCastle)
+            {
+
+            }
+            else if (move.ShortCastle)
+            {
+
+            }
+        }
+    }
+
+    private static void HandleEnpassantMove(ref Globals globals, MoveObject move, int[] board)
+    {
+
+    }
+
+    private static void HandleEnPassantUndo(ref Globals globals, MoveObject move, int[] board)
+    {
+
+    }
+
+    private static void HandlePromotionMove(ref Globals globals, MoveObject move, int[] board)
+    {
+
+    }
+
+    private static void HandlePromotionUndo(ref Globals globals, MoveObject move, int[] board)
+    {
+
+    }
 }

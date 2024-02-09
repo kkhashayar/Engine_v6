@@ -35,8 +35,8 @@ internal static class Kings
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.whiteKing,
-                    StartSquare = square,
-                    EndSquare = square + 2,
+                    StartSquare = 60,
+                    EndSquare = 62,
                     ShortCastle = true
                 });
             }
@@ -47,8 +47,8 @@ internal static class Kings
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.whiteKing,
-                    StartSquare = square,
-                    EndSquare = square - 2,
+                    StartSquare = 60,
+                    EndSquare = 58,
                     LongCastle = true
                 });
             }

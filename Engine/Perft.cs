@@ -40,7 +40,7 @@ public static class Perft
 
             ///////////// I was here, need to pass the board to MoveHandler /////////////
             
-            MoveHandler.MakeMove(ref globals, move);
+            MoveHandler.MakeMove(ref globals, move, board);
 
             if (move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) Globals.LastMoveWasPawn = true;
             else Globals.LastMoveWasPawn = false;
@@ -48,15 +48,16 @@ public static class Perft
             // only last end Square 
             Globals.LastendSquare = move.EndSquare;
             //////////////////////////////////////   DEBUG BOARD 
-            //count++;
-            //ShowDebugBoard(shadowBoard, 50);
+            count++;
+            ShowDebugBoard(board, 500);
             //////////////////////////////////////   DEBUG BOARD 
 
 
             ///////////// I was here, need to use MoveHandler, Not using the cloaning.
-            ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
-           
-            
+            //ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
+            ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
+
+            MoveHandler.UndoMove(ref globals, move, board);
             nodes += childNodes;
 
             if (depth == maxDepth)
