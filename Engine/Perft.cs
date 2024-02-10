@@ -33,13 +33,14 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         { 
+
             MoveHandler.MakeMove(move, board);
 
             //////////////////////////////////////   DEBUG BOARD 
             count++;
             ShowDebugBoard(board, 1000, move);
             //////////////////////////////////////   DEBUG BOARD 
-            MoveHandler.UndoMove(move, board);
+
 
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
 
@@ -50,7 +51,7 @@ public static class Perft
             {
                 Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
-            
+            MoveHandler.UndoMove(move, board);
         }
 
         if (depth == maxDepth)
