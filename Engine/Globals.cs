@@ -2,11 +2,10 @@
 
 public sealed class Globals
 {
-
     public static bool WhiteShortCastle { get; set; } = false;
-    public static bool WhiteLongCastle { get; set; } = false; 
+    public static bool WhiteLongCastle { get; set; } = false;
     public static bool BlackShortCastle { get; set; } = false;
-    public static bool BlackLongCastle { get; set; } = false; 
+    public static bool BlackLongCastle { get; set; } = false;
 
     public bool CheckmateWhite { get; set; } = false;
     public bool CheckmateBlack { get; set; } = false;
@@ -17,10 +16,10 @@ public sealed class Globals
 
     public static bool LastMoveWasPawn { get; set; } = false;
     // Tracking enpassant 
-    public static int LastendSquare { get; set; } = -1; 
+    public static int LastendSquare { get; set; } = -1;
 
-    public static List<MoveObject> moveHistory = new List<MoveObject>();    
-    public  int Turn { get; set; }
+    public static List<MoveObject> moveHistory = new List<MoveObject>();
+    public int Turn { get; set; }
 
     public int[] ChessBoard = new int[64]
     {
@@ -72,17 +71,17 @@ public sealed class Globals
 
     public static readonly int[] BoardIndices = new int[64]
    {
-        0,  1,   2,   3,   4,   5,   6,   7, 
+        0,  1,   2,   3,   4,   5,   6,   7,
         8,  9,  10,  11,  12,  13,  14,  15,
-       16, 17,  18,  19,  20,  21,  22,  23, 
+       16, 17,  18,  19,  20,  21,  22,  23,
        24, 25,  26,  27,  28,  29,  30,  31,
-       32, 33,  34,  35,  36,  37,  38,  39, 
+       32, 33,  34,  35,  36,  37,  38,  39,
        40, 41,  42,  43,  44,  45,  46,  47,
-       48, 49,  50,  51,  52,  53,  54,  55, 
+       48, 49,  50,  51,  52,  53,  54,  55,
        56, 57,  58,  59,  60,  61,  62,  63
    };
 
-  
+
 
     public static readonly string[] Coordinates = new string[64]
     {
@@ -95,6 +94,30 @@ public sealed class Globals
         "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
+
+
+    public static int GetBlackKingSquare(int[] board)
+    {
+        for (int i = 0; i < 64; i++)
+        {
+            if (board[i] == 109)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public static int GetWhiteKingSquare(int[] board)
+    {
+        for (int i = 0; i < 64; i++)
+        {
+            if (board[i] == 99)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static bool IsValidSquare(int square)
     {
@@ -113,17 +136,17 @@ public sealed class Globals
     public static Globals Clone(Globals instanceToClone)
     {
         var copy = new Globals();
-        
-        copy.ChessBoard         = (int[])instanceToClone.ChessBoard.Clone();
+
+        copy.ChessBoard = (int[])instanceToClone.ChessBoard.Clone();
         // copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
         // copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
         // copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
         // copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
-        copy.CheckmateWhite     = instanceToClone.CheckmateWhite;
-        copy.CheckmateBlack     = instanceToClone.CheckmateBlack; 
-        copy.Stalemate          = instanceToClone.Stalemate;
-        copy.Turn               = instanceToClone.Turn;
-        
+        copy.CheckmateWhite = instanceToClone.CheckmateWhite;
+        copy.CheckmateBlack = instanceToClone.CheckmateBlack;
+        copy.Stalemate = instanceToClone.Stalemate;
+        copy.Turn = instanceToClone.Turn;
+
         return copy;
     }
 
@@ -188,7 +211,7 @@ public sealed class Globals
             case 'r': pieceCode = Piece.Rook; break;
             case 'q': pieceCode = Piece.Queen; break;
             case 'k': pieceCode = Piece.King; break;
-            default: return Piece.None; 
+            default: return Piece.None;
         }
 
         if (char.IsUpper(c))
@@ -327,12 +350,10 @@ public sealed class Globals
     }
 
     static List<char> Unicodes = new List<char>
-        {
+    {
             '\u2659','\u2658','\u2657','\u2656',
             '\u2655','\u2654','\u265F','\u265E',
             '\u265D','\u265C','\u265B','\u265A'
-        };
-
-
+    };
 
 }

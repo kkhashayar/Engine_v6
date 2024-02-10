@@ -3,21 +3,12 @@ namespace Engine;
 
 internal static class Rooks
 {
-    // public static List<int>? DefendingSquares { get; set; }
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
 
-        /*
-            foreach (int endSquare in maskForSquare)
-            {
-                //!Piece.IsWhite(board[endSquare]) &&
-                if (MoveGenerator.IsPathClear(startSquare, endSquare, board))
-                    result.Add(endSquare);
-            }
-         */
         if(turn == 0)
         {
             foreach (int targetSquare in targetSquares)
@@ -62,8 +53,6 @@ internal static class Rooks
 
         return moves;   
     }
-
-
 
     public static List<int> GetMasksForSquare(int square)
     {

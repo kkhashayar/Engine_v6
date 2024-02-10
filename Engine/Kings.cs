@@ -2,14 +2,11 @@
 
 internal static class Kings
 {
- 
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
-
-        Globals globals = new Globals();    
 
         if (turn == 0)
         {
@@ -17,7 +14,7 @@ internal static class Kings
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
 
-                if (targetsquareColor == "White") continue; //  DefendingSquares.Add(targetSquare);
+                if (targetsquareColor == "White") continue;
                 else
                     {
                         moves.Add(new MoveObject
@@ -29,26 +26,26 @@ internal static class Kings
                     }
             }
 
-            // Kingside castling
-            if (Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0)
+            
+            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0))
             {
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.whiteKing,
-                    StartSquare = square,
-                    EndSquare = square + 2,
+                    StartSquare = 60,
+                    EndSquare = 62,
                     ShortCastle = true
                 });
             }
 
-            // Queenside castling
-            if (Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0)
+            
+            else if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0))
             {
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.whiteKing,
-                    StartSquare = square,
-                    EndSquare = square - 2,
+                    StartSquare = 60,
+                    EndSquare = 58,
                     LongCastle = true
                 });
             }
@@ -70,36 +67,34 @@ internal static class Kings
                         });
                     }
             }
-            // kingside castling
-            if (Globals.BlackShortCastle && board[5] == 0 && board[6] == 0)
+            
+            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0))
             {
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.blackKing,
-                    StartSquare = square,
-                    EndSquare = square + 2,
+                    StartSquare = 4,
+                    EndSquare = 6,
                     ShortCastle = true
                 });
             }
 
-            // Queenside castling
-            if (Globals.BlackLongCastle && board[3] == 0 && board[2] == 0)
+            
+            else if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0))
             {
                 moves.Add(new MoveObject
                 {
                     pieceType = MoveGenerator.blackKing,
-                    StartSquare = square,
-                    EndSquare = square - 2,
+                    StartSquare = 4,
+                    EndSquare = 2,
                     LongCastle = true
                 });
             }
         }
-
-
         return moves;
     }
 
-    // 
+    
     static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new();
@@ -129,7 +124,5 @@ internal static class Kings
 
         return squares;
     }
-
-
 }
 
