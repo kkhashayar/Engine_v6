@@ -39,5 +39,35 @@ public static class Piece
         return "None";
     }
 
+    public static string GetPieceName(int pieceValue)
+    {
+        switch (pieceValue)
+        {
+            case 1:
+                return "P";
+            case 3:
+                return "K";
+            case 4:
+                return "B";
+            case 5:
+                return "R";
+            case 9:
+                return "Q";
+            case 99:
+                return "K";
+            case 0:
+                return " "; 
+            default:
+                if (pieceValue == Pawn + BlackPieceOffset) return "p";
+                if (pieceValue == Knight + BlackPieceOffset) return "k";
+                if (pieceValue == Bishop + BlackPieceOffset) return "b";
+                if (pieceValue == Rook + BlackPieceOffset) return "r";
+                if (pieceValue == Queen + BlackPieceOffset) return "q";
+                if (pieceValue == King + BlackPieceOffset) return "k";
+                return " "; 
+        }
+    }
+
+
 }
 

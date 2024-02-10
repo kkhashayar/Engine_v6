@@ -171,7 +171,7 @@ public static class MoveGenerator
             }
 
             // normal moves 
-            MoveHandler.MakeMove(ref globals, move, board);
+            MoveHandler.MakeMove(move, board);
 
             // Get a king position on new board
             int whiteKingSquare = Globals.GetWhiteKingSquare(board);
@@ -179,7 +179,7 @@ public static class MoveGenerator
             var blackResponseMoves = GeneratePseudoLegalMoves(board, 1);
 
             // Take back the move
-            MoveHandler.UndoMove(ref globals, move, board);
+            MoveHandler.UndoMove(move, board);
 
             // Check if any black piece can hit the king 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false; 
@@ -201,14 +201,14 @@ public static class MoveGenerator
 
         // Same algorithm goes for black.
         // normal moves 
-        MoveHandler.MakeMove(ref globals, move, board);
+        MoveHandler.MakeMove(move, board);
 
         int blackKingSquare = Globals.GetBlackKingSquare(board);
 
         var WhiteResponseMoves = GeneratePseudoLegalMoves(board, 0);
 
         // Take back the move
-        MoveHandler.UndoMove(ref globals, move, board);
+        MoveHandler.UndoMove(move, board);
 
         if (WhiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 

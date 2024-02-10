@@ -2,21 +2,21 @@
 
 internal static class MoveHandler
 {
-    public static void MakeMove(ref Globals globals, MoveObject move, int[]board)
+    public static void MakeMove(MoveObject move, int[]board)
     {
         if(move.LongCastle || move.ShortCastle)
         {
-            HandleCastlingMove(ref globals, move, board);
+            HandleCastlingMove(move, board);
             
         }
         else if (move.IsEnPassant)
         {
-            HandleEnpassantMove(ref globals, move, board);
+            HandleEnpassantMove(move, board);
             
         }
         else if (move.IsPromotion)
         {
-            HandlePromotionMove(ref globals, move, board);  
+            HandlePromotionMove(move, board);  
             
         }
 
@@ -29,21 +29,21 @@ internal static class MoveHandler
          
     }
 
-    public static void UndoMove(ref Globals globals, MoveObject move, int[]board)
+    public static void UndoMove(MoveObject move, int[]board)
     {
         if (move.LongCastle || move.ShortCastle)
         {
-            HandleCastlingUndo(ref globals, move, board);
+            HandleCastlingUndo(move, board);
             
         }
         else if (move.IsEnPassant)
         {
-            HandleEnPassantUndo(ref globals, move, board);
+            HandleEnPassantUndo(move, board);
             
         }
         else if (move.IsPromotion)
         {
-            HandlePromotionUndo(ref globals, move, board);
+            HandlePromotionUndo(move, board);
             
         }
         else
@@ -55,22 +55,22 @@ internal static class MoveHandler
     }
 
 
-    private static void HandleCastlingMove(ref Globals globals, MoveObject move, int[] board)
+    private static void HandleCastlingMove(MoveObject move, int[] board)
     {
         if(move.pieceType == MoveGenerator.whiteKing)
         {
             if(move.LongCastle)
             {
-                move.CastleStatus = Globals.WhiteShortCastle; 
-
-                board[56] = 0; board[58] = MoveGenerator.whiteKing; board[59] = MoveGenerator.whiteRook;
+                move.CastleStatus = Globals.WhiteShortCastle;
+                move.CapturedPiece = 0;
+                board[56]=0;  board[60]=0; board[58]=MoveGenerator.whiteKing; board[59] = MoveGenerator.whiteRook;
                 Globals.WhiteShortCastle = false; Globals.WhiteLongCastle = false;
             }
             else if (move.ShortCastle)
             {
                 move.CastleStatus = Globals.WhiteLongCastle;
-
-                board[63] = 0; board[62] = MoveGenerator.whiteKing; board[61] = MoveGenerator.whiteRook;
+                move.CapturedPiece = 0;
+                board[63]=0; board[60]=0;  board[62]=MoveGenerator.whiteKing; board[61] = MoveGenerator.whiteRook;
                 Globals.WhiteShortCastle = false; Globals.WhiteLongCastle= false;   
             }
         }
@@ -90,13 +90,13 @@ internal static class MoveHandler
         }
     }
 
-    private static void HandleCastlingUndo(ref Globals globals, MoveObject move, int[] board)
+    private static void HandleCastlingUndo(MoveObject move, int[] board)
     {
         if(move.pieceType == MoveGenerator.whiteKing)
         {
             if (move.LongCastle)
             {
-                board[59] = 0; board[56] = MoveGenerator.whiteRook; board[58] = 0; board[60] = MoveGenerator.whiteKing;
+                board[59] = 0; board[58] = 0; board[56] = MoveGenerator.whiteRook; board[60] = MoveGenerator.whiteKing;
                 Globals.WhiteLongCastle = true; Globals.WhiteShortCastle = move.CastleStatus;
                 return;
             }
@@ -121,22 +121,22 @@ internal static class MoveHandler
         }
     }
 
-    private static void HandleEnpassantMove(ref Globals globals, MoveObject move, int[] board)
+    private static void HandleEnpassantMove(MoveObject move, int[] board)
     {
 
     }
 
-    private static void HandleEnPassantUndo(ref Globals globals, MoveObject move, int[] board)
+    private static void HandleEnPassantUndo(MoveObject move, int[] board)
     {
 
     }
 
-    private static void HandlePromotionMove(ref Globals globals, MoveObject move, int[] board)
+    private static void HandlePromotionMove(MoveObject move, int[] board)
     {
 
     }
 
-    private static void HandlePromotionUndo(ref Globals globals, MoveObject move, int[] board)
+    private static void HandlePromotionUndo(MoveObject move, int[] board)
     {
 
     }

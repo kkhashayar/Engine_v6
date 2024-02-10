@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Engine;
 
@@ -33,44 +32,29 @@ public static class Perft
         }
 
         foreach (MoveObject move in moves)
-        {
-            // int[] shadowBoard = (int[])board.Clone();
+        { 
+            MoveHandler.MakeMove(move, board);
 
-            // MakeMove(move, shadowBoard);
-
-            ///////////// I was here, need to pass the board to MoveHandler /////////////
-            
-            MoveHandler.MakeMove(ref globals, move, board);
-
-            if (move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) Globals.LastMoveWasPawn = true;
-            else Globals.LastMoveWasPawn = false;
-
-            // only last end Square 
-            Globals.LastendSquare = move.EndSquare;
             //////////////////////////////////////   DEBUG BOARD 
             count++;
-            ShowDebugBoard(board, 500);
+            ShowDebugBoard(board, 1000, move);
             //////////////////////////////////////   DEBUG BOARD 
+            MoveHandler.UndoMove(move, board);
 
-
-            ///////////// I was here, need to use MoveHandler, Not using the cloaning.
-            //ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
 
-            MoveHandler.UndoMove(ref globals, move, board);
+           
+           
             nodes += childNodes;
-
             if (depth == maxDepth)
             {
-                // Output each move and its nodes
                 Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
-
+            
         }
 
         if (depth == maxDepth)
         {
-            // Output total nodes searched at the initial call
             Console.WriteLine($"Nodes searched: {nodes}");
         }
 
@@ -82,58 +66,7 @@ public static class Perft
         return $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}";
     }
 
-    private static void MakeMove(MoveObject move, int[] shadowBoard)
-    {
-        // White castlings 
-        if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
-        {
-            move.CapturedPiece = 0;
-            shadowBoard[62] = move.pieceType;
-            shadowBoard[60] = 0;
-            shadowBoard[63] = 0;
-            shadowBoard[61] = MoveGenerator.whiteRook;
-
-        }
-        else if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
-        {
-            move.CapturedPiece = 0;
-            shadowBoard[58] = move.pieceType;
-            shadowBoard[60] = 0;
-            shadowBoard[56] = 0;
-            shadowBoard[59] = MoveGenerator.whiteRook;
-        }
-
-        // Black castlings 
-        else if(move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
-        {
-            move.CapturedPiece = 0;
-            shadowBoard[6] = move.pieceType;
-            shadowBoard[4] = 0;
-            shadowBoard[7] = 0;
-            shadowBoard[5] = MoveGenerator.blackRook;
-        }
-        else if(move.pieceType == MoveGenerator.blackKing && move.LongCastle)
-        {
-            move.CapturedPiece = 0;
-            shadowBoard[move.EndSquare] = move.pieceType;
-            shadowBoard[4] = 0;
-            shadowBoard[0] = 0;
-            shadowBoard[3] = MoveGenerator.blackRook;
-        }
-        
-        // Applying normal moves 
-        else
-        {
-            move.CapturedPiece = shadowBoard[move.EndSquare];
-            //if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion) move.pieceType = MoveGenerator.whitePawn;
-            //else if(move.pieceType == MoveGenerator.blackPawn && move.IsPromotion) move.pieceType = MoveGenerator.blackPawn;
-            shadowBoard[move.EndSquare] = move.pieceType;
-            shadowBoard[move.StartSquare] = 0;
-        }
-        
-    }
-
-    public static void ShowDebugBoard(int[] board, int speedMs)
+    public static void ShowDebugBoard(int[] board, int speedMs, MoveObject move)
     {
         Console.Clear();
         Console.OutputEncoding = System.Text.Encoding.Unicode;
@@ -158,8 +91,10 @@ public static class Perft
         }
         Console.WriteLine();
         Console.WriteLine($"Ply:{count}");
+        Console.WriteLine();
+        Console.WriteLine($"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}");
         Thread.Sleep(speedMs);
-
+        
     }
 
 }
