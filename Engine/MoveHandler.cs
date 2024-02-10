@@ -62,16 +62,16 @@ internal static class MoveHandler
             if(move.LongCastle)
             {
                 move.CastleStatus = Globals.WhiteShortCastle;
-                move.CapturedPiece = 0;
-                board[56]=0;  board[60]=0; board[58]=MoveGenerator.whiteKing; board[59] = MoveGenerator.whiteRook;
+                
+                board[56] = 0;  board[60] = 0; board[58] = MoveGenerator.whiteKing; board[59] = MoveGenerator.whiteRook;
                 Globals.WhiteShortCastle = false; Globals.WhiteLongCastle = false;
             }
             else if (move.ShortCastle)
             {
                 move.CastleStatus = Globals.WhiteLongCastle;
-                move.CapturedPiece = 0;
-                board[63]=0; board[60]=0;  board[62]=MoveGenerator.whiteKing; board[61] = MoveGenerator.whiteRook;
-                Globals.WhiteShortCastle = false; Globals.WhiteLongCastle= false;   
+                
+                board[63] = 0; board[60] = 0;  board[62] = MoveGenerator.whiteKing; board[61] = MoveGenerator.whiteRook;
+                Globals.WhiteShortCastle = false; Globals.WhiteLongCastle = false;   
             }
         }
 
@@ -79,11 +79,15 @@ internal static class MoveHandler
         {
             if (move.LongCastle)
             {
+                move.CastleStatus = Globals.BlackShortCastle;
+
                 board[0] = 0; board[2] = MoveGenerator.blackKing; board[3] = MoveGenerator.blackRook;
                 Globals.BlackLongCastle = false; Globals.BlackShortCastle = false; 
             }
             else if (move.ShortCastle)
             {
+                move.CastleStatus = Globals.BlackLongCastle;
+
                 board[7] = 0; board[6] = MoveGenerator.blackKing; board[5] = MoveGenerator.blackRook;
                 Globals.BlackLongCastle = false; Globals.BlackShortCastle = false;
             }
@@ -112,11 +116,15 @@ internal static class MoveHandler
         {
             if (move.LongCastle)
             {
-
+                board[3] = 0; board[2] = 0; board[0] = MoveGenerator.blackRook; board[4] = MoveGenerator.blackKing;
+                Globals.BlackLongCastle = true; Globals.BlackShortCastle = move.CastleStatus;
+                return;
             }
             else if (move.ShortCastle)
             {
-
+                board[6] = 0; board[5] = 0; board[7] = MoveGenerator.blackRook; board[4] = MoveGenerator.blackKing;
+                Globals.BlackShortCastle = true; Globals.BlackLongCastle = move.CastleStatus;
+                return;
             }
         }
     }
