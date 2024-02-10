@@ -33,16 +33,16 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
-            // int[] shadowBoard = (int[])board.Clone();
-            MoveHandler.MakeMove(move, board);
+            int[] shadowBoard = (int[])board.Clone();
+            MoveHandler.MakeMove(move, shadowBoard);
 
             //////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(shadowBoard, 1000, move);
+            //ShowDebugBoard(board, 1000, move);
             //////////////////////////////////////   DEBUG BOARD 
 
 
-            ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
+            ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
 
       
             nodes += childNodes;
@@ -50,7 +50,7 @@ public static class Perft
             {
                 Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
-            MoveHandler.UndoMove(move, board);
+            //MoveHandler.UndoMove(move, board);
         }
 
         if (depth == maxDepth)
