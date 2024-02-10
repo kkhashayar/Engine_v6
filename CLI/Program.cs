@@ -8,7 +8,7 @@ if (String.IsNullOrEmpty(fen))
 
 
 Globals globals = Globals.FenReader(fen);
-int perftDepth = 3;
+int perftDepth = 2;
 
 Perft.Calculate(globals.ChessBoard, perftDepth, globals.Turn);
 Console.ReadLine();
