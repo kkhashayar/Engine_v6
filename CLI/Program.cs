@@ -6,7 +6,6 @@ if (String.IsNullOrEmpty(fen))
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }
 
-
 Globals globals = Globals.FenReader(fen);
 int perftDepth = 4;
 

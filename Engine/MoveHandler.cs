@@ -173,7 +173,7 @@ internal static class MoveHandler
         {
             if (move.StartSquare == blackLongCastleRookPosition)
             {
-                Globals.BlackLongCastle = move.CastleStatus;
+
             }
             else if (move.StartSquare == blackShortCastleRookPosition)
             {
