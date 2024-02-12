@@ -4,7 +4,7 @@ namespace Engine;
 
 public static class Perft
 {
-    public static Globals globals  = new Globals();
+    
     public static int count = 0;
     public static ulong Calculate(int[] board, int depth, int turn)
     {
@@ -34,6 +34,24 @@ public static class Perft
         foreach (MoveObject move in moves)
         {
             int[] shadowBoard = (int[])board.Clone();
+
+            StateSnapshotBase snapshot = new StateSnapshotBase
+            {
+                WhiteShortCastle = Globals.WhiteShortCastle,
+                WhiteLongCastle = Globals.WhiteLongCastle,
+                BlackShortCastle = Globals.BlackShortCastle,
+                BlackLongCastle = Globals.BlackLongCastle,
+                CheckmateWhite = Globals.CheckmateWhite,
+                CheckmateBlack = Globals.CheckmateBlack,
+                CheckWhite = Globals.CheckWhite,
+                CheckBlack = Globals.CheckBlack,
+                Stalemate = Globals.Stalemate,
+                LastMoveWasPawn = Globals.LastMoveWasPawn,
+                LastendSquare = Globals.LastendSquare,
+                depth = depth,
+                Turn = Globals.Turn
+            };
+            //MoveHandler.Snapshots.Push(snapshot);
             MoveHandler.MakeMove(move, shadowBoard);
 
             //////////////////////////////////////   DEBUG BOARD 
@@ -50,7 +68,9 @@ public static class Perft
             {
                 Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
-            //MoveHandler.UndoMove(move, board);
+
+            // StateSnapshotBase lastSnapshot = MoveHandler.Snapshots.Pop();
+            //MoveHandler.UndoMove(move, board); --> no need to undo anymore
         }
 
         if (depth == maxDepth)
@@ -59,6 +79,22 @@ public static class Perft
         }
 
         return nodes;
+    }
+
+    public static void RestoreStateFromSnapshot(StateSnapshotBase snapshot)
+    {
+        Globals.WhiteShortCastle = snapshot.WhiteShortCastle;
+        Globals.WhiteLongCastle = snapshot.WhiteLongCastle;
+        Globals.BlackShortCastle = snapshot.BlackShortCastle;
+        Globals.BlackLongCastle = snapshot.BlackLongCastle;
+        Globals.CheckmateWhite = snapshot.CheckmateWhite;
+        Globals.CheckmateBlack = snapshot.CheckmateBlack;
+        Globals.CheckWhite = snapshot.CheckWhite;
+        Globals.CheckBlack = snapshot.CheckBlack;
+        Globals.Stalemate = snapshot.Stalemate;
+        Globals.LastMoveWasPawn = snapshot.LastMoveWasPawn;
+        Globals.LastendSquare = snapshot.LastendSquare;
+        Globals.Turn = snapshot.Turn;
     }
 
     private static string MoveToString(MoveObject move)

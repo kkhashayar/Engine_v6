@@ -1,8 +1,8 @@
 ﻿namespace Engine;
 
-internal class StateSnapshotBase
+public class StateSnapshotBase
 {
-
+    public string? Position { get; set; }
     public bool WhiteShortCastle { get; set; } = false;
     public bool WhiteLongCastle { get; set; } = false;
     public bool BlackShortCastle { get; set; } = false;
@@ -19,5 +19,5 @@ internal class StateSnapshotBase
      
     public int LastendSquare { get; set; } = -1;
     public int Turn { get; set; }
-    public int dept { get; set; }   
+    public int depth { get; set; }   
 }

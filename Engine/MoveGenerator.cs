@@ -156,38 +156,34 @@ public static class MoveGenerator
 
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
-        if (turn == 0) // TODO: Check for refactoring
+        int[] shadowBoard = (int[])board.Clone();
+
+        if (turn == 0)
         {
-            // Checking Castling reserved squares
             if (move.LongCastle)
             {
-                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(board, 1);
+                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
                 if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58)) return false;
             }
             else if (move.ShortCastle)
             {         
-                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(board, 1);
+                var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
                 if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62)) return false;
             }
 
-            // normal moves 
-            MoveHandler.MakeMove(move, board);
+           
+            MakeMove(move, shadowBoard);
 
-            // Get a king position on new board
-            int whiteKingSquare = Globals.GetWhiteKingSquare(board);
-            // generate black sseudo moves
-            var blackResponseMoves = GeneratePseudoLegalMoves(board, 1);
+            int whiteKingSquare = Globals.GetWhiteKingSquare(shadowBoard);
+           
+            var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
 
-            // Take back the move
-            MoveHandler.UndoMove(move, board);
-
-            // Check if any black piece can hit the king 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false; 
 
-            return true; // Move is legal 
+            return true; 
         }
 
-        // Black Castlings
+        ///////////////////////////////////////////////  BLACK TURN 
         if (move.LongCastle)
         {
             var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(board, 0);
@@ -199,16 +195,12 @@ public static class MoveGenerator
             if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6)) return false;
         }
 
-        // Same algorithm goes for black.
-        // normal moves 
-        MoveHandler.MakeMove(move, board);
+       
+        MakeMove(move, shadowBoard);
 
-        int blackKingSquare = Globals.GetBlackKingSquare(board);
+        int blackKingSquare = Globals.GetBlackKingSquare(shadowBoard);
 
-        var WhiteResponseMoves = GeneratePseudoLegalMoves(board, 0);
-
-        // Take back the move
-        MoveHandler.UndoMove(move, board);
+        var WhiteResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 0);
 
         if (WhiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
@@ -216,4 +208,30 @@ public static class MoveGenerator
     }
 
    
+
+    private static void MakeMove(MoveObject move, int[] board)
+    {
+        if(move.LongCastle || move.ShortCastle)
+        {
+            
+        }
+
+        else if (move.IsPromotion)
+        {
+
+        }
+
+        else if (move.IsEnPassant)
+        {
+
+        }
+
+        else
+        {
+            board[move.EndSquare] = move.pieceType; 
+            board[move.StartSquare] = 0;
+        }
+    }
 }
+
+

@@ -7,19 +7,19 @@ public sealed class Globals
     public static bool BlackShortCastle { get; set; } = false;
     public static bool BlackLongCastle { get; set; } = false;
 
-    public bool CheckmateWhite { get; set; } = false;
-    public bool CheckmateBlack { get; set; } = false;
+    public static bool CheckmateWhite { get; set; } = false;
+    public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
     public static bool CheckBlack { get; set; } = false;
 
-    public bool Stalemate { get; set; } = false;
+    public static bool Stalemate { get; set; } = false;
 
     public static bool LastMoveWasPawn { get; set; } = false;
     // Tracking enpassant 
     public static int LastendSquare { get; set; } = -1;
 
     public static List<MoveObject> moveHistory = new List<MoveObject>();
-    public int Turn { get; set; }
+    public static int Turn { get; set; }
 
     public int[] ChessBoard = new int[64]
     {
@@ -133,24 +133,6 @@ public sealed class Globals
         return Coordinates[squareIndex];
     }
 
-    public static Globals Clone(Globals instanceToClone)
-    {
-        var copy = new Globals();
-
-        copy.ChessBoard = (int[])instanceToClone.ChessBoard.Clone();
-        // copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
-        // copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
-        // copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
-        // copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
-        copy.CheckmateWhite = instanceToClone.CheckmateWhite;
-        copy.CheckmateBlack = instanceToClone.CheckmateBlack;
-        copy.Stalemate = instanceToClone.Stalemate;
-        copy.Turn = instanceToClone.Turn;
-
-        return copy;
-    }
-
-
 
     public static Globals FenReader(string fen)
     {
@@ -162,11 +144,11 @@ public sealed class Globals
 
         if (parts[1] == "w")
         {
-            globals.Turn = 0;
+            Globals.Turn = 0;
         }
         else if (parts[1] == "b")
         {
-            globals.Turn = 1;
+            Globals.Turn = 1;
         }
         // Parse castling rights
         Globals.WhiteShortCastle = parts[2].Contains("K");
