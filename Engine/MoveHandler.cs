@@ -31,6 +31,15 @@ internal static class MoveHandler
             board[move.EndSquare] = move.pieceType;
             board[move.StartSquare] = 0;
 
+
+            if ((move.pieceType == MoveGenerator.whiteRook && move.StartSquare == whiteLongCastleRookPosition && Globals.WhiteLongCastle) ||
+            (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == whiteShortCastleRookPosition && Globals.WhiteShortCastle) ||
+            (move.pieceType == MoveGenerator.blackRook && move.StartSquare == blackLongCastleRookPosition && Globals.BlackLongCastle) ||
+            (move.pieceType == MoveGenerator.blackRook && move.StartSquare == blackShortCastleRookPosition && Globals.BlackShortCastle))
+            {
+                UpdateCastleRightsOnRookMoves(move);
+            }
+
         }
 
     }
