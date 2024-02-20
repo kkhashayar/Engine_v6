@@ -2,26 +2,24 @@
 
 public sealed class Globals
 {
-    public static bool WhiteShortCastle { get; set; } = false;
-    public static bool WhiteLongCastle { get; set; } = false;
-    public static bool BlackShortCastle { get; set; } = false;
-    public static bool BlackLongCastle { get; set; } = false;
+    public static bool WhiteShortCastle { get; set; } 
+    public static bool WhiteLongCastle { get; set; } 
+    public static bool BlackShortCastle { get; set; }
+    public static bool BlackLongCastle { get; set; } 
 
     public bool CheckmateWhite { get; set; } = false;
     public bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
     public static bool CheckBlack { get; set; } = false;
-
     public bool Stalemate { get; set; } = false;
-
     public static bool LastMoveWasPawn { get; set; } = false;
     // Tracking enpassant 
-    public static int LastendSquare { get; set; } = -1;
+    public static int LastEndSquare { get; set; } = -1;
 
-    public static List<MoveObject> moveHistory = new List<MoveObject>();
+    public static Stack<MoveObject> moveHistory = new Stack<MoveObject>();
     public int Turn { get; set; }
 
-    public int[] ChessBoard = new int[64]
+    public int[] ChessBoard = 
     {
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
@@ -34,7 +32,7 @@ public sealed class Globals
     };
 
 
-    public static readonly int[] BoardOfRanks = new int[64]
+    public static readonly int[] BoardOfRanks = 
     {
         8, 8, 8, 8, 8, 8, 8, 8,
         7, 7, 7, 7, 7, 7, 7, 7,
@@ -46,7 +44,7 @@ public sealed class Globals
         1, 1, 1, 1, 1, 1, 1, 1
     };
 
-    public static readonly int[] BoardOfFiles = new int[64]
+    public static readonly int[] BoardOfFiles = 
     {
         1, 2, 3, 4, 5, 6, 7, 8,
         1, 2, 3, 4, 5, 6, 7, 8,
@@ -58,18 +56,18 @@ public sealed class Globals
         1, 2, 3, 4, 5, 6, 7, 8
     };
 
-    public static readonly int[] LightSquares = new int[32]
+    public static readonly int[] LightSquares =
     {
         0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
         32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63
     };
-    public static readonly int[] DarkSquares = new int[32]
+    public static readonly int[] DarkSquares =
     {
         1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30,
         33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62
     };
 
-    public static readonly int[] BoardIndices = new int[64]
+    public static readonly int[] BoardIndices = 
    {
         0,  1,   2,   3,   4,   5,   6,   7,
         8,  9,  10,  11,  12,  13,  14,  15,
@@ -83,7 +81,7 @@ public sealed class Globals
 
 
 
-    public static readonly string[] Coordinates = new string[64]
+    public static readonly string[] Coordinates =
     {
         "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
         "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
@@ -94,7 +92,6 @@ public sealed class Globals
         "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
-
 
     public static int GetBlackKingSquare(int[] board)
     {
@@ -149,8 +146,6 @@ public sealed class Globals
 
         return copy;
     }
-
-
 
     public static Globals FenReader(string fen)
     {
