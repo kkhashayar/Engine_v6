@@ -150,6 +150,14 @@ public static class MoveGenerator
                 }
             }
         }
+        if(turn == 0)
+        {
+            if(pseudoMoves.Count  == 0 || pseudoMoves is null ) { Globals.CheckmateWhite = true; }
+        }
+        else if(turn == 1)
+        {
+            if (pseudoMoves.Count == 0 || pseudoMoves is null) { Globals.CheckmateBlack = true; }
+        }
         return pseudoMoves;
     }
 
@@ -186,12 +194,12 @@ public static class MoveGenerator
         ///////////////////////////////////////////////  BLACK TURN 
         if (move.LongCastle)
         {
-            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(board, 0);
-            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 3 || wMove.EndSquare == 4)) return false;
+            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
+            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 3 || wMove.EndSquare == 2)) return false;
         }
         else if (move.ShortCastle)
         {
-            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(board, 0);
+            var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
             if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6)) return false;
         }
 

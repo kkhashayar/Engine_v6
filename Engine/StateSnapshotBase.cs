@@ -19,5 +19,4 @@ public class StateSnapshotBase
      
     public int LastendSquare { get; set; } = -1;
     public int Turn { get; set; }
-    public int depth { get; set; }   
 }

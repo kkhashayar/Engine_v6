@@ -2,10 +2,10 @@
 
 public sealed class Globals
 {
-    public static bool WhiteShortCastle { get; set; } = false;
-    public static bool WhiteLongCastle { get; set; } = false;
-    public static bool BlackShortCastle { get; set; } = false;
-    public static bool BlackLongCastle { get; set; } = false;
+    public static bool WhiteShortCastle { get; set; }
+    public static bool WhiteLongCastle { get; set; }
+    public static bool BlackShortCastle { get; set; }
+    public static bool BlackLongCastle { get; set; }
 
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
@@ -144,17 +144,17 @@ public sealed class Globals
 
         if (parts[1] == "w")
         {
-            Globals.Turn = 0;
+            Turn = 0;
         }
         else if (parts[1] == "b")
         {
-            Globals.Turn = 1;
+            Turn = 1;
         }
         // Parse castling rights
-        Globals.WhiteShortCastle = parts[2].Contains("K");
-        Globals.WhiteLongCastle = parts[2].Contains("Q");
-        Globals.BlackShortCastle = parts[2].Contains("k");
-        Globals.BlackLongCastle = parts[2].Contains("q");
+        WhiteShortCastle = parts[2].Contains("K");
+        WhiteLongCastle = parts[2].Contains("Q");
+        BlackShortCastle = parts[2].Contains("k");
+        BlackLongCastle = parts[2].Contains("q");
 
         int index = 0;
         foreach (var rank in ranks)
