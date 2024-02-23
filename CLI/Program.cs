@@ -1,6 +1,6 @@
 ﻿using Engine;
 
-string fen = "4k3/8/8/8/4B3/8/8/4K3 w - - 0 1";
+string fen = "8/8/8/3k4/8/3K4/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
