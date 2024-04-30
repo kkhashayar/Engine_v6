@@ -27,7 +27,8 @@ internal static class Kings
             }
 
             
-            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0) && board[63] == MoveGenerator.whiteRook)
+            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0) 
+                && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -39,7 +40,8 @@ internal static class Kings
             }
 
             
-            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0) && board[56] == MoveGenerator.whiteRook)
+            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0) 
+                && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -68,7 +70,8 @@ internal static class Kings
                     }
             }
             
-            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) && board[7] == MoveGenerator.blackRook)
+            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) 
+                && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -80,7 +83,8 @@ internal static class Kings
             }
 
             
-            if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0) && board[0] == MoveGenerator.blackRook)
+            if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0) 
+                && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {

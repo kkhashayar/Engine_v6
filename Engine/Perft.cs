@@ -5,7 +5,6 @@ namespace Engine;
 
 public static class Perft
 {
-    public static Stack<StateSnapshotBase> stateSnapshots = new Stack<StateSnapshotBase>();
     public static int count = 0;
     public static ulong Calculate(int[] board, int depth, int turn)
     {
@@ -34,48 +33,32 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
-            StateSnapshotBase snapshot = new StateSnapshotBase
-            {
-                WhiteShortCastle = Globals.WhiteShortCastle,
-                WhiteLongCastle = Globals.WhiteLongCastle,
-                BlackShortCastle = Globals.BlackShortCastle,
-                BlackLongCastle = Globals.BlackLongCastle,
-                CheckmateWhite = Globals.CheckmateWhite,
-                CheckmateBlack = Globals.CheckmateBlack,
-                CheckWhite = Globals.CheckWhite,
-                CheckBlack = Globals.CheckBlack,
-                Stalemate = Globals.Stalemate,
-                LastMoveWasPawn = Globals.LastMoveWasPawn,
-                LastendSquare = Globals.LastendSquare,
-                Turn = Globals.Turn
-            };
+            RegisterStaticStates();
 
             int[] shadowBoard = (int[])board.Clone();
 
-            stateSnapshots.Push(snapshot);
-
             shadowBoard[move.EndSquare] = move.pieceType;
-            shadowBoard[move.StartSquare] = 0; 
-            if(move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
+            shadowBoard[move.StartSquare] = 0;
+            if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
             {
                 board[56] = 0; board[59] = MoveGenerator.whiteRook;
             }
-            else if(move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+            else if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
             {
                 board[63] = 0; board[61] = MoveGenerator.whiteRook;
             }
-            else if(move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+            else if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
             {
                 board[0] = 0; board[3] = MoveGenerator.blackRook;
             }
-            else if(move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
+            else if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
             {
                 board[7] = 0; board[5] = 0;
             }
 
             //////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(shadowBoard, 750, move);
+            //ShowDebugBoard(shadowBoard, 300, move);
             //////////////////////////////////////   DEBUG BOARD 
 
 
@@ -88,8 +71,8 @@ public static class Perft
                 Console.WriteLine($"{MoveToString(move)}: {childNodes}");
             }
 
-            StateSnapshotBase lastSnapshot = stateSnapshots.Pop();
-            RestoreStateFromSnapshot(lastSnapshot);
+            
+            
 
         }
 
@@ -101,20 +84,48 @@ public static class Perft
         return nodes;
     }
 
-    public static void RestoreStateFromSnapshot(StateSnapshotBase snapshot)
+    private static void RegisterStaticStates()
     {
-        Globals.WhiteShortCastle = snapshot.WhiteShortCastle;
-        Globals.WhiteLongCastle = snapshot.WhiteLongCastle;
-        Globals.BlackShortCastle = snapshot.BlackShortCastle;
-        Globals.BlackLongCastle = snapshot.BlackLongCastle;
-        Globals.CheckmateWhite = snapshot.CheckmateWhite;
-        Globals.CheckmateBlack = snapshot.CheckmateBlack;
-        Globals.CheckWhite = snapshot.CheckWhite;
-        Globals.CheckBlack = snapshot.CheckBlack;
-        Globals.Stalemate = snapshot.Stalemate;
-        Globals.LastMoveWasPawn = snapshot.LastMoveWasPawn;
-        Globals.LastendSquare = snapshot.LastendSquare;
-        Globals.Turn = snapshot.Turn;
+        StateSnapshotBase.WhiteShortCastle = Globals.WhiteShortCastle;
+        StateSnapshotBase.WhiteLongCastle = Globals.WhiteLongCastle;
+        StateSnapshotBase.WhiteKingRookMoved = Globals.WhiteKingRookMoved;
+        StateSnapshotBase.WhiteQueenRookMoved = Globals.WhiteQueenRookMoved;
+
+        StateSnapshotBase.BlackShortCastle = Globals.BlackShortCastle;
+        StateSnapshotBase.BlackLongCastle = Globals.BlackLongCastle;
+        StateSnapshotBase.BlackKingRookMoved = Globals.BlackKingRookMoved;
+        StateSnapshotBase.BlackQueenRookMoved = Globals.BlackQueenRookMoved;
+
+        StateSnapshotBase.CheckmateWhite = Globals.CheckmateWhite;
+        StateSnapshotBase.CheckmateBlack = Globals.CheckmateBlack;
+        StateSnapshotBase.CheckWhite = Globals.CheckWhite;
+        StateSnapshotBase.CheckBlack = Globals.CheckBlack;
+        StateSnapshotBase.Stalemate = Globals.Stalemate;
+        StateSnapshotBase.LastMoveWasPawn = Globals.LastMoveWasPawn;
+        StateSnapshotBase.LastEndSquare = Globals.LastEndSquare;
+        StateSnapshotBase.Turn = Globals.Turn;
+    }
+
+    public static void RestoreStateFromSnapshot()
+    {
+        Globals.WhiteShortCastle = StateSnapshotBase.WhiteShortCastle;
+        Globals.WhiteLongCastle = StateSnapshotBase.WhiteLongCastle;
+        Globals.WhiteKingRookMoved = StateSnapshotBase.WhiteKingRookMoved; 
+        Globals.WhiteQueenRookMoved = StateSnapshotBase.WhiteQueenRookMoved;
+
+        Globals.BlackShortCastle = StateSnapshotBase.BlackShortCastle;
+        Globals.BlackLongCastle = StateSnapshotBase.BlackLongCastle;
+        Globals.BlackKingRookMoved = StateSnapshotBase.BlackKingRookMoved;
+        Globals.BlackQueenRookMoved = StateSnapshotBase.BlackQueenRookMoved;
+
+        Globals.CheckmateWhite = StateSnapshotBase.CheckmateWhite;
+        Globals.CheckmateBlack = StateSnapshotBase.CheckmateBlack;
+        Globals.CheckWhite = StateSnapshotBase.CheckWhite;
+        Globals.CheckBlack = StateSnapshotBase.CheckBlack;
+        Globals.Stalemate = StateSnapshotBase.Stalemate;
+        Globals.LastMoveWasPawn = StateSnapshotBase.LastMoveWasPawn;
+        Globals.LastEndSquare = StateSnapshotBase.LastEndSquare;
+        Globals.Turn = StateSnapshotBase.Turn;
     }
 
     private static string MoveToString(MoveObject move)

@@ -53,11 +53,11 @@ internal static class Pawns
                     {
                         if(currentPawnRank == 5)
                         {
-                            enPassantSquare = Globals.LastendSquare - 8;
+                            enPassantSquare = Globals.LastEndSquare - 8;
                         }
                         else if(currentPawnRank == 4)
                         {
-                            enPassantSquare = Globals.LastendSquare + 8 ;
+                            enPassantSquare = Globals.LastEndSquare + 8 ;
                         }
                         if (potentialCaptureSquare == enPassantSquare)
                         {

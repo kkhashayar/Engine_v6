@@ -4,9 +4,13 @@ public sealed class Globals
 {
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
+    public static bool WhiteKingRookMoved { get; set; } = false;    
+    public static bool WhiteQueenRookMoved { get; set; } = false;
+
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
-
+    public static bool BlackKingRookMoved { get; set; } = false;
+    public static bool BlackQueenRookMoved { get; set; } = false;
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
@@ -16,7 +20,7 @@ public sealed class Globals
 
     public static bool LastMoveWasPawn { get; set; } = false;
     // Tracking enpassant 
-    public static int LastendSquare { get; set; } = -1;
+    public static int LastEndSquare { get; set; } = -1;
 
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
