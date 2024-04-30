@@ -4,13 +4,14 @@ public sealed class Globals
 {
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
-    public static bool WhiteKingRookMoved { get; set; } = false;    
-    public static bool WhiteQueenRookMoved { get; set; } = false;
+    public static bool WhiteKingRookMoved { get; set; } = true;    
+    public static bool WhiteQueenRookMoved { get; set; } = true;
 
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
-    public static bool BlackKingRookMoved { get; set; } = false;
-    public static bool BlackQueenRookMoved { get; set; } = false;
+    public static bool BlackKingRookMoved { get; set; } = true;
+    public static bool BlackQueenRookMoved { get; set; } = true;
+
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
@@ -154,11 +155,18 @@ public sealed class Globals
         {
             Turn = 1;
         }
-        // Parse castling rights
+        // Parse castling rights nad rook first move states 
         WhiteShortCastle = parts[2].Contains("K");
+        if(WhiteShortCastle) WhiteKingRookMoved = false;
+
         WhiteLongCastle = parts[2].Contains("Q");
+        if(WhiteLongCastle) WhiteQueenRookMoved = false;    
+
         BlackShortCastle = parts[2].Contains("k");
+        if(BlackShortCastle) BlackKingRookMoved = false;
+
         BlackLongCastle = parts[2].Contains("q");
+        if(BlackLongCastle) BlackQueenRookMoved = false;
 
         int index = 0;
         foreach (var rank in ranks)

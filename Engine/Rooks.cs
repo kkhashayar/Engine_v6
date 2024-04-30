@@ -19,8 +19,7 @@ internal static class Rooks
                 if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
                     if (targetsquareColor == "White") continue; 
-                    if(square == board[63]) Globals.WhiteKingRookMoved = true;  
-                    else if(square == board[56]) Globals.WhiteQueenRookMoved = true; 
+           
                     else
                     {
                         moves.Add(new MoveObject
@@ -42,8 +41,7 @@ internal static class Rooks
                 if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
                     if (targetsquareColor == "Black") continue;
-                    if (square == board[7]) Globals.BlackKingRookMoved = true; 
-                    else if (square == board[0]) Globals.BlackQueenRookMoved = true; 
+
                     else
                     {
                         moves.Add(new MoveObject
