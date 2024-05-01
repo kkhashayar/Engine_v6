@@ -195,12 +195,12 @@ public static class MoveGenerator
         if (move.LongCastle)
         {
             var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
-            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 3 || wMove.EndSquare == 2)) return false;
+            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 3 || wMove.EndSquare == 2 || wMove.EndSquare == 4)) return false;
         }
         else if (move.ShortCastle)
         {
             var WhiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
-            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6)) return false;
+            if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6 || wMove.EndSquare == 4)) return false;
         }
 
        
