@@ -18,8 +18,7 @@ internal static class Rooks
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
                 if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
-                    if (targetsquareColor == "White") continue; 
-           
+                    if (targetsquareColor == "White") continue;
                     else
                     {
                         moves.Add(new MoveObject

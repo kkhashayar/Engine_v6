@@ -19,6 +19,7 @@ public static class StateSnapshotBase
 
     public static bool Stalemate { get; set; } = false;
 
+    public static MoveObject? LastMoveMade { get; set; }
     public static bool LastMoveWasPawn { get; set; } = false;
      
     public static int LastEndSquare { get; set; } = -1;

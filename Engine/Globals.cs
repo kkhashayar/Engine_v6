@@ -20,6 +20,8 @@ public sealed class Globals
     public static bool Stalemate { get; set; } = false;
 
     public static bool LastMoveWasPawn { get; set; } = false;
+
+    public static MoveObject? LastMoveMade { get; set; } = null;
     // Tracking enpassant 
     public static int LastEndSquare { get; set; } = -1;
 

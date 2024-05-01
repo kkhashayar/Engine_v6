@@ -26,21 +26,21 @@ internal static class Kings
                     }
             }
 
-            
-            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0) 
-                && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
-            {
-                moves.Add(new MoveObject
-                {
-                    pieceType = MoveGenerator.whiteKing,
-                    StartSquare = 60,
-                    EndSquare = 62,
-                    ShortCastle = true
-                });
-            }
 
-            
-            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0) 
+            //if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0)
+            //    && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
+            //{
+            //    moves.Add(new MoveObject
+            //    {
+            //        pieceType = MoveGenerator.whiteKing,
+            //        StartSquare = 60,
+            //        EndSquare = 62,
+            //        ShortCastle = true
+            //    });
+            //}
+
+
+            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0)
                 && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject

@@ -20,7 +20,7 @@ public static class MoveGenerator
     public static bool BlackKingIsCheck { get; set; } = false;
 
     public static List<int>? BlackDefendedSquares { get; set; }
-    public static List<int>? WhiteDefenedSquares { get; set; }
+    public static List<int>? WhiteDefendedSquares { get; set; }
 
     static Globals globals = new Globals();
 
@@ -75,7 +75,7 @@ public static class MoveGenerator
     {
         List<MoveObject> pseudoMoves = new List<MoveObject>();
 
-        WhiteDefenedSquares = new();
+        WhiteDefendedSquares = new();
         BlackDefendedSquares = new();
 
         for (int square = 0; square < 64; square++)
