@@ -16,18 +16,19 @@ internal static class Kings
 
                 if (targetsquareColor == "White") continue;
                 else
+                {
+                    moves.Add(new MoveObject
                     {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.whiteKing,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
+                        pieceType = MoveGenerator.whiteKing,
+                        StartSquare = square,
+                        EndSquare = targetSquare
+                    });
+                }
             }
 
-
-            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0) && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
+            //////////// Short CASTLE //////////// 
+            if (Globals.WhiteShortCastle && (board[61] == 0 && board[62] == 0)
+                && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -39,7 +40,8 @@ internal static class Kings
             }
 
             //////////// LONG CASTLE //////////// 
-            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0)  && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
+            if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0)
+                && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -60,29 +62,31 @@ internal static class Kings
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
                 if (targetsquareColor == "Black") continue;
                 else
-                    {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.blackKing,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
-            }
-
-            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0)  && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
-            {
-                moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.blackKing,
-                    StartSquare = 4,
-                    EndSquare = 6,
-                    ShortCastle = true
-                });
+                    moves.Add(new MoveObject
+                    {
+                        pieceType = MoveGenerator.blackKing,
+                        StartSquare = square,
+                        EndSquare = targetSquare
+                    });
+                }
             }
 
+            //if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) 
+            //    && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
+            //{
+            //    moves.Add(new MoveObject
+            //    {
+            //        pieceType = MoveGenerator.blackKing,
+            //        StartSquare = 4,
+            //        EndSquare = 6,
+            //        ShortCastle = true
+            //    });
+            //}
 
-            if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0)  && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
+
+            if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0)
+                && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
@@ -96,7 +100,7 @@ internal static class Kings
         return moves;
     }
 
-    
+
     static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new();
