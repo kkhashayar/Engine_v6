@@ -10,9 +10,9 @@ public static class StateSnapshotBase
 
     public static bool BlackShortCastle { get; set; } = false;
     public static bool BlackLongCastle { get; set; } = false;
-    public static bool BlackKingRookMoved { get; set; } = false;    
-    public static bool BlackQueenRookMoved { get; set; } = false; 
-    
+    public static bool BlackKingRookMoved { get; set; } = false;
+    public static bool BlackQueenRookMoved { get; set; } = false;
+
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
@@ -20,9 +20,9 @@ public static class StateSnapshotBase
 
     public static bool Stalemate { get; set; } = false;
 
-    public static MoveObject? LastMoveMade { get; set; }   = null;
+    public static MoveObject? LastMoveMade { get; set; } = null;
     public static bool LastMoveWasPawn { get; set; } = false;
-     
+
     public static int LastEndSquare { get; set; } = -1;
     public static int Turn { get; set; }
 }
