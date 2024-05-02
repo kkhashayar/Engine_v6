@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 using System.Runtime.CompilerServices;
 
-string fen = "4k3/8/8/8/8/8/8/4K2R w K - 0 1";
+string fen = "4k2r/8/8/8/8/8/8/4K3 w k - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -128,7 +128,6 @@ void showBoardValuesBlack(int[] board)
 
 void VerifyWithStockfish(string fen, int depth)
 {
-   
     string stockfishPath = "\"C:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
     StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
     stockfish.StartStockfish();
@@ -139,30 +138,28 @@ void VerifyWithStockfish(string fen, int depth)
 
     // Read the output
     string output;
-   
+
     while ((output = stockfish.ReadOutput()) != null)
     {
-        
+
         Console.WriteLine(output);
         if (output.StartsWith("Stockfish result:  ")) break;
     }
-    Console.WriteLine("Press a key to continue");
-    Console.ReadKey();
-    stockfish.StopStockfish();
+
 }
 
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine("******* Engine 6 *******  \n");
-    Console.WriteLine($"Perft test in depth: {perftDepth} \n");
+    Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
+    Console.WriteLine($"{fen} \n");
     Perft.Calculate(globals.ChessBoard, perftDepth, Globals.Turn);
     Console.WriteLine();
     Console.WriteLine("Press a key to Verify with stockfish \n");
-    
+
     Console.ReadKey();
-    
+
     VerifyWithStockfish(fen, perftDepth);
-    Console.ReadLine();
-    
+
 }
