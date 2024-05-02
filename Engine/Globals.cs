@@ -2,24 +2,33 @@
 
 public sealed class Globals
 {
-    public static bool WhiteShortCastle { get; set; } 
-    public static bool WhiteLongCastle { get; set; } 
-    public static bool BlackShortCastle { get; set; }
-    public static bool BlackLongCastle { get; set; } 
+    public static bool WhiteShortCastle { get; set; }
+    public static bool WhiteLongCastle { get; set; }
+    public static bool WhiteKingRookMoved { get; set; } = true;
+    public static bool WhiteQueenRookMoved { get; set; } = true;
 
-    public bool CheckmateWhite { get; set; } = false;
-    public bool CheckmateBlack { get; set; } = false;
+    public static bool BlackShortCastle { get; set; }
+    public static bool BlackLongCastle { get; set; }
+    public static bool BlackKingRookMoved { get; set; } = true;
+    public static bool BlackQueenRookMoved { get; set; } = true;
+
+    public static bool CheckmateWhite { get; set; } = false;
+    public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
     public static bool CheckBlack { get; set; } = false;
-    public bool Stalemate { get; set; } = false;
+
+    public static bool Stalemate { get; set; } = false;
+
     public static bool LastMoveWasPawn { get; set; } = false;
+
+    public static MoveObject? LastMoveMade { get; set; } = null;
     // Tracking enpassant 
     public static int LastEndSquare { get; set; } = -1;
 
-    public static Stack<MoveObject> moveHistory = new Stack<MoveObject>();
-    public int Turn { get; set; }
+    public static List<MoveObject> moveHistory = new List<MoveObject>();
+    public static int Turn { get; set; }
 
-    public int[] ChessBoard = 
+    public int[] ChessBoard =
     {
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
@@ -32,7 +41,7 @@ public sealed class Globals
     };
 
 
-    public static readonly int[] BoardOfRanks = 
+    public static readonly int[] BoardOfRanks =
     {
         8, 8, 8, 8, 8, 8, 8, 8,
         7, 7, 7, 7, 7, 7, 7, 7,
@@ -44,7 +53,7 @@ public sealed class Globals
         1, 1, 1, 1, 1, 1, 1, 1
     };
 
-    public static readonly int[] BoardOfFiles = 
+    public static readonly int[] BoardOfFiles =
     {
         1, 2, 3, 4, 5, 6, 7, 8,
         1, 2, 3, 4, 5, 6, 7, 8,
@@ -67,7 +76,7 @@ public sealed class Globals
         33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62
     };
 
-    public static readonly int[] BoardIndices = 
+    public static readonly int[] BoardIndices =
    {
         0,  1,   2,   3,   4,   5,   6,   7,
         8,  9,  10,  11,  12,  13,  14,  15,
@@ -130,22 +139,6 @@ public sealed class Globals
         return Coordinates[squareIndex];
     }
 
-    public static Globals Clone(Globals instanceToClone)
-    {
-        var copy = new Globals();
-
-        copy.ChessBoard = (int[])instanceToClone.ChessBoard.Clone();
-        // copy.WhiteShortCastle   = instanceToClone.WhiteShortCastle;
-        // copy.WhiteLongCastle    = instanceToClone.WhiteLongCastle;
-        // copy.BlackShortCastle   = instanceToClone.BlackShortCastle;
-        // copy.BlackLongCastle    = instanceToClone.BlackLongCastle;
-        copy.CheckmateWhite = instanceToClone.CheckmateWhite;
-        copy.CheckmateBlack = instanceToClone.CheckmateBlack;
-        copy.Stalemate = instanceToClone.Stalemate;
-        copy.Turn = instanceToClone.Turn;
-
-        return copy;
-    }
 
     public static Globals FenReader(string fen)
     {
@@ -157,17 +150,24 @@ public sealed class Globals
 
         if (parts[1] == "w")
         {
-            globals.Turn = 0;
+            Turn = 0;
         }
         else if (parts[1] == "b")
         {
-            globals.Turn = 1;
+            Turn = 1;
         }
-        // Parse castling rights
-        Globals.WhiteShortCastle = parts[2].Contains("K");
-        Globals.WhiteLongCastle = parts[2].Contains("Q");
-        Globals.BlackShortCastle = parts[2].Contains("k");
-        Globals.BlackLongCastle = parts[2].Contains("q");
+        // Parse castling rights nad rook first move states 
+        WhiteShortCastle = parts[2].Contains("K");
+        if (WhiteShortCastle) WhiteKingRookMoved = false;
+
+        WhiteLongCastle = parts[2].Contains("Q");
+        if (WhiteLongCastle) WhiteQueenRookMoved = false;
+
+        BlackShortCastle = parts[2].Contains("k");
+        if (BlackShortCastle) BlackKingRookMoved = false;
+
+        BlackLongCastle = parts[2].Contains("q");
+        if (BlackLongCastle) BlackQueenRookMoved = false;
 
         int index = 0;
         foreach (var rank in ranks)
@@ -282,7 +282,7 @@ public sealed class Globals
             return -9; // Moving down-left
     }
 
-
+    // Diagonal Breaks Mask
     public static bool IsDiagBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
         int newRank = square / 8;
@@ -299,6 +299,7 @@ public sealed class Globals
         return rankDifference != fileDifference;
     }
 
+    // Vertical Horizontal Breaks Mask
     public static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
         int newRank = square / 8;
