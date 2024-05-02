@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 using System.Runtime.CompilerServices;
 
-string fen = "4k2r/8/8/8/8/8/8/4K3 w k - 0 1";
+string fen = "8/8/8/8/4k3/8/8/R3K3 w Q - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -12,7 +12,7 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////////   PERFT And stockfish verification
 
-int perftDepth = 2;
+int perftDepth = 1;
 
 RunPerft(fen, globals, perftDepth);
 
@@ -148,6 +148,7 @@ void VerifyWithStockfish(string fen, int depth)
 
 }
 
+
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
     Console.ForegroundColor = ConsoleColor.Black;
@@ -156,10 +157,25 @@ void RunPerft(string fen, Globals globals, int perftDepth)
     Console.WriteLine($"{fen} \n");
     Perft.Calculate(globals.ChessBoard, perftDepth, Globals.Turn);
     Console.WriteLine();
-    Console.WriteLine("Press a key to Verify with stockfish \n");
+    Console.Beep(2000, 50);
+    Console.WriteLine("Press 'V' to verify with Stockfish or 'I' \n");
+    Console.WriteLine("Press 'I' to increase depth and test again \n");
+    Console.WriteLine("Enter to return to Boards \n");
+    char input = Console.ReadKey().KeyChar;
+    if (input == 'v' || input == 'V')
+    {
+        VerifyWithStockfish(fen, perftDepth);
+        Console.WriteLine("Press any key to continue\n");
+        Console.ReadKey();
+        RunPerft(fen, globals, perftDepth);
+        
+    }
+    else if (input == 'i' || input == 'I')
+    {
+        RunPerft(fen, globals, perftDepth + 1);
+        Console.Beep(1500, 50);
+        Console.Beep(1500, 50);
+    }
 
-    Console.ReadKey();
-
-    VerifyWithStockfish(fen, perftDepth);
 
 }
