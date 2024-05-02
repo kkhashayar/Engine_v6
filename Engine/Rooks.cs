@@ -1,4 +1,6 @@
 ﻿
+using System.Net.Quic;
+
 namespace Engine;
 
 internal static class Rooks
@@ -16,7 +18,7 @@ internal static class Rooks
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
                 if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
-                    if (targetsquareColor == "White") continue; 
+                    if (targetsquareColor == "White") continue;
                     else
                     {
                         moves.Add(new MoveObject
@@ -38,6 +40,7 @@ internal static class Rooks
                 if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
                     if (targetsquareColor == "Black") continue;
+
                     else
                     {
                         moves.Add(new MoveObject

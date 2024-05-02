@@ -1,23 +1,28 @@
 ﻿namespace Engine;
 
-internal class StateSnapshotBase
+public static class StateSnapshotBase
 {
+    public static string? Position { get; set; }
+    public static bool WhiteShortCastle { get; set; } = false;
+    public static bool WhiteLongCastle { get; set; } = false;
+    public static bool WhiteKingRookMoved { get; set; } = false;
+    public static bool WhiteQueenRookMoved { get; set; } = false;
 
-    public bool WhiteShortCastle { get; set; } = false;
-    public bool WhiteLongCastle { get; set; } = false;
-    public bool BlackShortCastle { get; set; } = false;
-    public bool BlackLongCastle { get; set; } = false;
+    public static bool BlackShortCastle { get; set; } = false;
+    public static bool BlackLongCastle { get; set; } = false;
+    public static bool BlackKingRookMoved { get; set; } = false;
+    public static bool BlackQueenRookMoved { get; set; } = false;
 
-    public bool CheckmateWhite { get; set; } = false;
-    public bool CheckmateBlack { get; set; } = false;
-    public bool CheckWhite { get; set; } = false;
-    public bool CheckBlack { get; set; } = false;
+    public static bool CheckmateWhite { get; set; } = false;
+    public static bool CheckmateBlack { get; set; } = false;
+    public static bool CheckWhite { get; set; } = false;
+    public static bool CheckBlack { get; set; } = false;
 
-    public bool Stalemate { get; set; } = false;
+    public static bool Stalemate { get; set; } = false;
 
-    public bool LastMoveWasPawn { get; set; } = false;
-     
-    public int LastendSquare { get; set; } = -1;
-    public int Turn { get; set; }
-    public int dept { get; set; }   
+    public static MoveObject? LastMoveMade { get; set; } = null;
+    public static bool LastMoveWasPawn { get; set; } = false;
+
+    public static int LastEndSquare { get; set; } = -1;
+    public static int Turn { get; set; }
 }
