@@ -7,7 +7,7 @@ internal static class Kings
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
-
+        /////////////////////////////////////////// WHITE KING ///////////////////////////////////////////
         if (turn == 0)
         {
             foreach (int targetSquare in targetSquares)
@@ -39,7 +39,7 @@ internal static class Kings
             //    });
             //}
 
-
+            //////////// LONG CASTLE //////////// 
             if (Globals.WhiteLongCastle && (board[59] == 0 && board[58] == 0)
                 && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
@@ -53,6 +53,8 @@ internal static class Kings
             }
             return moves;
         }
+
+        /////////////////////////////////////////// BLACK KING ///////////////////////////////////////////
         else if (turn == 1)
         {
             foreach (int targetSquare in targetSquares)
@@ -70,17 +72,17 @@ internal static class Kings
                     }
             }
             
-            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) 
-                && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
-            {
-                moves.Add(new MoveObject
-                {
-                    pieceType = MoveGenerator.blackKing,
-                    StartSquare = 4,
-                    EndSquare = 6,
-                    ShortCastle = true
-                });
-            }
+            //if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) 
+            //    && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
+            //{
+            //    moves.Add(new MoveObject
+            //    {
+            //        pieceType = MoveGenerator.blackKing,
+            //        StartSquare = 4,
+            //        EndSquare = 6,
+            //        ShortCastle = true
+            //    });
+            //}
 
             
             if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0) 

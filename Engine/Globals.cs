@@ -283,7 +283,7 @@ public sealed class Globals
             return -9; // Moving down-left
     }
 
-
+    // Diagonal Breaks Mask
     public static bool IsDiagBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
         int newRank = square / 8;
@@ -300,6 +300,7 @@ public sealed class Globals
         return rankDifference != fileDifference;
     }
 
+    // Vertical Horizontal Breaks Mask
     public static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
         int newRank = square / 8;

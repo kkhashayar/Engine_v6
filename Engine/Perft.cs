@@ -41,13 +41,13 @@ public static class Perft
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 600, move);
+            //ShowDebugBoard(board, 200, move);
             ////////////////////////////////////   DEBUG BOARD 
 
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
 
             UndoMove(board, move, pieceMoving, targetSquare);
-            RestoreStateFromSnapshot();
+            RestoreStateFromSnapshot(); // reset all static properties to the state before the move was made
 
 
 
@@ -84,9 +84,20 @@ public static class Perft
             {
                 board[59] = 0;
                 board[56] = MoveGenerator.whiteRook;
-                Globals.WhiteQueenRookMoved = false;
+                
             }
 
+        }
+
+
+        if (move.pieceType == MoveGenerator.blackKing)
+        {
+            if (move.LongCastle)
+            {
+                board[3] = 0;
+                board[0] = MoveGenerator.blackRook;
+                
+            }
         }
 
         //if(move.ShortCastle && move.pieceType == MoveGenerator.blackKing)
@@ -94,10 +105,7 @@ public static class Perft
         //    board[5] = 0; board[6] = 0; board[7] = MoveGenerator.blackRook;
         //}
 
-        //else if(move.LongCastle && move.pieceType == MoveGenerator.blackKing)
-        //{
-        //    board[3] = 0; board[2] = 0; board[0] = MoveGenerator.blackRook;
-        //}
+
 
     }
 
@@ -106,33 +114,38 @@ public static class Perft
         board[move.EndSquare] = move.pieceType;
         board[move.StartSquare] = 0;
 
+        /////////////////////////////////// WHITE
         //if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
         //{
         //    Globals.WhiteKingRookMoved = true;
         //}
 
-        // Partially state management for castling rights
+        // ROOK ON LONG CASLTE 
         if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
         {
             Globals.WhiteQueenRookMoved = true;
         }
 
+
+        /////////////////////////////////// BLACK  
         //else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackKingRookMoved is false)
         //{
         //    Globals.BlackQueenRookMoved = true;
         //}
-        //else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackQueenRookMoved is false)
-        //{
-        //    Globals.BlackKingRookMoved = true;
-        //}
+        
+        // ROOK ON LONG CASTLE
+        else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+        {
+            Globals.BlackQueenRookMoved = true;
+        }
 
         if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
         {
             board[56] = 0; board[59] = MoveGenerator.whiteRook;
             Globals.WhiteLongCastle = false;
             Globals.WhiteShortCastle = false;
-            StateSnapshotBase.LastMoveMade = move;
-            Globals.WhiteKingRookMoved = true;  
+             
+            
         }
 
         //if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
@@ -143,13 +156,14 @@ public static class Perft
         //    Globals.WhiteShortCastle = false;
         //}
 
-        //if (move.pieceType == MoveGenerator.blackKing && move.LongCastle && Globals.BlackQueenRookMoved is false)
-        //{
-        //    board[0] = 0; board[3] = MoveGenerator.blackRook;
-        //    Globals.BlackKingRookMoved = true;   
-        //    Globals.BlackLongCastle = false;    
-        //    Globals.BlackShortCastle = false;       
-        //}
+        if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+        {
+            board[0] = 0; board[3] = MoveGenerator.blackRook;
+            Globals.BlackQueenRookMoved = true;
+            Globals.BlackLongCastle = false;
+            
+            
+        }
         //else if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle && Globals.BlackKingRookMoved is false)
         //{
         //    board[7] = 0; board[5] = 0;
@@ -164,11 +178,13 @@ public static class Perft
 
         StateSnapshotBase.WhiteShortCastle = Globals.WhiteShortCastle;
         StateSnapshotBase.WhiteLongCastle = Globals.WhiteLongCastle;
+
         StateSnapshotBase.WhiteKingRookMoved = Globals.WhiteKingRookMoved;
         StateSnapshotBase.WhiteQueenRookMoved = Globals.WhiteQueenRookMoved;
 
         StateSnapshotBase.BlackShortCastle = Globals.BlackShortCastle;
         StateSnapshotBase.BlackLongCastle = Globals.BlackLongCastle;
+        
         StateSnapshotBase.BlackKingRookMoved = Globals.BlackKingRookMoved;
         StateSnapshotBase.BlackQueenRookMoved = Globals.BlackQueenRookMoved;
 
@@ -184,8 +200,6 @@ public static class Perft
 
         StateSnapshotBase.LastEndSquare = Globals.LastEndSquare;
 
-        StateSnapshotBase.LastMoveMade = null; 
-
         StateSnapshotBase.Turn = Globals.Turn;
     }
 
@@ -193,22 +207,28 @@ public static class Perft
     {
         Globals.WhiteShortCastle = StateSnapshotBase.WhiteShortCastle;
         Globals.WhiteLongCastle = StateSnapshotBase.WhiteLongCastle;
+
         Globals.WhiteKingRookMoved = StateSnapshotBase.WhiteKingRookMoved;
         Globals.WhiteQueenRookMoved = StateSnapshotBase.WhiteQueenRookMoved;
 
         Globals.BlackShortCastle = StateSnapshotBase.BlackShortCastle;
         Globals.BlackLongCastle = StateSnapshotBase.BlackLongCastle;
+        
         Globals.BlackKingRookMoved = StateSnapshotBase.BlackKingRookMoved;
         Globals.BlackQueenRookMoved = StateSnapshotBase.BlackQueenRookMoved;
 
         Globals.CheckmateWhite = StateSnapshotBase.CheckmateWhite;
         Globals.CheckmateBlack = StateSnapshotBase.CheckmateBlack;
+        
         Globals.CheckWhite = StateSnapshotBase.CheckWhite;
         Globals.CheckBlack = StateSnapshotBase.CheckBlack;
+        
         Globals.Stalemate = StateSnapshotBase.Stalemate;
+        
         Globals.LastMoveWasPawn = StateSnapshotBase.LastMoveWasPawn;
+        
         Globals.LastEndSquare = StateSnapshotBase.LastEndSquare;
-        Globals.LastMoveMade = null;
+        
         Globals.Turn = StateSnapshotBase.Turn;
     }
 
