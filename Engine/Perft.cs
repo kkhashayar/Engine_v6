@@ -37,6 +37,9 @@ public static class Perft
 
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
+
+            
+
             MakeMove(board, move);
 
             ////////////////////////////////////   DEBUG BOARD 

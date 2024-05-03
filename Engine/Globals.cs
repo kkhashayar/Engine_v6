@@ -4,13 +4,13 @@ public sealed class Globals
 {
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
-    public static bool WhiteKingRookMoved { get; set; } = true;
-    public static bool WhiteQueenRookMoved { get; set; } = true;
+    public static bool WhiteKingRookMoved { get; set; }
+    public static bool WhiteQueenRookMoved { get; set; }
 
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
-    public static bool BlackKingRookMoved { get; set; } = true;
-    public static bool BlackQueenRookMoved { get; set; } = true;
+    public static bool BlackKingRookMoved { get; set; } 
+    public static bool BlackQueenRookMoved { get; set; }
 
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
