@@ -72,17 +72,17 @@ internal static class Kings
                 }
             }
 
-            //if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0) 
-            //    && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
-            //{
-            //    moves.Add(new MoveObject
-            //    {
-            //        pieceType = MoveGenerator.blackKing,
-            //        StartSquare = 4,
-            //        EndSquare = 6,
-            //        ShortCastle = true
-            //    });
-            //}
+            if (Globals.BlackShortCastle && (board[5] == 0 && board[6] == 0)
+                && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
+            {
+                moves.Add(new MoveObject
+                {
+                    pieceType = MoveGenerator.blackKing,
+                    StartSquare = 4,
+                    EndSquare = 6,
+                    ShortCastle = true
+                });
+            }
 
 
             if (Globals.BlackLongCastle && (board[3] == 0 && board[2] == 0)
