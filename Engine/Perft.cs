@@ -37,6 +37,8 @@ public static class Perft
 
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
+
+
             MakeMove(board, move);
 
             ////////////////////////////////////   DEBUG BOARD 
@@ -48,9 +50,6 @@ public static class Perft
 
             RestoreStateFromSnapshot(); // reset all static properties to the state before the move was made
             UndoMove(board, move, pieceMoving, targetSquare);
-
-
-
 
 
             nodes += childNodes;
@@ -94,7 +93,7 @@ public static class Perft
         }
 
         // ROOK ON LONG CASTLE
-        else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackKingRookMoved is false)
+        else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
         {
             Globals.BlackKingRookMoved = true;
             Globals.BlackShortCastle = false;
