@@ -6,7 +6,7 @@ public sealed class Globals
     public static bool WhiteLongCastle { get; set; }
     public static bool WhiteKingRookMoved { get; set; }
     public static bool WhiteQueenRookMoved { get; set; }
-
+    
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
     public static bool BlackKingRookMoved { get; set; } 
@@ -20,6 +20,7 @@ public sealed class Globals
     public static bool Stalemate { get; set; } = false;
 
     public static bool LastMoveWasPawn { get; set; } = false;
+
 
     public static MoveObject? LastMoveMade { get; set; } = null;
     // Tracking enpassant 

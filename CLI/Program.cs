@@ -1,14 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
-using System.Runtime.CompilerServices;
 
-// White king  castle       8/8/8/8/8/2k5/8/R3K3 w Q - 0 1
-// white queen castle       8/8/8/8/4k3/8/8/4K2R w K - 0 1
-// black king  castle       4k2r/8/8/8/8/8/8/4K3 w k - 0 1
-// black queen castle       r3k3/8/8/8/8/8/8/4K3 w q - 0 1
-
-
-string fen = "1k6/7P/8/4K3/8/8/8/8 w - - 0 1";
+string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
