@@ -33,25 +33,25 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
+            // int[] shadowBoard = (int[])board.Clone();
             RegisterStaticStates();
 
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
-
+            var promotedTo = move.PromotionPiece;
 
             MakeMove(board, move);
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 200, move);
+            //ShowDebugBoard(board, 1200, move);
             ////////////////////////////////////   DEBUG BOARD 
-
+            ///
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
 
-            RestoreStateFromSnapshot(); // reset all static properties to the state before the move was made
-            UndoMove(board, move, pieceMoving, targetSquare);
-
-
+            RestoreStateFromSnapshot();
+            UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
+            
             nodes += childNodes;
             if (depth == maxDepth)
             {
@@ -71,70 +71,97 @@ public static class Perft
         board[move.EndSquare] = move.pieceType;
         board[move.StartSquare] = 0;
 
-        /////////////////////////////////// WHITE
-        if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
+
+        
+        if(Globals.Turn == 0)             /////////////////////////////////// WHITE
         {
-            Globals.WhiteKingRookMoved = true;
-            Globals.WhiteShortCastle = false;
-        }
+            /////////////////////////////////// Pawn Promotion  
+            if(move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
+            {
+                board[move.EndSquare] = move.PromotionPiece;    
+            }
 
-        // ROOK ON LONG CASLTE 
-        if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+
+
+
+            if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
+            {
+                Globals.WhiteKingRookMoved = true;
+            }
+
+            // ROOK ON LONG CASLTE 
+            if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+            {
+                Globals.WhiteQueenRookMoved = true;
+            }
+            /////////////////////////////////// Castling   
+
+            if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
+            {
+                board[56] = 0; board[59] = MoveGenerator.whiteRook;
+                Globals.WhiteLongCastle = false;
+                Globals.WhiteShortCastle = false;
+                Globals.WhiteQueenRookMoved = true;
+            }
+
+            if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+            {
+                board[63] = 0; board[61] = MoveGenerator.whiteRook;
+                Globals.WhiteLongCastle = false;
+                Globals.WhiteShortCastle = false;
+                Globals.WhiteKingRookMoved = true;
+            }
+        }
+        ///////////////////////////////// BLACK 
+        else
         {
-            Globals.WhiteQueenRookMoved = true;
-            Globals.WhiteLongCastle = false;
+            
+            /////////////////////////////////// Pawn Promotion
+            if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
+            {
+                board[move.EndSquare] = move.PromotionPiece;
+            }
+
+            if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+            {
+                Globals.BlackQueenRookMoved = true;
+            }
+
+            
+            if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
+            {
+                Globals.BlackKingRookMoved = true;
+            }
+
+
+            if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+            {
+                board[0] = 0; board[3] = MoveGenerator.blackRook;
+                Globals.BlackLongCastle = false;
+                Globals.BlackShortCastle = false;
+                Globals.BlackQueenRookMoved = true;
+
+            }
+            if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
+            {
+                board[7] = 0; board[5] = MoveGenerator.blackRook;
+                Globals.BlackShortCastle = false;
+                Globals.BlackLongCastle = false;
+                Globals.BlackKingRookMoved = true;
+            }
         }
-
-        ///////////////////////////////// BLACK  
-        else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
-        {
-            Globals.BlackQueenRookMoved = true;
-            Globals.BlackLongCastle = false;
-        }
-
-        // ROOK ON LONG CASTLE
-        else if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
-        {
-            Globals.BlackKingRookMoved = true;
-            Globals.BlackShortCastle = false;
-        }
-
-
-        /////////////////////////////////// Castling   
-
-        if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
-        {
-            board[56] = 0; board[59] = MoveGenerator.whiteRook;
-            Globals.WhiteLongCastle = false;
-            Globals.WhiteShortCastle = false;
-        }
-
-        if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
-        {
-            board[63] = 0; board[61] = MoveGenerator.whiteRook;
-            Globals.WhiteLongCastle = false;
-            Globals.WhiteShortCastle = false;
-        }
-
-        if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
-        {
-            board[0] = 0; board[3] = MoveGenerator.blackRook;
-            Globals.BlackShortCastle = false;
-            Globals.BlackLongCastle = false;
-
-
-        }
-        else if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
-        {
-            board[7] = 0; board[5] = 0;
-            Globals.BlackLongCastle = false;
-            Globals.BlackShortCastle = false;
-        }
+        
     }
-    private static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare)
-    {
+    private static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare, int promotedTo)
+    {    
         board[move.StartSquare] = pieceMoving;
         board[move.EndSquare] = targetSquare;
+        
+        if((move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) && move.IsPromotion is true)
+        {
+            board[move.EndSquare] = 0;
+            board[move.StartSquare] = move.pieceType;
+        }
 
         if (move.pieceType == MoveGenerator.whiteKing)
         {
@@ -142,17 +169,14 @@ public static class Perft
             {
                 board[61] = 0;
                 board[63] = MoveGenerator.whiteRook;
-                Globals.WhiteKingRookMoved = false;
-                Globals.WhiteShortCastle = true;
+                
             }
 
             if (move.LongCastle)
             {
                 board[59] = 0;
                 board[56] = MoveGenerator.whiteRook;
-                Globals.WhiteQueenRookMoved = false;
-                Globals.WhiteLongCastle = true;
-
+                
             }
 
         }
@@ -164,20 +188,18 @@ public static class Perft
             {
                 board[3] = 0;
                 board[0] = MoveGenerator.blackRook;
+                
 
             }
+
+            if (move.ShortCastle)
+            {
+                board[5] = 0;
+                board[7] = MoveGenerator.blackRook;
+                
+            }
         }
-
-        //if(move.ShortCastle && move.pieceType == MoveGenerator.blackKing)
-        //{
-        //    board[5] = 0; board[6] = 0; board[7] = MoveGenerator.blackRook;
-        //}
-
-
-
     }
-
-
 
     private static void RegisterStaticStates()
     {
@@ -206,7 +228,7 @@ public static class Perft
 
         StateSnapshotBase.LastEndSquare = Globals.LastEndSquare;
 
-        // StateSnapshotBase.Turn = Globals.Turn;
+        StateSnapshotBase.Turn = Globals.Turn;
     }
 
     public static void RestoreStateFromSnapshot()
@@ -235,7 +257,7 @@ public static class Perft
 
         Globals.LastEndSquare = StateSnapshotBase.LastEndSquare;
 
-        //Globals.Turn = StateSnapshotBase.Turn;
+        Globals.Turn = StateSnapshotBase.Turn;
     }
 
     private static string MoveToString(MoveObject move)

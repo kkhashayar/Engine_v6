@@ -44,10 +44,7 @@ internal static class Pawns
 
                 // En Passant capture
                 if(Globals.LastMoveWasPawn is true)
-                {
-                    //Console.WriteLine($"Last move is pawn {Globals.LastMoveWasPawn}");
-                    //Thread.Sleep(2000);
-                   
+                {  
                     int currentPawnRank = Globals.BoardOfRanks[square];
                     if ((turn == 0 && currentPawnRank == 5) || (turn == 1 && currentPawnRank == 4))
                     {
@@ -71,7 +68,6 @@ internal static class Pawns
                                     EndSquare = enPassantSquare,
                                     IsEnPassant = true
                                 };
-                                // board[Globals.LastendSquare] = 0;
                                 moves.Add(enPassantMove);
                             }
                         }
@@ -80,8 +76,6 @@ internal static class Pawns
                 
             }
         }
-
-
 
         return moves;
     }
@@ -95,10 +89,10 @@ internal static class Pawns
             {
                 moves.AddRange(new[]
                 {
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteQueen, IsPromotion = true},
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteRook, IsPromotion = true },
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteBishop, IsPromotion = true },
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whiteKnight, IsPromotion = true }
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whitePawn, IsPromotion = true, PromotionPiece = MoveGenerator.whiteQueen},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whitePawn, IsPromotion = true, PromotionPiece = MoveGenerator.whiteRook},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whitePawn, IsPromotion = true, PromotionPiece = MoveGenerator.whiteBishop},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.whitePawn, IsPromotion = true,PromotionPiece = MoveGenerator.whiteKnight}
                 });
 
             }
@@ -107,10 +101,10 @@ internal static class Pawns
             {
                 moves.AddRange(new[]
                 {
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackQueen, IsPromotion = true },
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackRook, IsPromotion = true },
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackBishop , IsPromotion = true},
-                    //new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackKnight, IsPromotion = true }
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackPawn, IsPromotion = true, PromotionPiece = MoveGenerator.blackQueen},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackPawn, IsPromotion = true, PromotionPiece = MoveGenerator.blackRook},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackPawn, IsPromotion = true, PromotionPiece = MoveGenerator.blackBishop},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = MoveGenerator.blackPawn, IsPromotion = true, PromotionPiece = MoveGenerator.blackKnight}
                 });
             }
 
