@@ -13,4 +13,5 @@ public struct MoveObject
     public bool ShortCastle { get; set; }
     public bool LongCastle { get; set; }
     public bool CastleStatus { get; set; }
+    public decimal Score { get; set; }  
 }

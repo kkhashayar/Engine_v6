@@ -11,9 +11,9 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////////   PERFT And stockfish verification
 
-int perftDepth = 1;
+//int perftDepth = 4;
 
-RunPerft(fen, globals, perftDepth);
+//RunPerft(fen, globals, perftDepth);
 
 //////////////////////   PERFT And stockfish verification
 Run();
