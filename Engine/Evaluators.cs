@@ -8,7 +8,7 @@ namespace Engine
 {
     internal static  class Evaluators
     {
-        public static decimal ByMaterial(int[] chessBoard)
+        public static decimal GetByMaterial(int[] chessBoard)
         {
             decimal score = 0;
             for (int i = 0; i < 64; i++)

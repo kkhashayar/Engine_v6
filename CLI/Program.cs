@@ -1,7 +1,8 @@
 ﻿using Engine;
 using Engine.External_Resources;
+using System.Net.NetworkInformation;
 
-string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+string fen = "8/k2r4/8/2b1B3/8/q5R1/4Q3/1K6 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -11,21 +12,30 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////////   PERFT And stockfish verification
 
-//int perftDepth = 4;
+int perftDepth = 1;
 
-//RunPerft(fen, globals, perftDepth);
+RunPerft(fen, globals, perftDepth);
 
 //////////////////////   PERFT And stockfish verification
+
+
 Run();
 void Run()
 {
+
+    printBoardWhiteDown(globals.ChessBoard);
     bool running = true;
     while (running)
     {
         Console.Clear();
+
+        var move = Search.FindBestMove(globals.ChessBoard, Globals.Turn, 3);
+        MoveHandler.MakeMove(globals.ChessBoard, move);
         printBoardWhiteDown(globals.ChessBoard);
+        Thread.Sleep(1000); 
     }
 }
+
 
 void printBoardWhiteDown(int[] board)
 {
@@ -50,7 +60,7 @@ void printBoardWhiteDown(int[] board)
         Console.Write(fileName + " ");  // Print file name
     }
     Console.WriteLine();
-    showBoardValuesWhite(board);
+    //showBoardValuesWhite(board);
 
 }
 
@@ -167,7 +177,7 @@ void RunPerft(string fen, Globals globals, int perftDepth)
         Console.WriteLine("Press any key to continue\n");
         Console.ReadKey();
         RunPerft(fen, globals, perftDepth);
-        
+
     }
     else if (input == 'i' || input == 'I')
     {
@@ -178,3 +188,28 @@ void RunPerft(string fen, Globals globals, int perftDepth)
 
 
 }
+
+//void MachineMove(Globals globals)
+//{
+//    int searchDepth = 3;  // Can adjust depth based on needs
+//    MoveObject bestMove = Search.FindBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
+//    if (!bestMove.Equals(default(MoveObject)))
+//    {
+//        Console.WriteLine($"Best move: {Globals.GetSquareCoordinate(bestMove.StartSquare)} to {Globals.GetSquareCoordinate(bestMove.EndSquare)}");
+//        // Apply the move and print the board again to show the result of the best move
+
+//        MoveHandler.RegisterStaticStates();
+
+//        var pieceMoving = bestMove.pieceType;
+//        var targetSquare = globals.ChessBoard[bestMove.EndSquare];
+//        var promotedTo = bestMove.PromotionPiece;
+//        MoveHandler.MakeMove(globals.ChessBoard, bestMove);
+//        Console.WriteLine("Board after the best move:");
+//        printBoardWhiteDown(globals.ChessBoard);
+//        MoveHandler.UndoMove(globals.ChessBoard, bestMove, pieceMoving, targetSquare, promotedTo);  // Optionally undo to keep original state
+//    }
+//    else
+//    {
+//        Console.WriteLine("No legal moves available.");
+//    }
+//}
