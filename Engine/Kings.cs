@@ -40,7 +40,7 @@ internal static class Kings
             }
 
             //////////// LONG CASTLE //////////// 
-            else if (board[60] == MoveGenerator.whiteKing && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
+            if (board[60] == MoveGenerator.whiteKing && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
                 && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
