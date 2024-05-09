@@ -1,8 +1,8 @@
 ﻿namespace Engine;
 
-internal static class MoveHandler
+public static class MoveHandler
 {
-    internal static void MakeMove(int[] board, MoveObject move)
+    public static void MakeMove(int[] board, MoveObject move)
     {
         board[move.EndSquare] = move.pieceType;
         board[move.StartSquare] = 0;
@@ -89,7 +89,7 @@ internal static class MoveHandler
 
     }
 
-    internal static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare, int promotedTo)
+    public static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare, int promotedTo)
     {
         board[move.StartSquare] = pieceMoving;
         board[move.EndSquare] = targetSquare;
@@ -137,7 +137,7 @@ internal static class MoveHandler
             }
         }
     }
-    internal static void RegisterStaticStates()
+    public static void RegisterStaticStates()
     {
 
         StateSnapshotBase.WhiteShortCastle = Globals.WhiteShortCastle;
@@ -167,7 +167,7 @@ internal static class MoveHandler
         StateSnapshotBase.Turn = Globals.Turn;
     }
 
-    internal static void RestoreStateFromSnapshot()
+    public static void RestoreStateFromSnapshot()
     {
         Globals.WhiteShortCastle = StateSnapshotBase.WhiteShortCastle;
         Globals.WhiteLongCastle = StateSnapshotBase.WhiteLongCastle;

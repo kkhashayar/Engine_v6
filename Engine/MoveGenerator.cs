@@ -75,8 +75,8 @@ public static class MoveGenerator
     {
         List<MoveObject> pseudoMoves = new List<MoveObject>();
 
-        WhiteDefendedSquares = new();
-        BlackDefendedSquares = new();
+        //WhiteDefendedSquares = new();
+        //BlackDefendedSquares = new();
 
         for (int square = 0; square < 64; square++)
         {

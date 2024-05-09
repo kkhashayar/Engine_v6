@@ -1,7 +1,8 @@
 ﻿using Engine;
 using Engine.External_Resources;
+using System.Net.NetworkInformation;
 
-string fen = "8/8/8/8/8/4k3/8/R3K2R w KQ - 0 1";
+string fen = "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -10,22 +11,38 @@ if (String.IsNullOrEmpty(fen))
 Globals globals = Globals.FenReader(fen);
 
 //////////////////////   PERFT And stockfish verification
-
-int perftDepth = 2;
-
-RunPerft(fen, globals, perftDepth);
-
+//int perftDepth = 1;
+//RunPerft(fen, globals, perftDepth);
 //////////////////////   PERFT And stockfish verification
+
+int searchDepth = 4;
 Run();
+printBoardWhiteDown(globals.ChessBoard);
 void Run()
 {
+
+    
     bool running = true;
     while (running)
     {
-        Console.Clear();
+
+        MoveObject move = new MoveObject();
+        if(Globals.Turn == 0)
+        {
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);    
+        }
+        else
+        {
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);    
+        }
+        Console.Clear();    
+        MoveHandler.MakeMove(globals.ChessBoard, move);
         printBoardWhiteDown(globals.ChessBoard);
+        Console.Beep(2000, 50); 
+        Thread.Sleep(4000);
     }
 }
+
 
 void printBoardWhiteDown(int[] board)
 {
@@ -50,7 +67,7 @@ void printBoardWhiteDown(int[] board)
         Console.Write(fileName + " ");  // Print file name
     }
     Console.WriteLine();
-    showBoardValuesWhite(board);
+    //showBoardValuesWhite(board);
 
 }
 
@@ -167,7 +184,7 @@ void RunPerft(string fen, Globals globals, int perftDepth)
         Console.WriteLine("Press any key to continue\n");
         Console.ReadKey();
         RunPerft(fen, globals, perftDepth);
-        
+
     }
     else if (input == 'i' || input == 'I')
     {
