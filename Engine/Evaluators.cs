@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine
 {
-    internal static  class Evaluators
+    internal static class Evaluators
     {
         public static decimal GetByMaterial(int[] chessBoard)
         {
@@ -25,7 +21,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.whiteBishop)
                 {
-                    score += 3;
+                    score += 3.2m;
                 }
                 else if (piece == MoveGenerator.whiteRook)
                 {
@@ -37,7 +33,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
-                    score += 100;
+                    score += 0.5m;
                 }
                 else if (piece == MoveGenerator.blackPawn)
                 {
@@ -49,7 +45,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackBishop)
                 {
-                    score -= 3;
+                    score -= 3.2m;
                 }
                 else if (piece == MoveGenerator.blackRook)
                 {
@@ -61,11 +57,20 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
-                    score -= 100;
+                    score -= 0.5m;
                 }
             }
             return score;
         }
 
+        public static decimal GetCheckmateScore(int turn)
+        {
+            return turn == 0 ? -9999m : 9999m;
+        }
+
+        public static decimal GetStalemateScore()
+        {
+            return 0m;
+        }
     }
 }
