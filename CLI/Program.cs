@@ -188,28 +188,3 @@ void RunPerft(string fen, Globals globals, int perftDepth)
 
 
 }
-
-//void MachineMove(Globals globals)
-//{
-//    int searchDepth = 3;  // Can adjust depth based on needs
-//    MoveObject bestMove = Search.FindBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
-//    if (!bestMove.Equals(default(MoveObject)))
-//    {
-//        Console.WriteLine($"Best move: {Globals.GetSquareCoordinate(bestMove.StartSquare)} to {Globals.GetSquareCoordinate(bestMove.EndSquare)}");
-//        // Apply the move and print the board again to show the result of the best move
-
-//        MoveHandler.RegisterStaticStates();
-
-//        var pieceMoving = bestMove.pieceType;
-//        var targetSquare = globals.ChessBoard[bestMove.EndSquare];
-//        var promotedTo = bestMove.PromotionPiece;
-//        MoveHandler.MakeMove(globals.ChessBoard, bestMove);
-//        Console.WriteLine("Board after the best move:");
-//        printBoardWhiteDown(globals.ChessBoard);
-//        MoveHandler.UndoMove(globals.ChessBoard, bestMove, pieceMoving, targetSquare, promotedTo);  // Optionally undo to keep original state
-//    }
-//    else
-//    {
-//        Console.WriteLine("No legal moves available.");
-//    }
-//}
