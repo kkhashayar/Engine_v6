@@ -23,9 +23,9 @@ void Run()
 
     
     bool running = true;
-    while (running)
+    while (running && !Globals.CheckmateWhite && !Globals.CheckmateBlack)
     {
-
+        
         MoveObject move = new MoveObject();
         if(Globals.Turn == 0)
         {

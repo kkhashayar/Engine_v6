@@ -46,7 +46,7 @@ public static class Piece
             case 1:
                 return "P";
             case 3:
-                return "K";
+                return "N";
             case 4:
                 return "B";
             case 5:
@@ -59,7 +59,7 @@ public static class Piece
                 return " "; 
             default:
                 if (pieceValue == Pawn + BlackPieceOffset) return "p";
-                if (pieceValue == Knight + BlackPieceOffset) return "k";
+                if (pieceValue == Knight + BlackPieceOffset) return "n";
                 if (pieceValue == Bishop + BlackPieceOffset) return "b";
                 if (pieceValue == Rook + BlackPieceOffset) return "r";
                 if (pieceValue == Queen + BlackPieceOffset) return "q";

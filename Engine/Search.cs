@@ -10,117 +10,114 @@ namespace Engine
         private static readonly string Red = "\u001b[31m";
         private static readonly string Reset = "\u001b[0m";
 
+        public static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
+        {
+            return MoveGenerator.GenerateAllMoves(board, turn, filter); 
+        }
         public static MoveObject GetBestMove(int[] board, int turn, int depth)
         {
-            decimal bestScore = turn == 0 ? decimal.MinValue : decimal.MaxValue;
+            decimal alpha = decimal.MinValue;
+            decimal beta = decimal.MaxValue;
+
             MoveObject bestMove = default;
 
-            List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            foreach (var move in moves)
+            List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
+
+            if (!allPossibleMoves.Any())
             {
-                MoveHandler.RegisterStaticStates();
-                var pieceMoving = move.pieceType;
-                var targetSquare = board[move.EndSquare];
-                var promotedTo = move.PromotionPiece;
-
-                MoveHandler.MakeMove(board, move);
-                decimal score = -AlphaBeta(depth - 1, decimal.MinValue, decimal.MaxValue, board, turn ^ 1);
-                MoveHandler.RestoreStateFromSnapshot();
-                MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
-                string color = (turn == 0 && score > bestScore) || (turn == 1 && score < bestScore) ? Green : Red;
-                Console.WriteLine($"{color}{MoveToString(move)}: {score}{Reset}");
-
-                if ((turn == 0 && score > bestScore) || (turn == 1 && score < bestScore))
-                {
-                    bestScore = score;
-                    bestMove = move;
-                }
+                if(turn == 0) Globals.CheckmateWhite = true;
+                else Globals.CheckmateBlack = true;
             }
 
-            Console.WriteLine($"{Green}Best Move: {MoveToString(bestMove)} with Score: {bestScore}{Reset}");
+            Console.WriteLine($"Candidate moves for {(turn == 0 ? "White" : "Black")}:");
+
+            if(turn == 0)
+            {
+                foreach (var move in allPossibleMoves)
+                {
+                    // int[] shadowBoard = (int[])board.Clone();
+                    ApplyMove(board, move);
+                    decimal score = AlphaBetaMin(depth - 1, alpha, beta, board, turn ^ 1);
+
+                    if(score > alpha)
+                    {
+                        alpha = score;
+                        bestMove = move;    
+                    }
+                }
+                bestMove.Score = alpha; 
+            }
+
+            else
+            {
+                foreach(var move in allPossibleMoves)
+                {
+                    ApplyMove(board, move); 
+                    decimal score = AlphaBetaMax(depth - 1, alpha, beta, board, turn ^ 1);
+                    
+                    if(score < beta)
+                    {
+                        beta = score;
+                        bestMove = move; 
+                    }   
+                
+                }
+                bestMove.Score = beta;
+            }
+            
+
+            Console.WriteLine($"{Green}Best Move: {MoveToString(bestMove)}{Reset}");
             Console.WriteLine($"{Green}Best Move is: {MoveToString(bestMove)}{Reset}");
             Thread.Sleep(1000);
 
             return bestMove;
         }
 
-        public static decimal AlphaBeta(int depth, decimal alpha, decimal beta, int[] board, int turn)
+        
+
+        public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
         {
-            if (depth == 0)
+            if (depth == 0)  return Evaluators.GetByMaterial(board);
+            
+
+            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            
+            if (allPossibleMoves.Count == 0 || allPossibleMoves == null) return decimal.MaxValue;
+            
+            foreach(var move in allPossibleMoves)
             {
-                return Evaluators.GetByMaterial(board);
+                ApplyMove(board, move);
+                decimal score = AlphaBetaMin(depth - 1, alpha, beta, board, turn ^ 1);
+
+                if(score >= beta) return beta;
+                if (score > alpha) alpha = score; 
             }
-
-            List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            if (moves.Count == 0)
-            {
-                if (IsCheckmate(turn, board))
-                {
-                    return Evaluators.GetCheckmateScore(turn); // Checkmate
-                }
-                else
-                {
-                    return Evaluators.GetStalemateScore(); // Stalemate
-                }
-            }
-
-            if (turn == 0) // Maximizing player (White)
-            {
-                decimal maxEval = decimal.MinValue;
-                foreach (var move in moves)
-                {
-                    // Make a move
-                    MoveHandler.RegisterStaticStates();
-                    var pieceMoving = move.pieceType;
-                    var targetSquare = board[move.EndSquare];
-                    var promotedTo = move.PromotionPiece;
-
-                    MoveHandler.MakeMove(board, move);
-
-                    decimal eval = AlphaBeta(depth - 1, alpha, beta, board, 1);
-
-                    // Undo move
-                    MoveHandler.RestoreStateFromSnapshot();
-                    MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
-                    maxEval = Math.Max(maxEval, eval);
-                    alpha = Math.Max(alpha, eval);
-                    if (beta <= alpha)
-                    {
-                        break; // Alpha cutoff
-                    }
-                }
-                return maxEval;
-            }
-            else // Minimizing player (Black)
-            {
-                decimal minEval = decimal.MaxValue;
-                foreach (var move in moves)
-                {
-                    // Make a move
-                    MoveHandler.RegisterStaticStates();
-                    var pieceMoving = move.pieceType;
-                    var targetSquare = board[move.EndSquare];
-                    var promotedTo = move.PromotionPiece;
-
-                    MoveHandler.MakeMove(board, move);
-                    decimal eval = AlphaBeta(depth - 1, alpha, beta, board, 0);
-
-                    // Undo move
-                    MoveHandler.RestoreStateFromSnapshot();
-                    MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
-                    minEval = Math.Min(minEval, eval);
-                    beta = Math.Min(beta, eval);
-                    if (beta <= alpha)
-                    {
-                        break; // Beta cutoff
-                    }
-                }
-                return minEval;
-            }
+            
+            return alpha;
         }
+
+        public static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
+        {
+            if(depth == 0) return - Evaluators.GetByMaterial(board);    
+
+            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+
+            if (allPossibleMoves.Count == 0 || allPossibleMoves == null) return decimal.MinValue;
+
+            foreach (var move in allPossibleMoves)
+            {
+                ApplyMove(board, move);
+                decimal score = AlphaBetaMax(depth - 1, alpha, beta, board, turn ^ 1);
+
+                if (score <= alpha) return alpha;
+
+                if (score < beta) beta = score;
+            }
+
+            return beta;    
+        }
+
+
 
         private static string MoveToString(MoveObject move)
         {
@@ -134,19 +131,13 @@ namespace Engine
 
             return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion}";
         }
-
-        private static bool IsCheckmate(int turn, int[] board)
+        private static void ApplyMove(int[] board, MoveObject move)
         {
-            // Determine if the current player is in checkmate
-            List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            if (moves.Count == 0)
-            {
-                if ((turn == 0 && Globals.CheckWhite) || (turn == 1 && Globals.CheckBlack))
-                {
-                    return true; // Checkmate
-                }
-            }
-            return false; // Not a checkmate
+            MoveHandler.RegisterStaticStates();
+            var pieceMoving = move.pieceType;
+            var targetSquare = board[move.EndSquare];
+            var promotedTo = move.PromotionPiece;
+            MoveHandler.MakeMove(board, move);
         }
     }
 }
