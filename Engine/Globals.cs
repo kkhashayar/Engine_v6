@@ -21,7 +21,7 @@ public sealed class Globals
 
     public static bool LastMoveWasPawn { get; set; } = false;
 
-
+    public static List<MoveObject> MovePrincipals = new List<MoveObject>();
     public static MoveObject? LastMoveMade { get; set; } = null;
     // Tracking enpassant 
     public static int LastEndSquare { get; set; } = -1;
