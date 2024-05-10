@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 using System.Net.NetworkInformation;
 
-string fen = "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq";
+string fen = "3rkb1r/ppn2pp1/1qp1p2p/4P3/2P4P/3Q2N1/PP1B1PP1/1K1R3R w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -23,9 +23,9 @@ void Run()
 
     
     bool running = true;
-    while (running)
+    while (running && !Globals.CheckmateWhite && !Globals.CheckmateBlack)
     {
-
+        
         MoveObject move = new MoveObject();
         if(Globals.Turn == 0)
         {
@@ -35,12 +35,24 @@ void Run()
         {
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);    
         }
-        Console.Clear();    
+        Globals.Turn ^= 1;  
+
         MoveHandler.MakeMove(globals.ChessBoard, move);
         printBoardWhiteDown(globals.ChessBoard);
-        Console.Beep(2000, 50); 
-        Thread.Sleep(4000);
+        Console.WriteLine();
+        Console.Beep(2000, 50);
+
     }
+
+    Console.WriteLine();
+    Console.WriteLine("Winning line");
+    foreach (var movePrincipal in Globals.MovePrincipals)
+    {
+        Console.Write(Search.MoveToString(movePrincipal) + "-"); 
+    }
+    Console.ReadLine();
+    Console.WriteLine("Game Over"); 
+    Console.ReadKey();  
 }
 
 
