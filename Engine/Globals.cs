@@ -2,14 +2,15 @@
 
 public sealed class Globals
 {
+
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
     public static bool WhiteKingRookMoved { get; set; }
     public static bool WhiteQueenRookMoved { get; set; }
-    
+
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
-    public static bool BlackKingRookMoved { get; set; } 
+    public static bool BlackKingRookMoved { get; set; }
     public static bool BlackQueenRookMoved { get; set; }
 
     public static bool CheckmateWhite { get; set; } = false;
@@ -28,6 +29,7 @@ public sealed class Globals
 
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
+    public static int InitialTurn { get; set; }
 
     public int[] ChessBoard =
     {
@@ -152,10 +154,12 @@ public sealed class Globals
         if (parts[1] == "w")
         {
             Turn = 0;
+            InitialTurn = 0;
         }
         else if (parts[1] == "b")
         {
             Turn = 1;
+            InitialTurn = 1;
         }
         // Parse castling rights nad rook first move states 
         WhiteShortCastle = parts[2].Contains("K");

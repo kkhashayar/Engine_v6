@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 using System.Net.NetworkInformation;
 
-string fen = "3rkb1r/ppn2pp1/1qp1p2p/4P3/2P4P/3Q2N1/PP1B1PP1/1K1R3R w - - 1 0";
+string fen = "N1bk4/pp1p1Qpp/8/2b5/3n3q/8/PPP2RPP/RNB1rBK1 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,13 +15,12 @@ Globals globals = Globals.FenReader(fen);
 //RunPerft(fen, globals, perftDepth);
 //////////////////////   PERFT And stockfish verification
 
-int searchDepth = 4;
+int searchDepth = 7;
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
 void Run()
 {
-
-    
     bool running = true;
     while (running && !Globals.CheckmateWhite && !Globals.CheckmateBlack)
     {
@@ -29,16 +28,20 @@ void Run()
         MoveObject move = new MoveObject();
         if(Globals.Turn == 0)
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
         }
         else
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
         }
         Globals.Turn ^= 1;  
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
-        printBoardWhiteDown(globals.ChessBoard);
+        Console.WriteLine();
+        
+        if(Globals.InitialTurn == 0)   printBoardWhiteDown(globals.ChessBoard);
+        else if(Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
         Console.WriteLine();
         Console.Beep(2000, 50);
 
@@ -106,9 +109,9 @@ void printBoardBlackDown(int[] board)
     {
         Console.Write(fileName + " "); // Print file names
     }
-    Console.WriteLine();
-    showBoardValuesBlack(board);
-    Console.ReadKey();
+    //Console.WriteLine();
+    //showBoardValuesBlack(board);
+    //Console.ReadKey();
 }
 
 
