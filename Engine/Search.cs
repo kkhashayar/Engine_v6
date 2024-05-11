@@ -101,11 +101,12 @@ namespace Engine
         }
         public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
         {
-            if (depth == 0) return Evaluators.GetByMaterial(board);
-
             List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
             if (allPossibleMoves == null || allPossibleMoves.Count == 0) return decimal.MinValue;
 
+            if (depth == 0) return 
+                    Evaluators.GetByMaterial(board, allPossibleMoves.Where(mo =>  Piece.IsWhite(mo.pieceType)).Count(), allPossibleMoves.Where(mo => Piece.IsBlack(mo.pieceType)).Count());
+           // if(depth ==  1 ) return QuiescenceSearch(board, alpha, beta, turn);   
             foreach (var move in allPossibleMoves)
             {
                 MoveHandler.RegisterStaticStates();
@@ -130,11 +131,15 @@ namespace Engine
 
         public static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
         {
-            if (depth == 0) return -Evaluators.GetByMaterial(board);
-
+            
+          
             List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
             if (allPossibleMoves == null || allPossibleMoves.Count == 0) return decimal.MaxValue;
 
+            if (depth == 0) return
+                    Evaluators.GetByMaterial(board, allPossibleMoves.Where(mo => Piece.IsWhite(mo.pieceType)).Count(), allPossibleMoves.Where(mo => Piece.IsBlack(mo.pieceType)).Count());
+
+            //if (depth == 1) return QuiescenceSearch(board, alpha, beta, turn);
             foreach (var move in allPossibleMoves)
             {
                 MoveHandler.RegisterStaticStates();
@@ -155,6 +160,38 @@ namespace Engine
             }
 
             return beta;
+        }
+
+        public static decimal QuiescenceSearch(int[] board, decimal alpha, decimal beta, int turn)
+        {
+            List<MoveObject> moves = GetAllPossibleMoves(board, turn, true);
+            
+            decimal standPat = Evaluators.GetByMaterial(board, moves.Where(mo => Piece.IsWhite(mo.pieceType)).Count(), moves.Where(mo => Piece.IsBlack(mo.pieceType)).Count());
+
+            if (standPat >= beta)
+                return beta;
+            if (alpha < standPat)
+                alpha = standPat;
+            
+            foreach (var move in moves)
+            {
+                if (!move.IsCapture)
+                    continue;
+
+                MoveHandler.RegisterStaticStates();
+                MoveHandler.MakeMove(board, move);
+
+                decimal score = -QuiescenceSearch(board, -beta, -alpha, turn ^ 1);
+
+                MoveHandler.RestoreStateFromSnapshot();
+                MoveHandler.UndoMove(board, move, move.pieceType, board[move.EndSquare], move.PromotionPiece);
+
+                if (score >= beta)
+                    return beta;
+                if (score > alpha)
+                    alpha = score;
+            }
+            return alpha;
         }
 
         public static string MoveToString(MoveObject move)

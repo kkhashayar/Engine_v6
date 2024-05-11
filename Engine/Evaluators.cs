@@ -4,7 +4,7 @@ namespace Engine
 {
     internal static class Evaluators
     {
-        public static decimal GetByMaterial(int[] chessBoard)
+        public static decimal GetByMaterial(int[] chessBoard, int numberOfWhiteMoves, int numberOfBlackMoves)
         {
             decimal score = 0;
             for (int i = 0; i < 64; i++)
@@ -13,7 +13,7 @@ namespace Engine
 
                 if (piece == MoveGenerator.whitePawn)
                 {
-                    score += 1;
+                    score += 1; // - Tables.Pawns.WhitePawnTable[i];
                 }
                 else if (piece == MoveGenerator.whiteKnight)
                 {
@@ -37,7 +37,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackPawn)
                 {
-                    score -= 1;
+                    score -= 1; // - Tables.Pawns.GetBlackSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.blackKnight)
                 {
@@ -60,17 +60,13 @@ namespace Engine
                     score -= 0.5m;
                 }
             }
+            //decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.01m;
+            //score += mobilityScore;
             return score;
         }
 
-        public static decimal GetCheckmateScore(int turn)
-        {
-            return turn == 0 ? -9999m : 9999m;
-        }
 
-        public static decimal GetStalemateScore()
-        {
-            return 0m;
-        }
+        
+
     }
 }
