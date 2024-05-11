@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 using System.Net.NetworkInformation;
 
-string fen = "2r5/2p2k1p/pqp1RB2/2r5/PbQ2N2/1P3PP1/2P3P1/4R2K w - - 1 0";
+string fen = "r3nrkq/pp3p1p/2p3nQ/5NN1/8/3BP3/PPP3PP/2KR4 w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,8 +15,8 @@ Globals globals = Globals.FenReader(fen);
 //RunPerft(fen, globals, perftDepth);
 //////////////////////   PERFT And stockfish verification
 
-int searchDepth = 7;
-TimeSpan maxTime = TimeSpan.FromSeconds(60);
+int searchDepth = 6;
+TimeSpan maxTime = TimeSpan.FromSeconds(90);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
 void Run()

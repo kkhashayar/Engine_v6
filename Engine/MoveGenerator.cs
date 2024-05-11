@@ -27,7 +27,7 @@ public static class MoveGenerator
     //////////////////////////////////////   ENGINE CORE LOOP 
 
     public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
-    {       
+    {
         List<MoveObject> moves = new List<MoveObject>();
 
         List<MoveObject> whitePseudoMoves = GeneratePseudoLegalMoves(chessBoard, 0); // 0 for white
@@ -87,30 +87,30 @@ public static class MoveGenerator
             {
                 if (piece == whiteKing)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));             
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
                 }
-                
-                else if(piece == whiteKnight)
+
+                else if (piece == whiteKnight)
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
-                else if(piece == whiteRook)
+                else if (piece == whiteRook)
                 {
                     pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
-                else if(piece == whiteBishop)
+                else if (piece == whiteBishop)
                 {
                     pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
-                else if(piece == whiteQueen)
+                else if (piece == whiteQueen)
                 {
                     pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
-                else if(piece == whitePawn)
+                else if (piece == whitePawn)
                 {
                     pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
                 }
@@ -121,17 +121,17 @@ public static class MoveGenerator
             {
                 if (piece == blackKing)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));    
+                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
                 }
-                
-                else if(piece == blackKnight)
+
+                else if (piece == blackKnight)
                 {
                     pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
-                else if(piece == blackRook)
+                else if (piece == blackRook)
                 {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));   
+                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
                 }
 
                 else if (piece == blackBishop)
@@ -150,11 +150,11 @@ public static class MoveGenerator
                 }
             }
         }
-        if(turn == 0)
+        if (turn == 0)
         {
-            if(pseudoMoves.Count  == 0 || pseudoMoves is null ) { Globals.CheckmateWhite = true; }
+            if (pseudoMoves.Count == 0 || pseudoMoves is null) { Globals.CheckmateWhite = true; }
         }
-        else if(turn == 1)
+        else if (turn == 1)
         {
             if (pseudoMoves.Count == 0 || pseudoMoves is null) { Globals.CheckmateBlack = true; }
         }
@@ -174,21 +174,21 @@ public static class MoveGenerator
                 if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58)) return false;
             }
             else if (move.ShortCastle)
-            {         
+            {
                 var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
                 if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62)) return false;
             }
 
-           
+
             MakeMove(move, shadowBoard);
 
             int whiteKingSquare = Globals.GetWhiteKingSquare(shadowBoard);
-           
+
             var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
 
-            if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false; 
+            if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
 
-            return true; 
+            return true;
         }
 
         ///////////////////////////////////////////////  BLACK TURN 
@@ -203,7 +203,7 @@ public static class MoveGenerator
             if (WhiteResponseMovesCastle.Any(wMove => wMove.EndSquare == 5 || wMove.EndSquare == 6 || wMove.EndSquare == 4)) return false;
         }
 
-       
+
         MakeMove(move, shadowBoard);
 
         int blackKingSquare = Globals.GetBlackKingSquare(shadowBoard);
@@ -215,13 +215,13 @@ public static class MoveGenerator
         return true;
     }
 
-   
+
 
     private static void MakeMove(MoveObject move, int[] board)
     {
-        if(move.LongCastle || move.ShortCastle)
+        if (move.LongCastle || move.ShortCastle)
         {
-            
+
         }
 
         else if (move.IsPromotion)
@@ -236,8 +236,13 @@ public static class MoveGenerator
 
         else
         {
-            board[move.EndSquare] = move.pieceType; 
+            board[move.EndSquare] = move.pieceType;
             board[move.StartSquare] = 0;
+            if (board[move.EndSquare] != 0)
+            {
+                move.IsCapture = true;
+                move.CapturedPiece = board[move.EndSquare];
+            }
         }
     }
 }
