@@ -16,8 +16,9 @@ Features
 Development Status
 
 This project is actively being developed and may contain bugs. It serves as a tool for understanding and implementing the complexities involved in developing a chess engine and for experimenting with different algorithms and techniques in game programming.
-Getting Started
 
+
+Getting Started
 To get started with this project:
 
     Clone the repository to your local machine.
