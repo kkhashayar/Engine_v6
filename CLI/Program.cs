@@ -1,6 +1,5 @@
 ﻿using Engine;
 using Engine.External_Resources;
-using System.Net.NetworkInformation;
 
 string fen = "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0";
 if (String.IsNullOrEmpty(fen))
