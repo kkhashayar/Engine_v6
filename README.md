@@ -19,6 +19,7 @@ This project is actively being developed and may contain bugs. It serves as a to
 
 
 Getting Started
+
 To get started with this project:
 
     Clone the repository to your local machine.
