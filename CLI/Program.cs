@@ -14,6 +14,16 @@ Globals globals = Globals.FenReader(fen);
 //RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
+
+///         PV 
+List<MoveObject> pv = Search.GetPrincipalVariation(globals.ChessBoard, Globals.Turn, 6);
+foreach (var move in pv)
+{
+    Console.Write(Search.MoveToString(move) + "-");
+}
+///
+
+
 int searchDepth = 6;
 TimeSpan maxTime = TimeSpan.FromSeconds(30);
 Run();
