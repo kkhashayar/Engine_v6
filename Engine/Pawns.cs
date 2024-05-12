@@ -33,6 +33,7 @@ internal static class Pawns
             if (Globals.IsValidSquare(potentialCaptureSquare))
             {
                 // Regular capture
+                if (Globals.PawnJumpCaptureSquares.Contains(square) && Globals.PawnJumpCaptureSquares.Contains(potentialCaptureSquare)) continue;
                 if (board[potentialCaptureSquare] != 0)
                 {
                     string colorOfCapturedPiece = Piece.GetColor(board[potentialCaptureSquare]);
