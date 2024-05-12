@@ -91,6 +91,11 @@ public sealed class Globals
        56, 57,  58,  59,  60,  61,  62,  63
    };
 
+    public static readonly int[] PawnJumpCaptureSquares =
+    {
+        56,48,40,32,24,16,8,0,
+        63,55,47,39,31,23,15,7
+    };
 
 
     public static readonly string[] Coordinates =

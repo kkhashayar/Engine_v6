@@ -60,8 +60,8 @@ namespace Engine
                     score -= 0.5m;
                 }
             }
-            //decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.01m;
-            //score += mobilityScore;
+            decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.01m;
+            score += mobilityScore;
             return score;
         }
 
