@@ -1,8 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
-using System.Net.NetworkInformation;
 
-string fen = "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0";
+string fen = "rqr3k1/3bppBp/3p2P1/p7/1n2P3/1p3P2/1PPQ2P1/2KR3R w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,8 +14,9 @@ Globals globals = Globals.FenReader(fen);
 //RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
+
 int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+TimeSpan maxTime = TimeSpan.FromSeconds(searchDepth * searchDepth);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
 void Run()
@@ -28,15 +28,16 @@ void Run()
         MoveObject move = new MoveObject();
         if(Globals.Turn == 0)
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         else
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         Globals.Turn ^= 1;  
 
-        MoveHandler.MakeMove(globals.ChessBoard, move);
         Console.WriteLine();
         
         if(Globals.InitialTurn == 0)   printBoardWhiteDown(globals.ChessBoard);
@@ -46,16 +47,6 @@ void Run()
         Console.Beep(2000, 50);
 
     }
-
-    Console.WriteLine();
-    Console.WriteLine("Winning line");
-    foreach (var movePrincipal in Globals.MovePrincipals)
-    {
-        Console.Write(Search.MoveToString(movePrincipal) + "-"); 
-    }
-    Console.ReadLine();
-    Console.WriteLine("Game Over"); 
-    Console.ReadKey();  
 }
 
 
