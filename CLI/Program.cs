@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0";
+string fen = "5Q2/6r1/6pp/7k/2pq1P2/P5RP/1P4PK/8 w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -13,15 +13,6 @@ Globals globals = Globals.FenReader(fen);
 //int perftDepth = 5;
 //RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
-
-
-///         PV 
-List<MoveObject> pv = Search.GetPrincipalVariation(globals.ChessBoard, Globals.Turn, 6);
-foreach (var move in pv)
-{
-    Console.Write(Search.MoveToString(move) + "-");
-}
-///
 
 
 int searchDepth = 6;
@@ -55,16 +46,6 @@ void Run()
         Console.Beep(2000, 50);
 
     }
-
-    Console.WriteLine();
-    Console.WriteLine("Winning line");
-    foreach (var movePrincipal in Globals.MovePrincipals)
-    {
-        Console.Write(Search.MoveToString(movePrincipal) + "-"); 
-    }
-    Console.ReadLine();
-    Console.WriteLine("Game Over"); 
-    Console.ReadKey();  
 }
 
 
