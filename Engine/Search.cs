@@ -139,8 +139,6 @@ public static class Search
     }
  
 
- 
-
     public static string MoveToString(MoveObject move)
     {
         string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";

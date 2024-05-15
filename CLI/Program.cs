@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "5Q2/6r1/6pp/7k/2pq1P2/P5RP/1P4PK/8 w - - 1 0";
+string fen = "rqr3k1/3bppBp/3p2P1/p7/1n2P3/1p3P2/1PPQ2P1/2KR3R w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -16,7 +16,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+TimeSpan maxTime = TimeSpan.FromSeconds(searchDepth * searchDepth);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
 void Run()
@@ -28,15 +28,16 @@ void Run()
         MoveObject move = new MoveObject();
         if(Globals.Turn == 0)
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         else
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);    
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         Globals.Turn ^= 1;  
 
-        MoveHandler.MakeMove(globals.ChessBoard, move);
         Console.WriteLine();
         
         if(Globals.InitialTurn == 0)   printBoardWhiteDown(globals.ChessBoard);

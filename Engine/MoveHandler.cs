@@ -14,11 +14,9 @@ public static class MoveHandler
             /////////////////////////////////// Pawn Promotion  
             if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
             {
-                board[move.EndSquare] = move.PromotionPiece;
+                var piece = move.PromotionPiece;    
+                board[move.EndSquare] = piece;
             }
-
-
-
 
             if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
             {
@@ -55,7 +53,8 @@ public static class MoveHandler
             /////////////////////////////////// Pawn Promotion
             if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
             {
-                board[move.EndSquare] = move.PromotionPiece;
+                var piece = move.PromotionPiece;
+                board[move.EndSquare] = piece;
             }
 
             if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
