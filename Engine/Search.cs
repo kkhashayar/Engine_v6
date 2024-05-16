@@ -95,7 +95,9 @@ public static class Search
             if (score > bestScore)
             {
                 bestScore = score;
-     
+                
+                if(bestScore >= 99) return bestScore;   
+
                 if (score >= beta)
                     return beta;
                 if (score > alpha)
@@ -106,7 +108,6 @@ public static class Search
         return alpha;
     }
 
-  
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
     
@@ -126,7 +127,8 @@ public static class Search
             if (score < bestScore)
             {
                 bestScore = score;
-               
+                
+                if(bestScore < -100) return bestScore;
 
                 if (score <= alpha)
                     return alpha;
