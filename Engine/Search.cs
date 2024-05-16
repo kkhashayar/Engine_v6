@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Engine;
 
@@ -6,9 +7,13 @@ public static class Search
 {
     public static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
-        return MoveGenerator.GenerateAllMoves(board, turn, filter);
+        var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
+
+        var orderedmoves = moves.OrderByDescending(m => m.IsCapture).ThenByDescending(m => m.Priority).ToList();
+
+        return orderedmoves;
     }
-    
+
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
         Stopwatch stopwatch = new Stopwatch();
@@ -22,8 +27,8 @@ public static class Search
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
             List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
-            
-            
+
+
             // Check if any side is checkmated // TODO draw by move into check  
             if (!allPossibleMoves.Any())
             {
@@ -75,10 +80,10 @@ public static class Search
         Console.WriteLine($"Best Move: {MoveToString(bestMove)}");
         return bestMove;
     }
-  
+
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-      
+
         if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
 
         decimal bestScore = decimal.MinValue;
@@ -95,8 +100,8 @@ public static class Search
             if (score > bestScore)
             {
                 bestScore = score;
-                
-                if(bestScore >= 99) return bestScore;   
+
+                if (bestScore >= 99) return bestScore;
 
                 if (score >= beta)
                     return beta;
@@ -110,7 +115,7 @@ public static class Search
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-    
+
         if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
 
         decimal bestScore = decimal.MaxValue;
@@ -127,8 +132,8 @@ public static class Search
             if (score < bestScore)
             {
                 bestScore = score;
-                
-                if(bestScore < -100) return bestScore;
+
+                if (bestScore < -100) return bestScore;
 
                 if (score <= alpha)
                     return alpha;
@@ -139,7 +144,7 @@ public static class Search
 
         return beta;
     }
- 
+
 
     public static string MoveToString(MoveObject move)
     {
