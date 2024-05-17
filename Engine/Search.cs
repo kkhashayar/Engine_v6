@@ -110,7 +110,7 @@ public static class Search
             {
                 bestScore = score;
 
-                if (bestScore >= 99) return bestScore;
+                //if (bestScore >= 99) return bestScore;
 
                 if (score >= beta)
                     return beta;
@@ -142,7 +142,7 @@ public static class Search
             {
                 bestScore = score;
 
-                if (bestScore < -100) return bestScore;
+                //if (bestScore < -100) return bestScore;
 
                 if (score <= alpha)
                     return alpha;

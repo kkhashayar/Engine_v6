@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "qr6/1b1p1krQ/p2Pp1p1/4PP2/1p1B1n2/3B4/PP3K1P/2R2R2 w - - 1 0";
+string fen = "";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
