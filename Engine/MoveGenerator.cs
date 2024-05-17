@@ -37,20 +37,24 @@ public static class MoveGenerator
         {
             if (turn == 0)
             {
-                foreach (var move in whitePseudoMoves)
+                for (int i = 0; i < whitePseudoMoves.Count; i++)
                 {
+                    var move = whitePseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
+                        if (chessBoard[move.EndSquare] != 0) move.IsCapture = true; 
                         moves.Add(move);
                     }
                 }
             }
             else
             {
-                foreach (var move in blackPseudoMoves)
+                for (int i = 0; i < blackPseudoMoves.Count; i++)
                 {
+                    var move = blackPseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
+                        if (chessBoard[move.EndSquare] != 0) move.IsCapture = true;
                         moves.Add(move);
                     }
                 }
@@ -165,7 +169,7 @@ public static class MoveGenerator
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
-
+        
         if (turn == 0)
         {
             if (move.LongCastle)
@@ -187,7 +191,7 @@ public static class MoveGenerator
             var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
-
+         
             return true;
         }
 
@@ -238,11 +242,6 @@ public static class MoveGenerator
         {
             board[move.EndSquare] = move.pieceType;
             board[move.StartSquare] = 0;
-            if (board[move.EndSquare] != 0)
-            {
-                move.IsCapture = true;
-                move.CapturedPiece = board[move.EndSquare];
-            }
         }
     }
 }

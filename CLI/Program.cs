@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "rqr3k1/3bppBp/3p2P1/p7/1n2P3/1p3P2/1PPQ2P1/2KR3R w - - 1 0";
+string fen = "r1b1kb1r/pppp1ppp/5q2/4n3/3KP3/2N3PN/PPP4P/R1BQ1B1R b kq - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -16,7 +16,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(searchDepth * searchDepth);
+TimeSpan maxTime = TimeSpan.FromSeconds(30);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
 void Run()
