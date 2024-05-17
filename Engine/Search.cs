@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Engine;
 
@@ -9,8 +8,8 @@ public static class Search
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
 
-        var orderedmoves = moves.OrderByDescending(m => m.IsCapture).ThenByDescending(m => m.Priority).ToList();
-
+        var orderedmoves = moves.OrderByDescending(m => m.Priority).ToList();
+        
         return orderedmoves;
     }
 
@@ -28,8 +27,6 @@ public static class Search
         {
             List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-
-            // Check if any side is checkmated // TODO draw by move into check  
             if (!allPossibleMoves.Any())
             {
                 if (turn == 0) Globals.CheckmateWhite = true;
@@ -74,12 +71,24 @@ public static class Search
                     beta = score;
                     bestMove = move;
                 }
+
+                // Return immediately if a decisive score is found
+                if (score >= 999 || score <= -100)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"Best move over 999 in {currentDepth}: {MoveToString(bestMove)}");
+                    Globals.PrincipalVariation.Add(bestMove);
+                    return bestMove;
+                }
             }
-            Console.WriteLine($"Depth {currentDepth}: Best Move Found - {MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}");
+            Console.WriteLine($"Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
         }
-        Console.WriteLine($"Best Move: {MoveToString(bestMove)}");
+        Console.WriteLine($"Best Move: {MoveToString(bestMove)} ");
+        Globals.PrincipalVariation.Add(bestMove);   
+        
         return bestMove;
     }
+
 
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
@@ -156,6 +165,6 @@ public static class Search
             return castle;
         }
 
-        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion}";
+        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
 }

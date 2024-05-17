@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "r1b1kb1r/pppp1ppp/5q2/4n3/3KP3/2N3PN/PPP4P/R1BQ1B1R b kq - 0 1";
+string fen = "4r1k1/pb4pp/1p2p3/4Pp2/1P3N2/P2Qn2P/3n1qPK/RBB1R3 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,38 +15,56 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+int searchDepth = 8;
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 Run();
-printBoardWhiteDown(globals.ChessBoard);
+
 void Run()
 {
+    Console.WriteLine();
+    if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+    else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+    Console.WriteLine();
+
     bool running = true;
-    while (running && !Globals.CheckmateWhite && !Globals.CheckmateBlack)
+    while (running)
     {
-        
         MoveObject move = new MoveObject();
-        if(Globals.Turn == 0)
+        if (Globals.Turn == 0)
         {
+            
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
+
         }
         else
         {
+             
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
-        Globals.Turn ^= 1;  
+        Globals.Turn ^= 1;
+        Console.Clear();
+        Console.WriteLine();
+
+        if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+        else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
 
         Console.WriteLine();
-        
-        if(Globals.InitialTurn == 0)   printBoardWhiteDown(globals.ChessBoard);
-        else if(Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+        Console.Beep(2000, 100);
 
-        Console.WriteLine();
-        Console.Beep(2000, 50);
+        if (Globals.CheckmateWhite || Globals.CheckmateBlack) break;
 
     }
+
+    Console.WriteLine();
+    foreach (var pMove in Globals.PrincipalVariation)
+    {
+        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write(Search.MoveToString(pMove));
+    }
+    Console.WriteLine();
 }
 
 
@@ -124,8 +142,6 @@ void showBoardValuesWhite(int[] board)
     Console.ReadKey();
 }
 
-
-
 void showBoardValuesBlack(int[] board)
 {
     Console.WriteLine();
@@ -146,15 +162,13 @@ void showBoardValuesBlack(int[] board)
     Console.ReadKey();
 }
 
-
-
 void VerifyWithStockfish(string fen, int depth)
 {
     string stockfishPath = "\"C:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
     StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
     stockfish.StartStockfish();
 
-    // Send the FEN to Stockfish
+    // Send FEN to Stockfish
     stockfish.SendCommand($"position fen {fen}");
     stockfish.SendCommand($"go perft {depth}");
 
@@ -198,6 +212,4 @@ void RunPerft(string fen, Globals globals, int perftDepth)
         Console.Beep(1500, 50);
         Console.Beep(1500, 50);
     }
-
-
 }
