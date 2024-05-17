@@ -37,24 +37,76 @@ public static class MoveGenerator
         {
             if (turn == 0)
             {
+                int blackKingPosition = Globals.GetBlackKingSquare(chessBoard);
                 for (int i = 0; i < whitePseudoMoves.Count; i++)
                 {
                     var move = whitePseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                        if (chessBoard[move.EndSquare] != 0) move.IsCapture = true; 
+                        move.Priority = 1;
+                        if (chessBoard[move.EndSquare] != 0) 
+                        {
+                          
+                            move.Priority = 2;
+                        }  
+                        if(move.EndSquare == blackKingPosition)
+                        {
+                            move.Priority = 3;
+                        }
+                        if(move.pieceType == MoveGenerator.whitePawn)
+                        {
+                            var leftKillSquare = move.EndSquare - 7; 
+                            var rightKillSquare = move.EndSquare - 9;
+                            if(Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
+                            {
+                                move.Priority = 3;
+                            }
+
+                            if(Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
+                            {
+                                move.Priority = 3;
+                            }
+                            
+                        }
                         moves.Add(move);
                     }
                 }
             }
             else
             {
+                int whiteKingPosition = Globals.GetWhiteKingSquare(chessBoard);
                 for (int i = 0; i < blackPseudoMoves.Count; i++)
                 {
                     var move = blackPseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                        if (chessBoard[move.EndSquare] != 0) move.IsCapture = true;
+
+                        move.Priority = 1;
+                        if (chessBoard[move.EndSquare] != 0)
+                        {
+                            
+                            move.Priority = 2;
+                        }
+                        if(move.EndSquare == whiteKingPosition)
+                        {
+                            move.Priority = 3;  
+                        }
+                        if(move.pieceType == MoveGenerator.blackPawn)
+                        {
+                            var leftKillSquare = move.EndSquare + 7; 
+                            var rightKillSquare = move.EndSquare + 9;
+                            if(Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
+                            {
+                                move.Priority = 3;
+                            }
+
+                            if(Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
+                            {
+                                move.Priority = 3;
+                            }
+                            
+                        }
+                        
                         moves.Add(move);
                     }
                 }
