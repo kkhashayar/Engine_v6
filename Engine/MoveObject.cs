@@ -14,6 +14,6 @@ public struct MoveObject
     public bool IsEnPassant { get; set; }
     public bool IsPromotion { get; set; }
     public bool IsCheck { get; set; }
-    public int Priority { get; set; } 
+    public decimal Priority { get; set; } 
     public decimal Score { get; set; }  
 }

@@ -46,12 +46,11 @@ public static class MoveGenerator
                         move.Priority = 1;
                         if (chessBoard[move.EndSquare] != 0) 
                         {
-                          
-                            move.Priority = 2;
+                            move.Priority = 1.2m;
                         }  
                         if(move.EndSquare == blackKingPosition)
                         {
-                            move.Priority = 3;
+                            move.Priority = 1.4m;
                         }
                         if(move.pieceType == MoveGenerator.whitePawn)
                         {
@@ -59,12 +58,12 @@ public static class MoveGenerator
                             var rightKillSquare = move.EndSquare - 9;
                             if(Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
                             {
-                                move.Priority = 3;
+                                move.Priority = 1.4m;
                             }
 
                             if(Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
                             {
-                                move.Priority = 3;
+                                move.Priority = 1.4m;
                             }
                             
                         }
@@ -84,11 +83,11 @@ public static class MoveGenerator
                         move.Priority = 1;
                         if (chessBoard[move.EndSquare] != 0)
                         {
-                            move.Priority = 2;
+                            move.Priority = 1.2m;
                         }
                         if(move.EndSquare == whiteKingPosition)
                         {
-                            move.Priority = 3;  
+                            move.Priority = 1.4m;  
                         }
                         if(move.pieceType == MoveGenerator.blackPawn)
                         {
@@ -96,12 +95,12 @@ public static class MoveGenerator
                             var rightKillSquare = move.EndSquare + 9;
                             if(Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
                             {
-                                move.Priority = 3;
+                                move.Priority = 1.4m;
                             }
 
                             if(Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
                             {
-                                move.Priority = 3;
+                                move.Priority = 1.4m;
                             }
                             
                         }

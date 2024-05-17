@@ -13,7 +13,7 @@ namespace Engine
 
                 if (piece == MoveGenerator.whitePawn)
                 {
-                    score += 1; // - Tables.Pawns.WhitePawnTable[i];
+                    score += 1; 
                 }
                 else if (piece == MoveGenerator.whiteKnight)
                 {
@@ -33,11 +33,15 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
-                    score += 0.5m;
+                    score += 50;
+                    if (Globals.CheckmateWhite) 
+                    {
+                        score += 949; 
+                    }
                 }
                 else if (piece == MoveGenerator.blackPawn)
                 {
-                    score -= 1; // - Tables.Pawns.GetBlackSquareWeight(i);
+                    score -= 1;
                 }
                 else if (piece == MoveGenerator.blackKnight)
                 {
@@ -57,16 +61,16 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
-                    score -= 0.5m;
+                    score -= 50;
+                    if (Globals.CheckmateBlack)
+                    {
+                        score -= 949; 
+                    }
                 }
             }
-            decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.01m;
+            decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.03m;
             score += mobilityScore;
             return score;
         }
-
-        // Better defensive moves always have more remaining moves to play. 
-        
-
     }
 }

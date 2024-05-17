@@ -9,8 +9,8 @@ public static class Search
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
 
         var orderedmoves = moves.OrderByDescending(m => m.Priority).ToList();
-        
-        return orderedmoves;
+
+        return moves;
     }
 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
@@ -73,7 +73,7 @@ public static class Search
                 }
 
                 // Return immediately if a decisive score is found
-                if (score >= 999 || score <= -100)
+                if (score >= 999 || score <= -999)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Best move over 999 in {currentDepth}: {MoveToString(bestMove)}");
@@ -84,8 +84,8 @@ public static class Search
             Console.WriteLine($"Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
         }
         Console.WriteLine($"Best Move: {MoveToString(bestMove)} ");
-        Globals.PrincipalVariation.Add(bestMove);   
-        
+        Globals.PrincipalVariation.Add(bestMove);
+
         return bestMove;
     }
 
@@ -153,7 +153,6 @@ public static class Search
 
         return beta;
     }
-
 
     public static string MoveToString(MoveObject move)
     {
