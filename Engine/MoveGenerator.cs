@@ -84,7 +84,6 @@ public static class MoveGenerator
                         move.Priority = 1;
                         if (chessBoard[move.EndSquare] != 0)
                         {
-                            
                             move.Priority = 2;
                         }
                         if(move.EndSquare == whiteKingPosition)
