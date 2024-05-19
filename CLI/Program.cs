@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "qr6/1b1p1krQ/p2Pp1p1/4PP2/1p1B1n2/3B4/PP3K1P/2R2R2 w - - 1 0";
+string fen = "r3k2r/ppp2Npp/1b5n/4p2b/2B1P2q/BQP2P2/P5PP/RN5K w kq - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -10,7 +10,7 @@ if (String.IsNullOrEmpty(fen))
 Globals globals = Globals.FenReader(fen);
 
 ////////////////////   PERFT And stockfish verification
-//int perftDepth = 5;
+//int perftDepth = 3;
 //RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
@@ -72,10 +72,10 @@ void printBoardWhiteDown(int[] board)
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
-
+    var ranks = new int[] { 8, 7, 6, 5, 4, 3, 2, 1 };
     for (int rank = 0; rank < 8; rank++)
     {
-        Console.Write((rank + 1) + " ");  // Print rank number on the left of the board
+        Console.Write($"{ranks[rank]}  ");  // Print rank number on the left of the board
         foreach (var file in fileNames.Select((value, index) => new { value, index }))
         {
             int index = rank * 8 + file.index;  // Calculate the index for the current position using file index
@@ -92,7 +92,6 @@ void printBoardWhiteDown(int[] board)
     }
     Console.WriteLine();
     //showBoardValuesWhite(board);
-
 }
 
 void printBoardBlackDown(int[] board)
@@ -187,6 +186,7 @@ void VerifyWithStockfish(string fen, int depth)
 
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
+    Console.ReadLine();
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine("******* Engine 6 *******  \n");
     Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
