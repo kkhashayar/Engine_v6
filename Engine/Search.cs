@@ -7,10 +7,10 @@ public static class Search
     public static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-
+     
         var orderedmoves = moves.OrderByDescending(m => m.Priority).ToList();
 
-        return moves;
+        return orderedmoves;
     }
 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
@@ -44,6 +44,7 @@ public static class Search
                     return bestMove;
                 }
 
+
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
                 MoveHandler.MakeMove(shadowBoard, move);
@@ -61,12 +62,12 @@ public static class Search
                 MoveHandler.RestoreStateFromSnapshot();
                 MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
 
-                if (turn == 0 && score > alpha)
+                if (turn == 0 && score > alpha || allPossibleMoves.Count == 1)
                 {
                     alpha = score;
                     bestMove = move;
                 }
-                else if (turn != 0 && score < beta)
+                else if (turn != 0 && score < beta || allPossibleMoves.Count == 1)
                 {
                     beta = score;
                     bestMove = move;
@@ -110,8 +111,6 @@ public static class Search
             {
                 bestScore = score;
 
-                //if (bestScore >= 99) return bestScore;
-
                 if (score >= beta)
                     return beta;
                 if (score > alpha)
@@ -124,7 +123,7 @@ public static class Search
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-
+        
         if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
 
         decimal bestScore = decimal.MaxValue;
@@ -141,8 +140,6 @@ public static class Search
             if (score < bestScore)
             {
                 bestScore = score;
-
-                //if (bestScore < -100) return bestScore;
 
                 if (score <= alpha)
                     return alpha;
