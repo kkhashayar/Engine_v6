@@ -74,7 +74,7 @@ public static class Search
                 }
 
                 // Return immediately if a decisive score is found
-                if (score >= 999 || score <= -999)
+                if (score >= 999 || score <= -100)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Best move over 999 in {currentDepth}: {MoveToString(bestMove)}");
