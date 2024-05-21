@@ -1,7 +1,4 @@
-﻿//using System;
-//using Engine.Tables;
-
-using System;
+﻿using System;
 using Engine.Tables;
 
 namespace Engine
@@ -17,7 +14,7 @@ namespace Engine
             50,   // White Rook
             90,   // White Queen
             500,  // White King
-            10,   // Black Pawn (will use positive values but subtracted for black)
+            10,   // Black Pawn
             30,   // Black Knight
             35,   // Black Bishop
             50,   // Black Rook
@@ -25,128 +22,117 @@ namespace Engine
             500   // Black King
         };
 
-        public static decimal GetByMaterial(int[] chessBoard, int numberOfWhiteMoves, int numberOfBlackMoves)
+        public static decimal GetByMaterial(int[] chessBoard)
         {
-            decimal score = 0;
+            decimal whiteMaterialValue = 0;
+            decimal blackMaterialValue = 0;
+
             for (int i = 0; i < 64; i++)
             {
                 int piece = chessBoard[i];
+                
+                if (piece == 0) continue;
 
                 if (piece == MoveGenerator.whitePawn)
                 {
-                    score += PieceValues[1];
-                    score += Tables.Pawns.GetWhiteSquareWeight(i);
+                    whiteMaterialValue += PieceValues[1];
+                    whiteMaterialValue += Tables.Pawns.GetWhiteSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.whiteKnight)
                 {
-                    score += PieceValues[2];
-                    score += Tables.Knights.GetWhiteSquareWeight(i);
+                    whiteMaterialValue += PieceValues[2];
+                    whiteMaterialValue += Tables.Knights.GetWhiteSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.whiteBishop)
                 {
-                    score += PieceValues[3];
-                    score += Tables.Bishops.GetWhiteSquareWeight(i);
+                    whiteMaterialValue += PieceValues[3];
+                    whiteMaterialValue += Tables.Bishops.GetWhiteSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.whiteRook)
                 {
-                    score += PieceValues[4];
+                    whiteMaterialValue += PieceValues[4];
+                    // Placeholder for potential rook position values
                 }
                 else if (piece == MoveGenerator.whiteQueen)
                 {
-                    score += PieceValues[5];
+                    whiteMaterialValue += PieceValues[5];
+                    // Placeholder for potential queen position values
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
-                    score += PieceValues[6];
+                    whiteMaterialValue += PieceValues[6];
+                    whiteMaterialValue += Tables.Kings.GetWhiteSquareWeight(i);
                     if (Globals.CheckmateWhite)
                     {
-                        score += 1000;
+                        whiteMaterialValue += 1000;
                     }
                 }
+
+                // Black pieces
+
                 else if (piece == MoveGenerator.blackPawn)
                 {
-                    score -= PieceValues[7];
-                    score += Tables.Pawns.GetBlackSquareWeight(i);
+                    blackMaterialValue += PieceValues[7];
+                    blackMaterialValue += Tables.Pawns.GetBlackSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.blackKnight)
                 {
-                    score -= PieceValues[8];
-                    score += Tables.Knights.GetBlackSquareWeight(i);
+                    blackMaterialValue += PieceValues[8];
+                    blackMaterialValue += Tables.Knights.GetBlackSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.blackBishop)
                 {
-                    score -= PieceValues[9];
-                    score += Tables.Bishops.GetBlackSquareWeight(i);
+                    blackMaterialValue += PieceValues[9];
+                    blackMaterialValue += Tables.Bishops.GetBlackSquareWeight(i);
                 }
                 else if (piece == MoveGenerator.blackRook)
                 {
-                    score -= PieceValues[10];
+                    blackMaterialValue += PieceValues[10];
+                    // Placeholder for potential rook position values
                 }
                 else if (piece == MoveGenerator.blackQueen)
                 {
-                    score -= PieceValues[11];
+                    blackMaterialValue += PieceValues[11];
+                    // Placeholder for potential queen position values
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
-                    score -= PieceValues[12];
+                    blackMaterialValue += PieceValues[12];
+                    blackMaterialValue += Tables.Kings.GetBlackSquareWeight(i);
                     if (Globals.CheckmateBlack)
                     {
-                        score -= 1000;
+                        blackMaterialValue -= 1000;
                     }
                 }
             }
 
-            // Penalize hanging pieces
-            score -= GetHangingPiecesPenalty(chessBoard);
-
-            decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 1.03m;
-            score += mobilityScore;
-
-            return score;
+            return whiteMaterialValue - blackMaterialValue;
         }
 
-        private static decimal GetHangingPiecesPenalty(int[] chessBoard)
+        // This is expensive to calculate, but it's a good metric for piece mobility
+        public static decimal GetByPieceMobility(int[] board, int turn)
         {
-            decimal penalty = 0;
-            for (int i = 0; i < 64; i++)
+            var whiteMovesCount = MoveGenerator.GenerateAllMoves(board, 0, true).Count;
+            var blackMovesCount = MoveGenerator.GenerateAllMoves(board, 1, true).Count;
+            if (turn == 0)
             {
-                int piece = chessBoard[i];
-                if (piece != 0)
-                {
-                    string pieceColor = Piece.GetColor(piece);
-                    int opponentColor;
-                    if (pieceColor == "Black")
-                    {
-                        opponentColor = 1; // White's turn
-                    }
-                    else
-                    {
-                        opponentColor = 0; // Black's turn
-                    }
-
-                    var enemyMoves = MoveGenerator.GenerateAllMoves(chessBoard, opponentColor, true);
-                    foreach (var move in enemyMoves)
-                    {
-                        if (move.EndSquare == i)
-                        {
-                            int pieceIndex;
-                            if (pieceColor == "Black")
-                            {
-                                pieceIndex = piece - Piece.BlackPieceOffset + 6; // Adjust for black pieces index
-                            }
-                            else
-                            {
-                                pieceIndex = piece;
-                            }
-                            penalty += PieceValues[pieceIndex];
-                            break;
-                        }
-                    }
-                }
+                return whiteMovesCount - blackMovesCount;
             }
-            return penalty;
+            else
+            {
+                return blackMovesCount - whiteMovesCount;
+            }
         }
 
+        public static decimal EvaluatePosition(int[] board, int turn, int numberOfWhiteMoves, int numberOfBlackMoves)
+        {
+            decimal material = GetByMaterial(board);
+            decimal mobility = GetByPieceMobility(board, turn);
 
+            const decimal MATERIAL_WEIGHT = 1.0m;
+            const decimal MOBILITY_WEIGHT = 0.1m;
+
+            return (material * MATERIAL_WEIGHT) + (mobility * MOBILITY_WEIGHT);
+        }
     }
 }

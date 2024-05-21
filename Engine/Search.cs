@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Engine;
 
@@ -15,6 +16,8 @@ public static class Search
 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
+        
+       
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -22,16 +25,31 @@ public static class Search
         decimal beta = decimal.MaxValue;
 
         MoveObject bestMove = default;
-
+        List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
+       
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
-            List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
-
             if (!allPossibleMoves.Any())
             {
-                if (turn == 0) Globals.CheckmateWhite = true;
-                else Globals.CheckmateBlack = true;
-                return bestMove;
+                if (turn == 0)
+                {
+                    var blackPossiblemoves = GetAllPossibleMoves(board, 1, true);   
+                    if(blackPossiblemoves.Any(mo => mo.EndSquare == Globals.GetWhiteKingSquare(board))) Globals.CheckmateWhite = true;
+                    else
+                    {
+                        Globals.Stalemate = true;   
+                    }
+
+                }
+                else 
+                {
+                    var whitePossiblemoves = GetAllPossibleMoves(board, 0, true);   
+                    if(whitePossiblemoves.Any(mo => mo.EndSquare == Globals.GetBlackKingSquare(board))) Globals.CheckmateBlack = true;
+                    else
+                    {
+                        Globals.Stalemate = true;
+                    }
+                }  
             }
 
             for (int i = 0; i < allPossibleMoves.Count; i++)
@@ -53,28 +71,30 @@ public static class Search
                 if (turn == 0)
                 {
                     score = AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1);
+                    if (score > alpha)
+                    {
+                        alpha = score;
+                        bestMove = move;
+                    }
                 }
                 else
                 {
                     score = AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0);
+                    if (score <= beta)
+                    {
+                        beta = score;
+                        bestMove = move;
+                    }
                 }
 
                 MoveHandler.RestoreStateFromSnapshot();
                 MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
 
-                if (turn == 0 && score > alpha || allPossibleMoves.Count == 1)
-                {
-                    alpha = score;
-                    bestMove = move;
-                }
-                else if (turn != 0 && score < beta || allPossibleMoves.Count == 1)
-                {
-                    beta = score;
-                    bestMove = move;
-                }
+               
+               
 
-                // Return immediately if a decisive score is found
-                if (score >= 999 || score <= -100)
+                //Return immediately if a decisive score is found
+                if (score >= 999 || score <= -999 || allPossibleMoves.Count == 1)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Best move over 999 in {currentDepth}: {MoveToString(bestMove)}");
@@ -93,8 +113,8 @@ public static class Search
 
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-
-        if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
+      
+        if (depth == 0) return Evaluators.EvaluatePosition(board, turn, 0, 0);
 
         decimal bestScore = decimal.MinValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
@@ -123,8 +143,8 @@ public static class Search
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-        
-        if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
+      
+        if (depth == 0) return Evaluators.EvaluatePosition(board, turn, 0, 0);  
 
         decimal bestScore = decimal.MaxValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
