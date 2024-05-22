@@ -2,7 +2,8 @@
 using Engine.External_Resources;
 
 // test fen 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
-string fen = "3r4/7p/2RN2k1/4n2q/P2p4/3P2P1/4p1P1/5QK1 w - - 1 0";
+// rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0
+string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -17,7 +18,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(10);
+TimeSpan maxTime = TimeSpan.FromSeconds(45);
 Run();
 
 void Run()
@@ -34,14 +35,14 @@ void Run()
         if (Globals.Turn == 0)
         {
             
-            move = NegaaxSearch.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
 
         }
         else
         {
              
-            move = NegaaxSearch.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         Globals.Turn ^= 1;
@@ -56,8 +57,8 @@ void Run()
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) break;
 
         Console.WriteLine();
-        Console.Beep(2000, 100);
-        Thread.Sleep(1000);
+        Console.Beep(500, 150);
+        
 
     }
 
