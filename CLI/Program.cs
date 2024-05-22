@@ -2,7 +2,7 @@
 using Engine.External_Resources;
 
 // test fen 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
-string fen = "r3k2r/1ppq1ppp/1p2P3/n3Pb2/1bP2Q2/2N2N1P/PP4P1/2KR1B1R b - - 0 1";
+string fen = "6k1/pp3ppp/4p3/2P3b1/bPP3P1/3K4/P3Q1q1/1R5R b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -16,8 +16,8 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(45);
+int searchDepth = 10;
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 Run();
 
 void Run()

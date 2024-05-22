@@ -80,7 +80,7 @@ public static class Search
                 else
                 {
                     score = AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0);
-                    if (score <= beta)
+                    if (score < beta)
                     {
                         beta = score;
                         bestMove = move;
@@ -91,8 +91,6 @@ public static class Search
                 MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
 
                
-               
-
                 //Return immediately if a decisive score is found
                 if (score >= 999 || score <= -999 || allPossibleMoves.Count == 1)
                 {
