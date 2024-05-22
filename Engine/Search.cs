@@ -8,16 +8,13 @@ public static class Search
     public static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-     
         var orderedmoves = moves.OrderByDescending(m => m.Priority).ToList();
-
         return orderedmoves;
     }
 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
         
-       
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -59,7 +56,7 @@ public static class Search
                 if (stopwatch.Elapsed >= maxTime)
                 {
                     Console.WriteLine("Stopping search due to time limit.");
-                    return bestMove;
+                    break;
                 }
 
 
@@ -129,14 +126,13 @@ public static class Search
             {
                 bestScore = score;
 
-                if (score >= beta)
-                    return beta;
-                if (score > alpha)
-                    alpha = score;
+                if (score >= beta) return beta;
+              
+                if (score > alpha) alpha = score;
             }
         }
 
-        return alpha;
+        return bestScore;
     }
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
@@ -159,14 +155,12 @@ public static class Search
             {
                 bestScore = score;
 
-                if (score <= alpha)
-                    return alpha;
-                if (score < beta)
-                    beta = score;
+                if (score <= alpha) return alpha;
+                if (score < beta) beta = score;
             }
         }
 
-        return beta;
+        return bestScore;
     }
 
     public static string MoveToString(MoveObject move)
