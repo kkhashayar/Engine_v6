@@ -22,18 +22,30 @@ public static class Search
         decimal beta = decimal.MaxValue;
 
         MoveObject bestMove = default;
+        List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+        if (!allPossibleMoves.Any())
         {
-            List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
-
-            if (!allPossibleMoves.Any())
+            if(turn == 0)
             {
-                if (turn == 0) Globals.CheckmateWhite = true;
-                else Globals.CheckmateBlack = true;
+                var blackMoves = GetAllPossibleMoves(board, 1, true);   
+                if(!blackMoves.Any()) Globals.Stalemate = true; 
+                Globals.CheckmateWhite = true;  
                 return bestMove;
             }
 
+            else if(turn == 1)
+            {
+                var whiteMoves = GetAllPossibleMoves(board, 0, true);
+                if(!whiteMoves.Any()) Globals.Stalemate = true;
+                Globals.CheckmateBlack = true;
+                return bestMove;    
+            }
+        }
+
+        for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+        {
+            
             for (int i = 0; i < allPossibleMoves.Count; i++)
             {
                 var move = allPossibleMoves[i];
@@ -59,8 +71,12 @@ public static class Search
                 }
 
                 MoveHandler.RestoreStateFromSnapshot();
-                MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
-
+                //MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
+                if(allPossibleMoves.Count == 1)
+                {
+                    bestMove = move;
+                    return bestMove;    
+                }
                 if (turn == 0 && score > alpha)
                 {
                     alpha = score;
@@ -73,10 +89,10 @@ public static class Search
                 }
 
                 // Return immediately if a decisive score is found
-                if (score >= 999 || score <= -100)
+                if (score >= 99 || score <= -99)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"Best move over 999 in {currentDepth}: {MoveToString(bestMove)}");
+                    Console.WriteLine($"Best move over 99 in {currentDepth}: {MoveToString(bestMove)}");
                     Globals.PrincipalVariation.Add(bestMove);
                     return bestMove;
                 }
