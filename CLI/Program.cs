@@ -3,7 +3,7 @@ using Engine.External_Resources;
 
 // test fen 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
 // rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0
-string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
+string fen = "6k1/pp1q1ppp/2p5/3n4/Q2P4/PPr4P/3NnBPK/5R2 b - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
