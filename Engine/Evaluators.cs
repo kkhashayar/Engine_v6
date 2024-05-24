@@ -51,12 +51,12 @@ namespace Engine
                 else if (piece == MoveGenerator.whiteRook)
                 {
                     whiteMaterialValue += PieceValues[4];
-                    // Placeholder for potential rook position values
+               
                 }
                 else if (piece == MoveGenerator.whiteQueen)
                 {
                     whiteMaterialValue += PieceValues[5];
-                    // Placeholder for potential queen position values
+                    
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
@@ -88,12 +88,12 @@ namespace Engine
                 else if (piece == MoveGenerator.blackRook)
                 {
                     blackMaterialValue += PieceValues[10];
-                    // Placeholder for potential rook position values
+                 
                 }
                 else if (piece == MoveGenerator.blackQueen)
                 {
                     blackMaterialValue += PieceValues[11];
-                    // Placeholder for potential queen position values
+            
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
