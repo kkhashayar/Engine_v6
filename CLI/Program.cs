@@ -17,8 +17,8 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 6;
-TimeSpan maxTime = TimeSpan.FromSeconds(45);
+int searchDepth = 8;
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 Run();
 
 void Run()
