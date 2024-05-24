@@ -109,30 +109,8 @@ namespace Engine
             return whiteMaterialValue - blackMaterialValue;
         }
 
-        // This is expensive to calculate, but it's a good metric for piece mobility
-        public static decimal GetByPieceMobility(int[] board, int turn)
-        {
-            var whiteMovesCount = MoveGenerator.GenerateAllMoves(board, 0, true).Count;
-            var blackMovesCount = MoveGenerator.GenerateAllMoves(board, 1, true).Count;
-            if (turn == 0)
-            {
-                return whiteMovesCount - blackMovesCount;
-            }
-            else
-            {
-                return blackMovesCount - whiteMovesCount;
-            }
-        }
+      
 
-        public static decimal EvaluatePosition(int[] board, int turn, int numberOfWhiteMoves, int numberOfBlackMoves)
-        {
-            decimal material = GetByMaterial(board);
-            decimal mobility = GetByPieceMobility(board, turn);
-
-            const decimal MATERIAL_WEIGHT = 1.0m;
-            const decimal MOBILITY_WEIGHT = 0.1m;
-
-            return (material * MATERIAL_WEIGHT) + (mobility * MOBILITY_WEIGHT);
-        }
+      
     }
 }

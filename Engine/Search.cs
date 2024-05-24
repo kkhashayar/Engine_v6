@@ -109,7 +109,7 @@ public static class Search
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
 
-        if (depth == 0) return Evaluators.EvaluatePosition(board, turn, 0, 0);
+        if (depth == 0) return Evaluators.GetByMaterial(board);
 
         decimal bestScore = decimal.MinValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
@@ -141,7 +141,7 @@ public static class Search
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
 
-        if (depth == 0) return Evaluators.EvaluatePosition(board, turn, 0, 0);
+        if (depth == 0) return Evaluators.GetByMaterial(board);
 
         decimal bestScore = decimal.MaxValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
