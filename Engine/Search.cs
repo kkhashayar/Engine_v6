@@ -24,6 +24,7 @@ public static class Search
         MoveObject bestMove = default;
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
+        // Handling stalemate and checkmates 
         if (!allPossibleMoves.Any())
         {
             if (turn == 0)
@@ -42,19 +43,26 @@ public static class Search
                 return bestMove;
             }
         }
+       
+        if (allPossibleMoves.Count == 1)
+        {
+            bestMove = allPossibleMoves[0];
+            return bestMove;
+        }
 
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
-
+            if (stopwatch.Elapsed >= maxTime)
+            {
+                Console.WriteLine("Max time .");
+                Thread.Sleep(500);
+                return bestMove;
+            }
             for (int i = 0; i < allPossibleMoves.Count; i++)
             {
                 var move = allPossibleMoves[i];
 
-                if (stopwatch.Elapsed >= maxTime)
-                {
-                    Console.WriteLine("Stopping search due to time limit.");
-                    return bestMove;
-                }
+               
 
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
@@ -71,12 +79,8 @@ public static class Search
                 }
 
                 MoveHandler.RestoreStateFromSnapshot();
-                //MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
-                if (allPossibleMoves.Count == 1)
-                {
-                    bestMove = move;
-                    return bestMove;
-                }
+               
+            
                 if (turn == 0 && score > alpha)
                 {
                     alpha = score;
@@ -89,7 +93,7 @@ public static class Search
                 }
 
                 // Return immediately if a decisive score is found
-                if (score >= 99 || score <= -99)
+                if (score >= 109 || score <= -109)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Best move over 99 in {currentDepth}: {MoveToString(bestMove)}");
@@ -126,8 +130,6 @@ public static class Search
             {
                 bestScore = score;
 
-                //if (bestScore >= 99) return bestScore;
-
                 if (score >= beta)
                     return beta;
                 if (score > alpha)
@@ -157,8 +159,6 @@ public static class Search
             if (score < bestScore)
             {
                 bestScore = score;
-
-                //if (bestScore < -100) return bestScore;
 
                 if (score <= alpha)
                     return alpha;

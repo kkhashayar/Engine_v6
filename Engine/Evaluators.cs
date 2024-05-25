@@ -93,7 +93,7 @@ namespace Engine
                 else if (piece == MoveGenerator.blackQueen)
                 {
                     blackMaterialValue += PieceValues[11];
-            
+                    
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
@@ -105,12 +105,8 @@ namespace Engine
                     }
                 }
             }
-
+            
             return whiteMaterialValue - blackMaterialValue;
         }
-
-      
-
-      
     }
 }
