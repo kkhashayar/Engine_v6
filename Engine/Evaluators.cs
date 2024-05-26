@@ -22,7 +22,7 @@ namespace Engine
             500   // Black King
         };
 
-        public static decimal GetByMaterial(int[] chessBoard)
+        public static decimal GetByMaterial(int[] chessBoard, int turn)
         {
             decimal whiteMaterialValue = 0;
             decimal blackMaterialValue = 0;
@@ -30,7 +30,7 @@ namespace Engine
             for (int i = 0; i < 64; i++)
             {
                 int piece = chessBoard[i];
-                
+
                 if (piece == 0) continue;
 
                 if (piece == MoveGenerator.whitePawn)
@@ -51,12 +51,12 @@ namespace Engine
                 else if (piece == MoveGenerator.whiteRook)
                 {
                     whiteMaterialValue += PieceValues[4];
-               
+
                 }
                 else if (piece == MoveGenerator.whiteQueen)
                 {
                     whiteMaterialValue += PieceValues[5];
-                    
+
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
@@ -88,12 +88,12 @@ namespace Engine
                 else if (piece == MoveGenerator.blackRook)
                 {
                     blackMaterialValue += PieceValues[10];
-                 
+
                 }
                 else if (piece == MoveGenerator.blackQueen)
                 {
                     blackMaterialValue += PieceValues[11];
-                    
+
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
@@ -105,8 +105,12 @@ namespace Engine
                     }
                 }
             }
-            
-            return whiteMaterialValue - blackMaterialValue;
+
+            decimal materialValue = whiteMaterialValue - blackMaterialValue;
+        
+
+            if(turn == 0) return materialValue;
+            return -materialValue;
         }
     }
 }

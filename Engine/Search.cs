@@ -43,7 +43,7 @@ public static class Search
                 return bestMove;
             }
         }
-       
+
         if (allPossibleMoves.Count == 1)
         {
             bestMove = allPossibleMoves[0];
@@ -52,17 +52,13 @@ public static class Search
 
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
-            if (stopwatch.Elapsed >= maxTime)
-            {
-                Console.WriteLine("Max time .");
-                Thread.Sleep(500);
-                return bestMove;
-            }
+            if (stopwatch.Elapsed >= maxTime) break;
+           
             for (int i = 0; i < allPossibleMoves.Count; i++)
             {
                 var move = allPossibleMoves[i];
 
-               
+
 
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
@@ -79,8 +75,8 @@ public static class Search
                 }
 
                 MoveHandler.RestoreStateFromSnapshot();
-               
-            
+
+
                 if (turn == 0 && score > alpha)
                 {
                     alpha = score;
@@ -93,13 +89,13 @@ public static class Search
                 }
 
                 // Return immediately if a decisive score is found
-                if (score >= 109 || score <= -109)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"Best move over 99 in {currentDepth}: {MoveToString(bestMove)}");
-                    Globals.PrincipalVariation.Add(bestMove);
-                    return bestMove;
-                }
+                //if (score >= 109 || score <= -109)
+                //{
+                //    Console.WriteLine();
+                //    Console.WriteLine($"Best move over 99 in {currentDepth}: {MoveToString(bestMove)}");
+                //    Globals.PrincipalVariation.Add(bestMove);
+                //    return bestMove;
+                //}
             }
             Console.WriteLine($"Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
         }
@@ -113,7 +109,7 @@ public static class Search
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
 
-        if (depth == 0) return Evaluators.GetByMaterial(board);
+        if (depth == 0) return Evaluators.GetByMaterial(board, turn);
 
         decimal bestScore = decimal.MinValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
@@ -126,6 +122,7 @@ public static class Search
             MoveHandler.RestoreStateFromSnapshot();
             MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
 
+
             if (score > bestScore)
             {
                 bestScore = score;
@@ -137,13 +134,13 @@ public static class Search
             }
         }
 
-        return alpha;
+        return bestScore;
     }
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
 
-        if (depth == 0) return Evaluators.GetByMaterial(board);
+        if (depth == 0) return -Evaluators.GetByMaterial(board, turn);
 
         decimal bestScore = decimal.MaxValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
@@ -167,7 +164,7 @@ public static class Search
             }
         }
 
-        return beta;
+        return bestScore;
     }
 
 
@@ -184,3 +181,5 @@ public static class Search
         return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
 }
+
+

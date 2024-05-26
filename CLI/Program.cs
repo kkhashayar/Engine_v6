@@ -1,9 +1,12 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-// test fen 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
-// rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0
-string fen = "6k1/pp1q1ppp/2p5/3n4/Q2P4/PPr4P/3NnBPK/5R2 b - - 0 1";
+// test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
+// test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0
+
+// test fen: 8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1 
+
+string fen = "rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -18,7 +21,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 8;
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+TimeSpan maxTime = TimeSpan.FromSeconds(10);
 Run();
 
 void Run()
@@ -55,21 +58,16 @@ void Run()
 
 
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) break;
-
+        Thread.Sleep(1000);
         Console.WriteLine();
-        Console.Beep(1000, 150);
-        
-
     }
 
     Console.WriteLine();
     foreach (var pMove in Globals.PrincipalVariation)
     {
-        Console.ResetColor();
-        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write(Search.MoveToString(pMove));
     }
-    Console.WriteLine();
+    Console.ReadKey();
 }
 
 
