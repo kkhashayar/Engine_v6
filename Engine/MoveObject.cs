@@ -15,7 +15,7 @@ public struct MoveObject
     public bool IsPromotion { get; set; }
     public bool IsCheck { get; set; }
     public decimal Priority { get; set; } 
-    public decimal Score { get; set; }
+    public double Score { get; set; }
 
     public static MoveObject Empty => new MoveObject
     {

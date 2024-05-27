@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security;
 
 namespace Engine;
 
@@ -6,11 +7,7 @@ public static class Search
 {
     public static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
-        var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-
-        var orderedmoves = moves.OrderByDescending(m => m.Priority).ToList();
-
-        return orderedmoves;
+        return MoveGenerator.GenerateAllMoves(board, turn, filter).OrderByDescending(m => m.Priority).ToList();
     }
 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
@@ -18,13 +15,13 @@ public static class Search
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        decimal alpha = decimal.MinValue;
-        decimal beta = decimal.MaxValue;
+        double alpha = double.NegativeInfinity;
+        double beta = double.PositiveInfinity;
 
         MoveObject bestMove = default;
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        // Handling stalemate and checkmates 
+       
         if (!allPossibleMoves.Any())
         {
             if (turn == 0)
@@ -34,7 +31,6 @@ public static class Search
                 Globals.CheckmateWhite = true;
                 return bestMove;
             }
-
             else if (turn == 1)
             {
                 var whiteMoves = GetAllPossibleMoves(board, 0, true);
@@ -42,6 +38,12 @@ public static class Search
                 Globals.CheckmateBlack = true;
                 return bestMove;
             }
+        }
+        // Two kings stalemate check
+        bool onlyKings = board.All(p => p == MoveGenerator.whiteKing || p == MoveGenerator.blackKing || p == MoveGenerator.None) && board.Contains(MoveGenerator.whiteKing) && board.Contains(MoveGenerator.blackKing);
+        if (onlyKings)
+        {
+            Globals.Stalemate = true; 
         }
 
         if (allPossibleMoves.Count == 1)
@@ -52,121 +54,166 @@ public static class Search
 
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
-            if (stopwatch.Elapsed >= maxTime) break;
-           
-            for (int i = 0; i < allPossibleMoves.Count; i++)
+            foreach (var move in allPossibleMoves)
             {
-                var move = allPossibleMoves[i];
-
-
+                if (stopwatch.Elapsed >= maxTime)
+                {
+                    Globals.PrincipalVariation.Add(bestMove);
+                    break;
+                }
 
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
                 MoveHandler.MakeMove(shadowBoard, move);
 
-                decimal score;
+                double score;
+    
+
                 if (turn == 0)
                 {
                     score = AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1);
+
+                    if (score > alpha)
+                    {
+                        alpha = score;
+                        bestMove = move;
+                    }
+
+                    if (score >= beta)
+                    {
+                        Console.WriteLine($"Pruning: Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
+                        Globals.PrincipalVariation.Add(bestMove);   
+                        return bestMove;
+                    }
                 }
                 else
                 {
                     score = AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0);
+
+                    if (score < beta)
+                    {
+                        beta = score;
+                        bestMove = move;
+                    }
+
+                    if (score <= alpha)
+                    {
+                        Console.WriteLine($"Pruning: Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
+                        Globals.PrincipalVariation.Add(bestMove);
+                        return bestMove; 
+                    }
                 }
+                
+                MoveHandler.RestoreStateFromSnapshot(); 
 
-                MoveHandler.RestoreStateFromSnapshot();
-
-
-                if (turn == 0 && score > alpha)
-                {
-                    alpha = score;
-                    bestMove = move;
-                }
-                else if (turn != 0 && score < beta)
-                {
-                    beta = score;
-                    bestMove = move;
-                }
-
-                // Return immediately if a decisive score is found
-                //if (score >= 109 || score <= -109)
-                //{
-                //    Console.WriteLine();
-                //    Console.WriteLine($"Best move over 99 in {currentDepth}: {MoveToString(bestMove)}");
-                //    Globals.PrincipalVariation.Add(bestMove);
-                //    return bestMove;
-                //}
             }
             Console.WriteLine($"Best Move: {MoveToString(bestMove)} Depth: {currentDepth}");
         }
-        Console.WriteLine($"Best Move: {MoveToString(bestMove)} ");
+        Console.WriteLine($"Final Best Move: {MoveToString(bestMove)}");
         Globals.PrincipalVariation.Add(bestMove);
 
         return bestMove;
     }
 
-
-    private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
+    private static double AlphaBetaMax(int depth, double alpha, double beta, int[] board, int turn)
     {
+        var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        if (depth == 0) return Evaluators.GetByMaterial(board, turn);
+        //if (depth == 0)
+        //{
+        //    Evaluators.GetGameStageAndPositionalFacts(board, turn, allPossibleMoves.Count);
+        //    var materialEvaluation = Evaluators.GetByMaterial();
+        //    var mobilityEvaluation = Evaluators.GetByMobility();
+        //    var positionalWeight = Evaluators.whitePositionalWeight - Evaluators.blackPositionalWeight;
 
-        decimal bestScore = decimal.MinValue;
-        foreach (var move in GetAllPossibleMoves(board, turn, true))
+        //    // Define weights
+        //    double materialWeight = 1.0;
+        //    double mobilityWeight = 0.3;
+        //    double positionalWeightFactor = 0.2;
+
+        //    // Calculate total evaluation with weights
+        //    return (double)(materialWeight * materialEvaluation +
+        //                 mobilityWeight * mobilityEvaluation +
+        //                 positionalWeightFactor * positionalWeight);
+        //}
+
+        if(depth == 0)
+        {
+            return Evaluators.GetByMaterial();  
+        }
+
+        double bestScore = double.NegativeInfinity;
+        foreach (var move in allPossibleMoves)
         {
             int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
             MoveHandler.MakeMove(shadowBoard, move);
 
-            decimal score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
+            double score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
             MoveHandler.RestoreStateFromSnapshot();
-            MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
-
 
             if (score > bestScore)
             {
                 bestScore = score;
-
                 if (score >= beta)
-                    return beta;
+                    return beta; // Beta cutoff
                 if (score > alpha)
-                    alpha = score;
+                    alpha = score; // Alpha update
             }
         }
-
         return bestScore;
     }
 
-    private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
+    private static double AlphaBetaMin(int depth, double alpha, double beta, int[] board, int turn)
     {
+        var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        if (depth == 0) return -Evaluators.GetByMaterial(board, turn);
+        //if (depth == 0)
+        //{
+        //    Evaluators.GetGameStageAndPositionalFacts(board, turn, allPossibleMoves.Count);
+        //    var materialEvaluation = Evaluators.GetByMaterial();
+        //    var mobilityEvaluation = Evaluators.GetByMobility();
+        //    var positionalWeight = Evaluators.whitePositionalWeight - Evaluators.blackPositionalWeight;
 
-        decimal bestScore = decimal.MaxValue;
-        foreach (var move in GetAllPossibleMoves(board, turn, true))
+        //    // Define weights
+        //    double materialWeight = 1.0;
+        //    double mobilityWeight = 0.3;
+        //    double positionalWeightFactor = 0.2;
+
+        //    // Calculate total evaluation with weights
+        //    return -(double)(materialWeight * materialEvaluation +
+        //                 mobilityWeight * mobilityEvaluation +
+        //                 positionalWeightFactor * positionalWeight);
+        //}
+
+
+        if(depth == 0)
+        {
+            return -Evaluators.GetByMaterial();
+        }
+
+
+        double bestScore = double.PositiveInfinity;
+        foreach (var move in allPossibleMoves)
         {
             int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
             MoveHandler.MakeMove(shadowBoard, move);
 
-            decimal score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
+            double score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
             MoveHandler.RestoreStateFromSnapshot();
-            MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
 
             if (score < bestScore)
             {
                 bestScore = score;
-
                 if (score <= alpha)
-                    return alpha;
+                    return alpha; // Alpha cutoff
                 if (score < beta)
-                    beta = score;
+                    beta = score; // Beta update
             }
         }
-
         return bestScore;
     }
-
 
     public static string MoveToString(MoveObject move)
     {
@@ -174,12 +221,8 @@ public static class Search
         string castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
 
         if (!string.IsNullOrEmpty(castle))
-        {
             return castle;
-        }
 
-        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
+        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion}";
     }
 }
-
-

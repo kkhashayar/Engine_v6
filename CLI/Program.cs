@@ -20,7 +20,7 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 8;
+int searchDepth = 10;
 TimeSpan maxTime = TimeSpan.FromSeconds(10);
 Run();
 
@@ -37,14 +37,11 @@ void Run()
         MoveObject move = new MoveObject();
         if (Globals.Turn == 0)
         {
-            
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
-
         }
         else
-        {
-             
+        {    
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
@@ -53,15 +50,19 @@ void Run()
         Console.WriteLine();
 
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
-      
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
 
-
-        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) break;
-        Thread.Sleep(1000);
         Console.WriteLine();
-    }
+        Console.Beep(2000, 100);
 
+        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
+        {
+            running = false;
+            break;
+        }
+
+    }
+    
     Console.WriteLine();
     foreach (var pMove in Globals.PrincipalVariation)
     {

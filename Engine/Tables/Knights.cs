@@ -2,7 +2,7 @@
 {
     public static class Knights
     {
-        public static readonly int[] WhiteKnightTable = new int[64]
+        public static readonly double[] WhiteKnightTable = new double[64]
         {
             -50, -40, -30, -30, -30, -30, -40, -50,
             -40, -20, 0, 0, 0, 0, -20, -40,
@@ -14,7 +14,7 @@
             -50, -40, -30, -30, -30, -30, -40, -50
         };
 
-        public static readonly int[] BlackKnightTable = new int[64]
+        public static readonly double[] BlackKnightTable = new double[64]
         {
             -50, -40, -30, -30, -30, -30, -40, -50,
             -40, -20, 0, 5, 5, 0, -20, -40,
@@ -26,12 +26,12 @@
             -50, -40, -30, -30, -30, -30, -40, -50
         };
 
-        public static int GetWhiteSquareWeight(int square)
+        public static double GetWhiteSquareWeight(int square)
         {
             return WhiteKnightTable[square];
         }
 
-        public static int GetBlackSquareWeight(int square)
+        public static double GetBlackSquareWeight(int square)
         {
             return BlackKnightTable[square];
         }

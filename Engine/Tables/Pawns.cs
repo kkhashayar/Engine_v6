@@ -4,7 +4,7 @@ namespace Engine.Tables;
 
 public static class Pawns
 {
-    public static readonly int[] WhitePawnTable = new int[64]
+    public static readonly double[] WhitePawnTable = new double[64]
     {
         0, 0, 0, 0, 0, 0, 0, 0,
         5, 5, 5, 5, 5, 5, 5, 5,
@@ -17,7 +17,7 @@ public static class Pawns
     };
 
 
-    public static readonly int[] BlackPawnTable = new int[64]
+    public static readonly double[] BlackPawnTable = new double[64]
     {
          0,  0,  0,  0,  0,  0,  0,  0,
         -1, -1, -1, -1, -1, -1, -1, -1,
@@ -29,12 +29,12 @@ public static class Pawns
          0,  0,  0,  0,  0,  0,  0,  0
     };
 
-    public static int GetWhiteSquareWeight(int square)
+    public static double GetWhiteSquareWeight(int square)
     {
         return WhitePawnTable[square];
     }
 
-    public static int GetBlackSquareWeight(int square)
+    public static double GetBlackSquareWeight(int square)
     {
         return BlackPawnTable[square];
     }
