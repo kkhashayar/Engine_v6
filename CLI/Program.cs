@@ -1,7 +1,12 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "r3k2r/ppp2Npp/1b5n/4p2b/2B1P2q/BQP2P2/P5PP/RN5K w kq - 1 0";
+// test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1
+// test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0
+
+// test fen: 8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1 
+
+string fen = "8/3k4/8/3K1R2/8/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,8 +20,8 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 8;
-TimeSpan maxTime = TimeSpan.FromSeconds(60);
+int searchDepth = 10;
+TimeSpan maxTime = TimeSpan.FromSeconds(10);
 Run();
 
 void Run()
@@ -32,14 +37,11 @@ void Run()
         MoveObject move = new MoveObject();
         if (Globals.Turn == 0)
         {
-            
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
-
         }
         else
-        {
-             
+        {    
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
@@ -53,18 +55,20 @@ void Run()
         Console.WriteLine();
         Console.Beep(2000, 100);
 
-        if (Globals.CheckmateWhite || Globals.CheckmateBlack) break;
+        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
+        {
+            running = false;
+            break;
+        }
 
     }
-
+    
     Console.WriteLine();
     foreach (var pMove in Globals.PrincipalVariation)
     {
-        Console.ResetColor();
-        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write(Search.MoveToString(pMove));
     }
-    Console.WriteLine();
+    Console.ReadKey();
 }
 
 
