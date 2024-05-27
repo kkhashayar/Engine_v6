@@ -15,8 +15,8 @@ public static class Search
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        double alpha = double.NegativeInfinity;
-        double beta = double.PositiveInfinity;
+        decimal alpha = decimal.MinValue;
+        decimal beta = decimal.MaxValue;
 
         MoveObject bestMove = default;
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
@@ -66,7 +66,7 @@ public static class Search
                 MoveHandler.RegisterStaticStates();
                 MoveHandler.MakeMove(shadowBoard, move);
 
-                double score;
+                decimal score;
     
 
                 if (turn == 0)
@@ -115,24 +115,25 @@ public static class Search
         return bestMove;
     }
 
-    private static double AlphaBetaMax(int depth, double alpha, double beta, int[] board, int turn)
+    private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
         var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
 
         if(depth == 0)
         {
-            return Evaluators.GetByMaterial(board, turn, allPossibleMoves.Count);
+            
+            return Evaluators.GetByMaterial(board, 0,0);
         }
 
-        double bestScore = double.NegativeInfinity;
+        decimal bestScore = decimal.MinValue;
         foreach (var move in allPossibleMoves)
         {
             int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
             MoveHandler.MakeMove(shadowBoard, move);
 
-            double score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
+            decimal score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
             MoveHandler.RestoreStateFromSnapshot();
 
             if (score > bestScore)
@@ -147,25 +148,25 @@ public static class Search
         return bestScore;
     }
 
-    private static double AlphaBetaMin(int depth, double alpha, double beta, int[] board, int turn)
+    private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
         var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
         if(depth == 0)
         {
             
-            return -Evaluators.GetByMaterial(board, turn, allPossibleMoves.Count);   
+            return -Evaluators.GetByMaterial(board, 0,0);   
         }
 
 
-        double bestScore = double.PositiveInfinity;
+        decimal bestScore = decimal.MinValue;
         foreach (var move in allPossibleMoves)
         {
             int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
             MoveHandler.MakeMove(shadowBoard, move);
 
-            double score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
+            decimal score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, turn ^ 1);
             MoveHandler.RestoreStateFromSnapshot();
 
             if (score < bestScore)

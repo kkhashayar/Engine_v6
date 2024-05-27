@@ -1,98 +1,72 @@
-﻿//using System.Diagnostics.CodeAnalysis;
+﻿using System;
 
-//namespace Engine;
-
-//public static class Evaluators
-//{
-
-//    public static double GetByMaterial(int[] board, int turn, int currentSideNumberOfPossibleMoves)
-//    {
-//        double score = 0;
-//        var opponentSideNumberOfPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn ^ 1).Count;
-
-//        if(turn == 0)
-//        {
-//            for (int i = 0; i < 64; i++)
-//            {
-//                int piece = board[i];
-//                if (piece == 0) continue;
-//                score += GetPieceValue(piece);
-//            }
-//            score *= (currentSideNumberOfPossibleMoves - opponentSideNumberOfPossibleMoves);
-
-//            return score;   
-//        }
-
-
-//        for (int i = 0; i < 64; i++)
-//        {
-//            int piece = board[i];
-//            if (piece == 0) continue;
-//            score += GetPieceValue(piece);
-//        }
-//        score *= (currentSideNumberOfPossibleMoves - opponentSideNumberOfPossibleMoves);
-
-//        return score;
-
-
-//    }
-
-//    private static double GetPieceValue(int piece)
-//    {
-//        if (piece == MoveGenerator.whitePawn) return 1;
-//        else if (piece == MoveGenerator.blackKnight) return 3; 
-//        else if (piece == MoveGenerator.whiteBishop) return 3.1;
-//        else if (piece == MoveGenerator.blackRook) return 5;
-//        else if (piece == MoveGenerator.whiteQueen) return 9;
-//        else if (piece == MoveGenerator.blackKing) return 100;
-
-//        else if (piece == MoveGenerator.blackPawn) return -1;
-//        else if (piece == MoveGenerator.whiteKnight) return -3;
-//        else if (piece == MoveGenerator.blackBishop) return -3.1;
-//        else if (piece == MoveGenerator.whiteRook) return -5;
-//        else if (piece == MoveGenerator.blackQueen) return -9;
-//        else if (piece == MoveGenerator.whiteKing) return -100;
-
-//        else return 0;
-//    }
-//}
-
-using Engine;
-
-public static class Evaluators
+namespace Engine
 {
-    public static double GetByMaterial(int[] board, int turn, int currentSideNumberOfPossibleMoves)
+    internal static class Evaluators
     {
-        double score = 0;
-        var opponentSideNumberOfPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn ^ 1).Count;
-        for (int i = 0; i < 64; i++)
+        public static decimal GetByMaterial(int[] chessBoard, int numberOfWhiteMoves, int numberOfBlackMoves)
         {
-            int piece = board[i];
-            if (piece == 0) continue;
-            score += GetPieceValue(piece);
+            decimal score = 0;
+            for (int i = 0; i < 64; i++)
+            {
+                int piece = chessBoard[i];
+
+                if (piece == MoveGenerator.whitePawn)
+                {
+                    score += 1; // - Tables.Pawns.WhitePawnTable[i];
+                }
+                else if (piece == MoveGenerator.whiteKnight)
+                {
+                    score += 3;
+                }
+                else if (piece == MoveGenerator.whiteBishop)
+                {
+                    score += 3.2m;
+                }
+                else if (piece == MoveGenerator.whiteRook)
+                {
+                    score += 5;
+                }
+                else if (piece == MoveGenerator.whiteQueen)
+                {
+                    score += 9;
+                }
+                else if (piece == MoveGenerator.whiteKing)
+                {
+                    score += 0.5m;
+                }
+                else if (piece == MoveGenerator.blackPawn)
+                {
+                    score -= 1; // - Tables.Pawns.GetBlackSquareWeight(i);
+                }
+                else if (piece == MoveGenerator.blackKnight)
+                {
+                    score -= 3;
+                }
+                else if (piece == MoveGenerator.blackBishop)
+                {
+                    score -= 3.2m;
+                }
+                else if (piece == MoveGenerator.blackRook)
+                {
+                    score -= 5;
+                }
+                else if (piece == MoveGenerator.blackQueen)
+                {
+                    score -= 9;
+                }
+                else if (piece == MoveGenerator.blackKing)
+                {
+                    score -= 0.5m;
+                }
+            }
+            decimal mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 0.01m;
+            score += mobilityScore;
+            return score;
         }
 
-      
-        double mobilityFactor = 0.1; 
-        score += mobilityFactor * (currentSideNumberOfPossibleMoves - opponentSideNumberOfPossibleMoves);
+    
+        
 
-        return score;
     }
-    private static double GetPieceValue(int piece)
-    {
-        if (piece == MoveGenerator.whitePawn) return 1;
-        else if (piece == MoveGenerator.whiteKnight) return 3;
-        else if (piece == MoveGenerator.whiteBishop) return 3.1;
-        else if (piece == MoveGenerator.whiteRook) return 5;
-        else if (piece == MoveGenerator.whiteQueen) return 9;
-        else if (piece == MoveGenerator.whiteKing) return 100;
-        else if (piece == MoveGenerator.blackPawn) return -1;
-        else if (piece == MoveGenerator.blackKnight) return -3;
-        else if (piece == MoveGenerator.blackBishop) return -3.1;
-        else if (piece == MoveGenerator.blackRook) return -5;
-        else if (piece == MoveGenerator.blackQueen) return -9;
-        else if (piece == MoveGenerator.blackKing) return -100;
-        else return 0;  // Default case if no known piece is matched
-    }
-
 }
