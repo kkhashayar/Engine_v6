@@ -71,7 +71,7 @@ public static class Search
                 }
 
                 MoveHandler.RestoreStateFromSnapshot();
-                //MoveHandler.UndoMove(shadowBoard, move, move.pieceType, shadowBoard[move.EndSquare], move.PromotionPiece);
+
                 if (allPossibleMoves.Count == 1)
                 {
                     bestMove = move;
@@ -108,11 +108,12 @@ public static class Search
 
     private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-
+        var moves = GetAllPossibleMoves(board, turn, true);
         if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
 
         decimal bestScore = decimal.MinValue;
-        foreach (var move in GetAllPossibleMoves(board, turn, true))
+        
+        foreach (var move in moves)
         {
             int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
@@ -125,9 +126,6 @@ public static class Search
             if (score > bestScore)
             {
                 bestScore = score;
-
-                //if (bestScore >= 99) return bestScore;
-
                 if (score >= beta)
                     return beta;
                 if (score > alpha)
@@ -140,7 +138,7 @@ public static class Search
 
     private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
     {
-
+        var moves = GetAllPossibleMoves(board, turn, true); 
         if (depth == 0) return Evaluators.GetByMaterial(board, 0, 0);
 
         decimal bestScore = decimal.MaxValue;
