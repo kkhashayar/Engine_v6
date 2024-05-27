@@ -36,7 +36,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.whiteRook)
                 {
-                    score += 5;
+                    score += 5 + Tables.Rooks.GetWhiteSquareWeight(i);
                     numbersOfWhitePieces++;
                 }
                 else if (piece == MoveGenerator.whiteQueen)
@@ -65,7 +65,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackRook)
                 {
-                    score -= 5;
+                    score -= 5 - Tables.Rooks.GetBlackSquareWeight(i);
                     numbersOfBlackPieces++;
                 }
                 else if (piece == MoveGenerator.blackQueen)
@@ -80,7 +80,7 @@ namespace Engine
                 }
             }
             decimal pieceCountFactor = 0.1m; // Adjust this value based on testing
-            score += pieceCountFactor * (numberOfWhitePieces - numbersOfBlackPieces);
+            score += pieceCountFactor * (numbersOfWhitePieces - numbersOfBlackPieces);
             return score;
         }
     }
