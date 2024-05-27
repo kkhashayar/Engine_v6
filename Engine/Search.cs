@@ -119,27 +119,10 @@ public static class Search
     {
         var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        //if (depth == 0)
-        //{
-        //    Evaluators.GetGameStageAndPositionalFacts(board, turn, allPossibleMoves.Count);
-        //    var materialEvaluation = Evaluators.GetByMaterial();
-        //    var mobilityEvaluation = Evaluators.GetByMobility();
-        //    var positionalWeight = Evaluators.whitePositionalWeight - Evaluators.blackPositionalWeight;
-
-        //    // Define weights
-        //    double materialWeight = 1.0;
-        //    double mobilityWeight = 0.3;
-        //    double positionalWeightFactor = 0.2;
-
-        //    // Calculate total evaluation with weights
-        //    return (double)(materialWeight * materialEvaluation +
-        //                 mobilityWeight * mobilityEvaluation +
-        //                 positionalWeightFactor * positionalWeight);
-        //}
 
         if(depth == 0)
         {
-            return Evaluators.GetByMaterial();  
+            return Evaluators.GetByMaterial(board, turn, allPossibleMoves.Count);
         }
 
         double bestScore = double.NegativeInfinity;
@@ -168,28 +151,10 @@ public static class Search
     {
         var allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        //if (depth == 0)
-        //{
-        //    Evaluators.GetGameStageAndPositionalFacts(board, turn, allPossibleMoves.Count);
-        //    var materialEvaluation = Evaluators.GetByMaterial();
-        //    var mobilityEvaluation = Evaluators.GetByMobility();
-        //    var positionalWeight = Evaluators.whitePositionalWeight - Evaluators.blackPositionalWeight;
-
-        //    // Define weights
-        //    double materialWeight = 1.0;
-        //    double mobilityWeight = 0.3;
-        //    double positionalWeightFactor = 0.2;
-
-        //    // Calculate total evaluation with weights
-        //    return -(double)(materialWeight * materialEvaluation +
-        //                 mobilityWeight * mobilityEvaluation +
-        //                 positionalWeightFactor * positionalWeight);
-        //}
-
-
         if(depth == 0)
         {
-            return -Evaluators.GetByMaterial();
+            
+            return -Evaluators.GetByMaterial(board, turn, allPossibleMoves.Count);   
         }
 
 
