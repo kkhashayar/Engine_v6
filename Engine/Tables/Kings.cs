@@ -2,36 +2,36 @@
 {
     public static class Kings
     {
-        public static readonly double[] WhiteKingTableEndgame = new double[64]
+        public static readonly int[] WhiteKingTableEndgame = new int[64]
         {
-            -3.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -3.0,
-            -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  0.0,  0.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  1.0,  1.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  1.0,  1.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  0.0,  0.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0,
-            -3.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -3.0
+            -3, -2, -2, -2, -2, -2, -2, -3,
+            -2, -1, -1, -1, -1, -1, -1, -2,
+            -2, -1,  0,  0,  0,  0, -1, -2,
+            -2, -1,  0,  1,  1,  0, -1, -2,
+            -2, -1,  0,  1,  1,  0, -1, -2,
+            -2, -1,  0,  0,  0,  0, -1, -2,
+            -2, -1, -1, -1, -1, -1, -1, -2,
+            -3, -2, -2, -2, -2, -2, -2, -3
         };
 
-        public static readonly double[] BlackKingTableEndgame = new double[64]
+        public static readonly int[] BlackKingTableEndgame = new int[64]
         {
-            -3.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -3.0,
-            -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  0.0,  0.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  1.0,  1.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  1.0,  1.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0,  0.0,  0.0,  0.0,  0.0, -1.0, -2.0,
-            -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0,
-            -3.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -3.0
+            -3, -2, -2, -2, -2, -2, -2, -3,
+            -2, -1, -1, -1, -1, -1, -1, -2,
+            -2, -1,  0,  0,  0,  0, -1, -2,
+            -2, -1,  0,  1,  1,  0, -1, -2,
+            -2, -1,  0,  1,  1,  0, -1, -2,
+            -2, -1,  0,  0,  0,  0, -1, -2,
+            -2, -1, -1, -1, -1, -1, -1, -2,
+            -3, -2, -2, -2, -2, -2, -2, -3
         };
 
-        public static double GetWhiteSquareWeight(int square)
+        public static int GetWhiteSquareWeight(int square)
         {
             return WhiteKingTableEndgame[square];
         }
 
-        public static double GetBlackSquareWeight(int square)
+        public static int GetBlackSquareWeight(int square)
         {
             return BlackKingTableEndgame[square];
         }
