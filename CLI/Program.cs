@@ -6,7 +6,7 @@ using Engine.External_Resources;
 
 // test fen: 8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1 
 
-string fen = "rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0";
+string fen = "8/3k4/8/3K1R2/8/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

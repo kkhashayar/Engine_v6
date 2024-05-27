@@ -4,8 +4,11 @@ namespace Engine
 {
     internal static class Evaluators
     {
+
         public static decimal GetByMaterial(int[] chessBoard)
         {
+
+
             int numberOfWhitePieces = 0;
             int numberOfBlackPieces = 0;
 
