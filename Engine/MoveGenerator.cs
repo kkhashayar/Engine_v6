@@ -16,6 +16,8 @@ public static class MoveGenerator
     public static readonly int blackBishop = Piece.Bishop + Piece.BlackPieceOffset;
     public static readonly int blackPawn = Piece.Pawn + Piece.BlackPieceOffset;
 
+
+
     public static readonly int None = Piece.None;   
 
     public static bool WhiteKingIsCheck { get; set; } = false;
@@ -48,6 +50,7 @@ public static class MoveGenerator
                         move.Priority = 1;
                         if (chessBoard[move.EndSquare] != 0) 
                         {
+                            move.IsCapture = true;
                             move.Priority = 1.2m;
                         }  
                         if(move.EndSquare == blackKingPosition)

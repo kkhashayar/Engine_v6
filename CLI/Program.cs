@@ -8,7 +8,7 @@ using Engine.External_Resources;
 
 // test fen: 8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1 
 
-string fen = "rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0";
+string fen = "8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -22,8 +22,8 @@ Globals globals = Globals.FenReader(fen);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 10;
-TimeSpan maxTime = TimeSpan.FromSeconds(10);
+int searchDepth = 20;
+TimeSpan maxTime = TimeSpan.FromSeconds(90);
 Run();
 
 void Run()
@@ -39,12 +39,12 @@ void Run()
         MoveObject move = new MoveObject();
         if (Globals.Turn == 0)
         {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            move = Search.MinMax(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         else
         {    
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+            move = Search.MinMax(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
         Globals.Turn ^= 1;
