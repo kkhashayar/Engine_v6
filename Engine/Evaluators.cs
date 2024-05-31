@@ -1,103 +1,90 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 namespace Engine;
 
 internal static class Evaluators
 {
     public static int numbersOfWhitePieces { get; set; }
     public static int numbersOfBlackPieces { get; set; }
+    public static int whiteStaticScore { get; set; }
+    public static int blackStaticScore { get; set; }
 
-    public static decimal GetByMaterial(int[] chessBoard)
+    public static decimal GetByMaterial(int[] board, int turn)
     {
+
         numbersOfWhitePieces = 0;
         numbersOfBlackPieces = 0;
+        whiteStaticScore = 0;
+        blackStaticScore = 0;
+
 
         decimal score = 0;
         for (int i = 0; i < 64; i++)
         {
-            int piece = chessBoard[i];
-
+            int piece = board[i];
+            if (piece == 0) continue;
             if (piece == MoveGenerator.whitePawn)
             {
-                score += 1 + Tables.Pawns.GetWhiteSquareWeight(i);
+                whiteStaticScore += 1;
                 numbersOfWhitePieces++;
             }
             else if (piece == MoveGenerator.whiteKnight)
             {
-                score += 3 + Tables.Knights.GetWhiteSquareWeight(i);
+                whiteStaticScore += 3;
                 numbersOfWhitePieces++;
             }
             else if (piece == MoveGenerator.whiteBishop)
             {
-                score += 3.2m + Tables.Bishops.GetWhiteSquareWeight(i);
+                whiteStaticScore += 4;
                 numbersOfWhitePieces++;
             }
             else if (piece == MoveGenerator.whiteRook)
             {
-                score += 5 + Tables.Rooks.GetWhiteSquareWeight(i);
+                whiteStaticScore += 5;
                 numbersOfWhitePieces++;
             }
             else if (piece == MoveGenerator.whiteQueen)
             {
-                score += 9;
+                whiteStaticScore += 9;
                 numbersOfWhitePieces++;
             }
             else if (piece == MoveGenerator.whiteKing)
             {
-                score += 999999 + Tables.Kings.GetWhiteSquareWeight(i);
+                whiteStaticScore += 0;
             }
             else if (piece == MoveGenerator.blackPawn)
             {
-                score -= 1 - Tables.Pawns.GetBlackSquareWeight(i);
+                blackStaticScore += 1;
                 numbersOfBlackPieces++;
             }
             else if (piece == MoveGenerator.blackKnight)
             {
-                score -= 3 - Tables.Knights.GetBlackSquareWeight(i);
+                blackStaticScore += 3;
                 numbersOfBlackPieces++;
             }
             else if (piece == MoveGenerator.blackBishop)
             {
-                score -= 3.2m - Tables.Bishops.GetBlackSquareWeight(i);
+                blackStaticScore += 4;
                 numbersOfBlackPieces++;
             }
             else if (piece == MoveGenerator.blackRook)
             {
-                score -= 5 - Tables.Rooks.GetBlackSquareWeight(i);
+                blackStaticScore += 5;
                 numbersOfBlackPieces++;
             }
             else if (piece == MoveGenerator.blackQueen)
             {
-                score -= 9;
+                blackStaticScore += 9;
                 numbersOfBlackPieces++;
             }
             else if (piece == MoveGenerator.blackKing)
             {
-                score -= 999999 - Tables.Kings.GetBlackSquareWeight(i);
+                blackStaticScore += 0;
             }
         }
-        decimal pieceCountFactor = 0.6m; // Adjust this value based on testing
-        score += pieceCountFactor * (numbersOfWhitePieces - numbersOfBlackPieces);
-        return score;
-    }
-
-    // Evaluate the move by considering immediate material changes
-    public static decimal EvaluateMoveImpact(int[] chessBoard, MoveObject move)
-    {
-         int pieceMoving = chessBoard[move.StartSquare];
-         int pieceCaptured = chessBoard[move.EndSquare];
-
-        decimal materialGainLoss = 0;
-
-        // Consider the value of captured piece
-        if (pieceCaptured != 0)
-        {
-            materialGainLoss += GetPieceValue(pieceCaptured);
-        }
-
-        // Consider the loss if the piece is captured
-        materialGainLoss -= GetPieceValue(pieceMoving);
-
-        return materialGainLoss;
+       if(turn == 0) return whiteStaticScore - blackStaticScore;
+       return blackStaticScore - whiteStaticScore;
     }
 
 

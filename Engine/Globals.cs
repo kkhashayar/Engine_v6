@@ -361,5 +361,16 @@ public sealed class Globals
             '\u2655','\u2654','\u265F','\u265E',
             '\u265D','\u265C','\u265B','\u265A'
     };
+    public static string MoveToString(MoveObject move)
+    {
+        string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
+        string castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
 
+        if (!string.IsNullOrEmpty(castle))
+        {
+            return castle;
+        }
+        if (move.StartSquare == move.EndSquare) return 0.ToString();
+        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
+    }
 }
