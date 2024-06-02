@@ -1,8 +1,9 @@
-﻿namespace Engine;
+﻿using System.Text;
+
+namespace Engine;
 
 public sealed class Globals
 {
-
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
     public static bool WhiteKingRookMoved { get; set; }
@@ -30,6 +31,7 @@ public sealed class Globals
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
     public static int InitialTurn { get; set; }
+    public static string CurrentFEN { get; set; }
 
     public int[] ChessBoard =
     {
@@ -150,6 +152,12 @@ public sealed class Globals
 
     public static Globals FenReader(string fen)
     {
+        
+        if (String.IsNullOrEmpty(fen))
+        {
+            fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        }
+
         var globals = new Globals();
         string[] parts = fen.Split(' ');
 
@@ -362,4 +370,95 @@ public sealed class Globals
             '\u265D','\u265C','\u265B','\u265A'
     };
 
+    // Only in use with Old cli version
+    public static string MoveToString(MoveObject move)
+    {
+        string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
+        string castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
+
+        if (!string.IsNullOrEmpty(castle))
+        {
+            return castle;
+        }
+        if (move.StartSquare == move.EndSquare) return 0.ToString();
+        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
+    }
+
+    // In use with UCI protocol
+    public static string ConvertMoveToString(MoveObject move)
+    {
+        int startSquare = move.StartSquare;
+        int endSquare = move.EndSquare;
+
+        char startFile = (char)('a' + (startSquare % 8));
+        char startRank = (char)('1' + (startSquare / 8));
+        char endFile = (char)('a' + (endSquare % 8));
+        char endRank = (char)('1' + (endSquare / 8));
+
+        return $"{startFile}{startRank}{endFile}{endRank}";
+    }
+
+    public static string BoardToFen(int[] board, int turn)
+    {
+        StringBuilder fenBuilder = new StringBuilder();
+
+        int emptyCount = 0;
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (board[i] == 0)
+            {
+                emptyCount++;
+            }
+            else
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                fenBuilder.Append(GetFenSymbol(board[i]));
+            }
+
+            if ((i + 1) % 8 == 0)
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                if (i < board.Length - 1)
+                {
+                    fenBuilder.Append('/');
+                }
+            }
+        }
+
+        fenBuilder.Append(turn == 0 ? " w " : " b ");
+        fenBuilder.Append("- - 0 1"); // Default castling rights, en passant, halfmove, fullmove
+
+        return fenBuilder.ToString();
+    }
+
+    private static char GetFenSymbol(int piece)
+    {
+        return PieceToFenMap.TryGetValue(piece, out char fenSymbol) ? fenSymbol : ' ';
+    }
+
+    private static readonly Dictionary<int, char> PieceToFenMap = new Dictionary<int, char>
+        {
+            { Piece.Pawn, 'P' },
+            { Piece.Knight, 'N' },
+            { Piece.Bishop, 'B' },
+            { Piece.Rook, 'R' },
+            { Piece.Queen, 'Q' },
+            { Piece.King, 'K' },
+            { Piece.Pawn + Piece.BlackPieceOffset, 'p' },
+            { Piece.Knight + Piece.BlackPieceOffset, 'n' },
+            { Piece.Bishop + Piece.BlackPieceOffset, 'b' },
+            { Piece.Rook + Piece.BlackPieceOffset, 'r' },
+            { Piece.Queen + Piece.BlackPieceOffset, 'q' },
+            { Piece.King + Piece.BlackPieceOffset, 'k' }
+        };
+
 }
+
