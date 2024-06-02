@@ -31,39 +31,45 @@ namespace Engine
 
                 Console.WriteLine($"Depth: {currentDepth}");
 
-                int count = 0;
+
                 foreach (var move in moves)
-                {   
-                    count++;
+                {
                     int[] shadowBoard = (int[])board.Clone();
                     MoveHandler.RegisterStaticStates();
                     MoveHandler.MakeMove(shadowBoard, move);
 
                     // Evaluate the board after making the move
                     decimal baseScore = Evaluators.GetByMaterial(shadowBoard, turn);
-                    decimal score = baseScore -Negamax(shadowBoard, turn ^ 1, currentDepth - 1, -beta, -alpha);
+                    decimal score;
+
+                    // Switching the turn using an if-else structure
+                    if (turn == 0)
+                    {
+                        score = baseScore - Negamax(shadowBoard, 1, currentDepth - 1, -beta, -alpha);
+                    }
+                    else
+                    {
+                        score = baseScore - Negamax(shadowBoard, 0, currentDepth - 1, -beta, -alpha);
+                    }
 
                     MoveHandler.RestoreStateFromSnapshot();
-                    if(count<=12)
-                    Console.WriteLine($"Move: {Globals.MoveToString(move)}, Score: {score} Depth: {currentDepth}");
+                   
+                    Console.WriteLine($"Move: {Globals.ConvertMoveToString(move)}, Score: {score} Depth: {currentDepth}");
 
-                    else if(count == 13)
-                    {
-                        count = 0;
-                        Console.Clear();
-                    }   
-
+                    // Updating alpha if a better score is found
                     if (score > alpha)
                     {
                         alpha = score;
                         bestMove = move;
                     }
 
+                    // Termination condition based on time or alpha-beta cutoff
                     if (stopwatch.Elapsed >= maxTime || alpha >= beta)
                     {
                         return bestMove;
                     }
                 }
+
             }
             return bestMove;
         }
@@ -74,7 +80,7 @@ namespace Engine
                 return Evaluators.GetByMaterial(board, turn);
 
             var moves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            decimal maxScore = MIN_SCORE;
+            decimal maxScore = decimal.MinValue; // Ensure you define MIN_SCORE as the smallest possible value for decimal
 
             foreach (var move in moves)
             {
@@ -82,16 +88,28 @@ namespace Engine
                 MoveHandler.RegisterStaticStates();
                 MoveHandler.MakeMove(shadowBoard, move);
 
-                decimal score = -Negamax(shadowBoard, turn ^ 1, depth - 1, -beta, -alpha);
+                decimal score;
+                // Manually switch turns using if-else
+                if (turn == 0)
+                { // Assuming 0 is white and 1 is black
+                    score = -Negamax(shadowBoard, 1, depth - 1, -beta, -alpha);
+                }
+                else
+                {
+                    score = -Negamax(shadowBoard, 0, depth - 1, -beta, -alpha);
+                }
+
                 maxScore = Math.Max(maxScore, score);
 
                 MoveHandler.RestoreStateFromSnapshot();
 
+                // Alpha-beta pruning
                 alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
                     break;
             }
             return maxScore;
         }
+
     }
 }
