@@ -7,6 +7,8 @@ namespace Engine
         private const decimal MAX_SCORE = 100000m;
         private const decimal MIN_SCORE = -100000m;
 
+        
+
         public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -24,11 +26,8 @@ namespace Engine
                     Globals.CheckmateBlack = true;
                     Globals.CheckmateWhite = true;
                 }
-                      
-
-                    
+                // If there is only one move, return it immediately
                 if(moves.Count == 1) return moves[0];
-
                 Console.WriteLine($"Depth: {currentDepth}");
 
 

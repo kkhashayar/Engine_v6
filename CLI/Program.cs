@@ -341,3 +341,33 @@ int ConvertToBoardIndex(string position)
 // In order to test the UCI mode, comment out the Run() method and call StartUCIMode() instead
 // StartUCIMode();
 // --------------------------- End of UCI Section ---------------------------
+
+
+// List of UCI commands
+/*
+ 
+uci                 // Initializes the engine and it responds with its options and sends 'uciok' when ready.
+debug [on/off]      // Turns debug mode on or off.
+isready             // Checks if the engine is ready, to which it should respond with 'readyok'.
+setoption name [optionname] value [value] // Sets an engine option.
+register name [name] code [code]          // Registers the engine if required.
+ucinewgame          // Indicates that a new game is starting.
+position [startpos | fen fenstring] moves [move1] ... [moveN] // Sets up the board position.
+go                  // Starts the engine calculation. Subcommands include:
+  ponder            // Engine thinks in the background.
+  searchmoves move1 ... moveN // Restrict search to these moves.
+  wtime [time]      // Time remaining for white in milliseconds.
+  btime [time]      // Time remaining for black in milliseconds.
+  winc [time]       // Increment per move for white in milliseconds.
+  binc [time]       // Increment per move for black in milliseconds.
+  movestogo [num]   // Number of moves to the next time control.
+  depth [x]         // Search x plies only.
+  nodes [n]         // Search n nodes only.
+  mate [m]          // Search for a mate in m moves.
+  movetime [ms]     // Think exactly ms milliseconds.
+  infinite          // Search until the 'stop' command.
+stop                // Stops the engine's calculation.
+ponderhit           // Used when the opponent makes the expected move.
+quit                // Shuts down the engine.
+
+ */
