@@ -1,114 +1,119 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Engine
 {
     public static class Search
     {
-        private const decimal MAX_SCORE = 100000m;
-        private const decimal MIN_SCORE = -100000m;
-
-        
-
-        public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
+        public static MoveObject GetBestMove(int[] board, int turn, TimeSpan maxTime)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            decimal alpha = MIN_SCORE;
-            decimal beta = MAX_SCORE;
-            MoveObject bestMove = new();
 
-            for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+            int maxDepth = 1;  // Start with a depth of 1 and increase iteratively
+            MoveObject bestMove = default;
+            int bestScore = (turn == 0) ? int.MinValue : int.MaxValue;
+
+            while (true)
             {
-                var moves = MoveGenerator.GenerateAllMoves(board, turn, true);
+                MoveObject currentBestMove = default;
+                int currentBestScore = (turn == 0) ? int.MinValue : int.MaxValue;
 
-                if (moves.Count == 0) 
+                var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+                Console.WriteLine($"Depth {maxDepth}: Evaluating {allPossibleMoves.Count} moves.");
+
+                foreach (var move in allPossibleMoves)
                 {
-                    Globals.CheckmateBlack = true;
-                    Globals.CheckmateWhite = true;
-                }
-                // If there is only one move, return it immediately
-                if(moves.Count == 1) return moves[0];
-                Console.WriteLine($"Depth: {currentDepth}");
-
-
-                foreach (var move in moves)
-                {
-                    int[] shadowBoard = (int[])board.Clone();
                     MoveHandler.RegisterStaticStates();
+                    int[] shadowBoard = (int[])board.Clone();
                     MoveHandler.MakeMove(shadowBoard, move);
+                    MoveHandler.RestoreStateFromSnapshot(); 
 
-                    // Evaluate the board after making the move
-                    decimal baseScore = Evaluators.GetByMaterial(shadowBoard, turn);
-                    decimal score;
+                    int score = AlphaBeta(shadowBoard, maxDepth, int.MinValue, int.MaxValue, 1 - turn);
 
-                    // Switching the turn using an if-else structure
-                    if (turn == 0)
+                    if (turn == 0 && score > currentBestScore) // Maximizing for white
                     {
-                        score = baseScore - Negamax(shadowBoard, 1, currentDepth - 1, -beta, -alpha);
+                        currentBestScore = score;
+                        currentBestMove = move;
                     }
-                    else
+                    else if (turn == 1 && score < currentBestScore) // Minimizing for black
                     {
-                        score = baseScore - Negamax(shadowBoard, 0, currentDepth - 1, -beta, -alpha);
-                    }
-
-                    MoveHandler.RestoreStateFromSnapshot();
-                   
-                    Console.WriteLine($"Move: {Globals.ConvertMoveToString(move)}, Score: {score} Depth: {currentDepth}");
-
-                    // Updating alpha if a better score is found
-                    if (score > alpha)
-                    {
-                        alpha = score;
-                        bestMove = move;
+                        currentBestScore = score;
+                        currentBestMove = move;
                     }
 
-                    // Termination condition based on time or alpha-beta cutoff
-                    if (stopwatch.Elapsed >= maxTime || alpha >= beta)
-                    {
-                        return bestMove;
-                    }
+                    Console.WriteLine($"Move: {Globals.MoveToString(move)}, Score: {score}");
                 }
 
+                if ((turn == 0 && currentBestScore > bestScore) || (turn == 1 && currentBestScore < bestScore))
+                {
+                    bestScore = currentBestScore;
+                    bestMove = currentBestMove;
+                }
+
+                Console.WriteLine($"Best Move at depth {maxDepth}: {Globals.MoveToString(bestMove)}, Score: {bestScore}");
+
+                if (stopwatch.Elapsed >= maxTime || maxDepth == 1 && allPossibleMoves.Count == 1)
+                {
+                    Console.WriteLine("Time limit reached or only one move available at depth 1. Ending search.");
+                    break;
+                }
+
+                maxDepth++;  // Increase the depth for the next iteration
             }
+
             return bestMove;
         }
 
-        private static decimal Negamax(int[] board, int turn, int depth, decimal alpha, decimal beta)
+        private static int AlphaBeta(int[] board, int depth, int alpha, int beta, int turn)
         {
             if (depth == 0)
-                return Evaluators.GetByMaterial(board, turn);
-
-            var moves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            decimal maxScore = decimal.MinValue; // Ensure you define MIN_SCORE as the smallest possible value for decimal
-
-            foreach (var move in moves)
             {
-                int[] shadowBoard = (int[])board.Clone();
-                MoveHandler.RegisterStaticStates();
-                MoveHandler.MakeMove(shadowBoard, move);
-
-                decimal score;
-                // Manually switch turns using if-else
-                if (turn == 0)
-                { // Assuming 0 is white and 1 is black
-                    score = -Negamax(shadowBoard, 1, depth - 1, -beta, -alpha);
-                }
-                else
-                {
-                    score = -Negamax(shadowBoard, 0, depth - 1, -beta, -alpha);
-                }
-
-                maxScore = Math.Max(maxScore, score);
-
-                MoveHandler.RestoreStateFromSnapshot();
-
-                // Alpha-beta pruning
-                alpha = Math.Max(alpha, score);
-                if (alpha >= beta)
-                    break;
+                return Evaluators.GetByMaterial(board, turn);
             }
-            return maxScore;
-        }
 
+            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            if (turn == 0)  // Maximizing player
+            {
+                int maxEval = int.MinValue;
+                foreach (var move in allPossibleMoves)
+                {
+                    MoveHandler.RegisterStaticStates();
+                    int[] shadowBoard = (int[])board.Clone();
+                    MoveHandler.MakeMove(shadowBoard, move);
+                    MoveHandler.RestoreStateFromSnapshot(); 
+
+
+                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn);
+                    maxEval = Math.Max(maxEval, eval);
+                    alpha = Math.Max(alpha, eval);
+                    if (beta <= alpha)
+                    {
+                        break;  // Alpha cut-off
+                    }
+                }
+                return maxEval;
+            }
+            else  // Minimizing player
+            {
+                int minEval = int.MaxValue;
+                foreach (var move in allPossibleMoves)
+                {
+                    MoveHandler.RegisterStaticStates();
+                    int[] shadowBoard = (int[])board.Clone();
+                    MoveHandler.MakeMove(shadowBoard, move);
+                    MoveHandler.RestoreStateFromSnapshot();
+
+                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn);
+                    minEval = Math.Min(minEval, eval);
+                    beta = Math.Min(beta, eval);
+                    if (beta <= alpha)
+                    {
+                        break;  // Beta cut-off
+                    }
+                }
+                return minEval;
+            }
+        }
     }
 }

@@ -6,9 +6,9 @@ using Engine.External_Resources;
 
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0 mate in 4
 
-// test fen: 8/8/3k4/3p4/4p3/6N1/8/2K5 w - - 0 1 
+// test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
 
-string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
+string fen = "";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -22,8 +22,8 @@ Globals globals = Globals.FenReader(fen);
 //////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 10;
-TimeSpan maxTime = TimeSpan.FromSeconds(10);
+int searchDepth = 20;
+TimeSpan maxTime = TimeSpan.FromSeconds(4);
 
 Run();
 
@@ -38,18 +38,13 @@ void Run()
     while (running)
     {
         Thread.Sleep(2000);
-
         MoveObject move = new MoveObject();
-        if (Globals.Turn == 0)
-        {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
-            MoveHandler.MakeMove(globals.ChessBoard, move);
-        }
-        else
-        {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
-            MoveHandler.MakeMove(globals.ChessBoard, move);
-        }
+
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxTime);
+        MoveHandler.MakeMove(globals.ChessBoard, move);
+
+
+
         Globals.Turn ^= 1;
         Console.Clear();
         Console.WriteLine();
@@ -292,15 +287,18 @@ void HandlePositionCommand(string input)
 
 void HandleGoCommand(string input)
 {
-    Globals.Turn ^= 1;  
+    Globals.Turn ^= 1;
     Console.WriteLine("Received go command");
-    
-    int maxDepth = 20;
+
+    int maxDepth = 1;
     TimeSpan maxTime = TimeSpan.FromSeconds(15);
 
     try
     {
-        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
+        MoveObject bestMove = default;
+
+        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxTime);
+
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
         Console.WriteLine($"bestmove {bestMoveString}");
 
@@ -326,8 +324,8 @@ MoveObject StringToMove(string moveString)
         StartSquare = startSquare,
         EndSquare = endSquare,
         pieceType = globals.ChessBoard[startSquare],
-        IsCapture = globals.ChessBoard[endSquare] != Piece.None 
-        
+        IsCapture = globals.ChessBoard[endSquare] != Piece.None
+
     };
 }
 
