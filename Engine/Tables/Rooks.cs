@@ -1,47 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Tables
+﻿namespace Engine.Tables
 {
     internal class Rooks
     {
-
-        public static readonly decimal[] WhiteRookTable = new decimal[64]
+        public static readonly int[] WhiteRookTable = new int[64]
         {
-                0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m,
-                0.5m, 1m, 1m, 1m, 1m, 1m, 1m, 0.5m,
-                0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-                0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-                0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-                0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-                0.5m, 0.75m, 0.75m, 0.75m, 0.75m, 0.75m, 0.75m, 0.5m,
-                1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m
+            0, 0, 0, 0, 0, 0, 0, 0,
+            25, 50, 50, 50, 50, 50, 50, 25,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            25, 38, 38, 38, 38, 38, 38, 25,
+            50, 50, 50, 50, 50, 50, 50, 50
         };
 
-        public static readonly decimal[] BlackRookTable = new decimal[64]
-{
-            1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m,
-            0.5m, 0.75m, 0.75m, 0.75m, 0.75m, 0.75m, 0.75m, 0.5m,
-            0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-            0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-            0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-            0.25m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.5m, 0.25m,
-            0.5m, 1m, 1m, 1m, 1m, 1m, 1m, 0.5m,
-            0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m
-};
-        public static decimal GetWhiteSquareWeight(int index)
+        public static readonly int[] BlackRookTable = new int[64]
+        {
+            50, 50, 50, 50, 50, 50, 50, 50,
+            25, 38, 38, 38, 38, 38, 38, 25,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            13, 25, 25, 25, 25, 25, 25, 13,
+            25, 50, 50, 50, 50, 50, 50, 25,
+            0, 0, 0, 0, 0, 0, 0, 0
+        };
+
+        public static int GetWhiteSquareWeight(int index)
         {
             return WhiteRookTable[index];
         }
 
-
-        public static decimal GetBlackSquareWeight(int index)
+        public static int GetBlackSquareWeight(int index)
         {
             return BlackRookTable[index];
         }
     }
-
 }
