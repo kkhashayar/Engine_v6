@@ -23,7 +23,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 20;
-TimeSpan maxTime = TimeSpan.FromSeconds(4);
+TimeSpan maxTime = TimeSpan.FromSeconds(10);
 
 Run();
 
@@ -37,7 +37,6 @@ void Run()
     bool running = true;
     while (running)
     {
-        Thread.Sleep(2000);
         MoveObject move = new MoveObject();
 
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxTime);
@@ -49,13 +48,15 @@ void Run()
         Console.Clear();
         Console.WriteLine();
 
+      
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+        
 
         Console.WriteLine();
         Console.Beep(2000, 100);
 
-        Thread.Sleep(2000);
+        Thread.Sleep(5000);
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             running = false;

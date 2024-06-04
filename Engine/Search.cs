@@ -12,14 +12,21 @@ namespace Engine
 
             int maxDepth = 1;  // Start with a depth of 1 and increase iteratively
             MoveObject bestMove = default;
-            int bestScore = (turn == 0) ? int.MinValue : int.MaxValue;
 
+            int bestScore = (turn == 0) ? int.MinValue : int.MaxValue;
+            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true)
+                                                .OrderByDescending(m => m.Score)
+                                                .ThenByDescending(m => m.IsCapture)
+                                                .ToList();
             while (true)
             {
                 MoveObject currentBestMove = default;
                 int currentBestScore = (turn == 0) ? int.MinValue : int.MaxValue;
 
-                var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+                
+                
+                DetectCheckMateAndStalemate(board, turn, bestMove, out allPossibleMoves);   
+
                 Console.WriteLine($"Depth {maxDepth}: Evaluating {allPossibleMoves.Count} moves.");
 
                 foreach (var move in allPossibleMoves)
@@ -51,9 +58,10 @@ namespace Engine
                     bestMove = currentBestMove;
                 }
 
+                
                 Console.WriteLine($"Best Move at depth {maxDepth}: {Globals.MoveToString(bestMove)}, Score: {bestScore}");
 
-                if (stopwatch.Elapsed >= maxTime || maxDepth == 1 && allPossibleMoves.Count == 1)
+                if ((stopwatch.Elapsed >= maxTime && maxDepth % 2 != 1) || allPossibleMoves.Count == 1)
                 {
                     Console.WriteLine("Time limit reached or only one move available at depth 1. Ending search.");
                     break;
@@ -65,11 +73,11 @@ namespace Engine
             return bestMove;
         }
 
-        private static int AlphaBeta(int[] board, int depth, int alpha, int beta, int turn)
+        private static int AlphaBeta(int[] board, int depth, int alpha, int beta, int turn, MoveObject? moveToEvaluate=default)
         {
             if (depth == 0)
             {
-                return Evaluators.GetByMaterial(board, turn);
+                return Eval(board, turn, moveToEvaluate);
             }
 
             var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
@@ -84,7 +92,7 @@ namespace Engine
                     MoveHandler.RestoreStateFromSnapshot(); 
 
 
-                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn);
+                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn, move);
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
                     if (beta <= alpha)
@@ -104,7 +112,7 @@ namespace Engine
                     MoveHandler.MakeMove(shadowBoard, move);
                     MoveHandler.RestoreStateFromSnapshot();
 
-                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn);
+                    int eval = AlphaBeta(shadowBoard, depth - 1, alpha, beta, 1 - turn, move);
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);
                     if (beta <= alpha)
@@ -114,6 +122,36 @@ namespace Engine
                 }
                 return minEval;
             }
+        }
+
+        private static int Eval(int[] board, int turn, MoveObject? moveToEvaluate)
+        {
+            int finalscoreIndepth = 0;
+            finalscoreIndepth = Evaluators.GetByMaterial(board, turn);
+            int pieceValue = Evaluators.GetPieceValue(board, turn, moveToEvaluate);
+            return finalscoreIndepth *= pieceValue;
+        }
+
+        private static void DetectCheckMateAndStalemate(int[] board, int turn, MoveObject bestMove, out List<MoveObject> allPossibleMoves)
+        {
+            allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            if (!allPossibleMoves.Any())
+            {
+                if (turn == 0)
+                {
+                    var blackMoves = MoveGenerator.GenerateAllMoves(board, 1, true);
+                    if (!blackMoves.Any()) Globals.Stalemate = true;
+                    Globals.CheckmateWhite = true;
+                }
+                else if (turn == 1)
+                {
+                    var whiteMoves = MoveGenerator.GenerateAllMoves(board, 0, true);
+                    if (!whiteMoves.Any()) Globals.Stalemate = true;
+                    Globals.CheckmateBlack = true;
+                }
+            }
+            bool onlyKingsRemain = board.All(p => p == MoveGenerator.whiteKing || p == MoveGenerator.blackKing || p == 0);
+            if (onlyKingsRemain) Globals.Stalemate = true;
         }
     }
 }

@@ -86,16 +86,16 @@
                 }
             }
 
-            int materialScore = WhiteStaticScore - BlackStaticScore;
-            int mobilityScore = MobilityWeight * GetMobility(board, turn);
+
+
 
             if (turn == 0)
             {
-                return materialScore + mobilityScore;
+                return (WhiteStaticScore - BlackStaticScore);
             }
             else
             {
-                return -1 * (materialScore + mobilityScore);
+                return (BlackStaticScore - WhiteStaticScore);
             }
         }
 
@@ -107,12 +107,32 @@
             NumberOfBlackPieces = 0;
         }
 
-        private static int GetMobility(int[] board, int turn)
+        public static int GetPieceValue(int[] board, int turn, MoveObject? move = default)
         {
-            int numberOfWhiteMoves = MoveGenerator.GenerateAllMoves(board, 0, true).Count;
-            int numberOfBlackMoves = MoveGenerator.GenerateAllMoves(board, 1, true).Count;
+            foreach (var square in board)
+            {
+                if (turn == 0)
+                {
+                    if (square == 0) continue;
+                    else if (square == MoveGenerator.whitePawn) return Tables.Pawns.GetWhiteSquareWeight(move?.EndSquare ?? default);
+                    else if (square == MoveGenerator.whiteKnight) return Tables.Knights.GetBlackSquareWeight(move?.EndSquare ?? default);
+                    else if (square == MoveGenerator.whiteBishop) return Tables.Bishops.GetWhiteSquareWeight(move?.EndSquare ?? default);
+                    else if (square == MoveGenerator.whiteRook) return Tables.Rooks.GetWhiteSquareWeight(move?.EndSquare ?? default);
+                    else if (square == MoveGenerator.whiteKing) return Tables.Kings.GetWhiteSquareWeight(move?.EndSquare ?? default);
+                }
 
-            return numberOfWhiteMoves - numberOfBlackMoves;
+
+                if (square == 0) continue;
+                else if (square == MoveGenerator.blackPawn) return Tables.Pawns.GetBlackSquareWeight(move?.EndSquare ?? default);
+                else if (square == MoveGenerator.blackKnight) return Tables.Knights.GetBlackSquareWeight(move?.EndSquare ?? default);
+                else if (square == MoveGenerator.blackBishop) return Tables.Bishops.GetBlackSquareWeight(move?.EndSquare ?? default);
+                else if (square == MoveGenerator.blackRook) return Tables.Rooks.GetBlackSquareWeight(move?.EndSquare ?? default);
+                else if (square == MoveGenerator.blackKing) return Tables.Kings.GetBlackSquareWeight(move?.EndSquare ?? default);
+
+            }
+
+            return 0;
         }
+
     }
 }
