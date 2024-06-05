@@ -7,8 +7,9 @@ using Engine.External_Resources;
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0 mate in 4
 
 // test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
+// test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
 
-string fen = "";
+string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -23,7 +24,7 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 20;
-TimeSpan maxTime = TimeSpan.FromSeconds(10);
+TimeSpan maxTime = TimeSpan.FromSeconds(20);
 
 Run();
 
@@ -32,14 +33,17 @@ void Run()
     Console.WriteLine();
     if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
     else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+    
+    Console.WriteLine();
     Console.WriteLine();
 
     bool running = true;
     while (running)
     {
+
         MoveObject move = new MoveObject();
 
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxTime);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
 
@@ -56,7 +60,7 @@ void Run()
         Console.WriteLine();
         Console.Beep(2000, 100);
 
-        Thread.Sleep(5000);
+      
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             running = false;
@@ -298,7 +302,7 @@ void HandleGoCommand(string input)
     {
         MoveObject bestMove = default;
 
-        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxTime);
+        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
 
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
         Console.WriteLine($"bestmove {bestMoveString}");

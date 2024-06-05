@@ -1,4 +1,6 @@
-﻿namespace Engine
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Engine
 {
     internal static class Evaluators
     {
@@ -15,23 +17,26 @@
         public static int NumberOfBlackPieces { get; private set; }
         public static int WhiteStaticScore { get; private set; }
         public static int BlackStaticScore { get; private set; }
-
+        public static int PieceValueOnPosition { get; set; }
         public static int GetByMaterial(int[] board, int turn)
         {
             ResetScores();
 
-            foreach (var square in board)
+            for (int i = 0; i < board.Length; i++)
             {
+                int square = board[i];
                 if (square == 0) continue;
 
                 if (square == MoveGenerator.whitePawn)
                 {
-                    WhiteStaticScore += PawnWeight;
+                    WhiteStaticScore += PawnWeight;  
+                   
                     NumberOfWhitePieces++;
                 }
                 else if (square == MoveGenerator.blackPawn)
                 {
                     BlackStaticScore += PawnWeight;
+                    
                     NumberOfBlackPieces++;
                 }
                 else if (square == MoveGenerator.whiteKnight)
@@ -89,8 +94,10 @@
 
 
 
+
             if (turn == 0)
             {
+                
                 return (WhiteStaticScore - BlackStaticScore);
             }
             else
@@ -107,32 +114,6 @@
             NumberOfBlackPieces = 0;
         }
 
-        public static int GetPieceValue(int[] board, int turn, MoveObject? move = default)
-        {
-            foreach (var square in board)
-            {
-                if (turn == 0)
-                {
-                    if (square == 0) continue;
-                    else if (square == MoveGenerator.whitePawn) return Tables.Pawns.GetWhiteSquareWeight(move?.EndSquare ?? default);
-                    else if (square == MoveGenerator.whiteKnight) return Tables.Knights.GetBlackSquareWeight(move?.EndSquare ?? default);
-                    else if (square == MoveGenerator.whiteBishop) return Tables.Bishops.GetWhiteSquareWeight(move?.EndSquare ?? default);
-                    else if (square == MoveGenerator.whiteRook) return Tables.Rooks.GetWhiteSquareWeight(move?.EndSquare ?? default);
-                    else if (square == MoveGenerator.whiteKing) return Tables.Kings.GetWhiteSquareWeight(move?.EndSquare ?? default);
-                }
-
-
-                if (square == 0) continue;
-                else if (square == MoveGenerator.blackPawn) return Tables.Pawns.GetBlackSquareWeight(move?.EndSquare ?? default);
-                else if (square == MoveGenerator.blackKnight) return Tables.Knights.GetBlackSquareWeight(move?.EndSquare ?? default);
-                else if (square == MoveGenerator.blackBishop) return Tables.Bishops.GetBlackSquareWeight(move?.EndSquare ?? default);
-                else if (square == MoveGenerator.blackRook) return Tables.Rooks.GetBlackSquareWeight(move?.EndSquare ?? default);
-                else if (square == MoveGenerator.blackKing) return Tables.Kings.GetBlackSquareWeight(move?.EndSquare ?? default);
-
-            }
-
-            return 0;
-        }
-
+        
     }
 }
