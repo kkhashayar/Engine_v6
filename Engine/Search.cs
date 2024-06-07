@@ -114,67 +114,6 @@ namespace Engine
             return bestMove;
         }
 
-        //private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn, MoveObject moveToEval)
-        //{
-
-        //    if (depth == 0) 
-        //    {
-        //        int score = Evaluators.GetByMaterial(board, turn);
-        //        return score += Evaluators.GetPositionalValue(board, moveToEval.EndSquare, turn);
-
-        //    }
-
-
-        //    decimal bestScore = decimal.MinValue;
-        //    foreach (var move in GetAllPossibleMoves(board, turn, true))
-        //    {
-        //        int[] shadowBoard = (int[])board.Clone();
-        //        MoveHandler.RegisterStaticStates();
-        //        MoveHandler.MakeMove(shadowBoard, move);
-
-        //        decimal score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, turn ^ 1, move);
-        //        MoveHandler.RestoreStateFromSnapshot();
-
-        //        bestScore = Math.Max(bestScore, score);
-        //        alpha = Math.Max(alpha, score);
-        //        if (beta <= alpha)
-        //        {
-        //            break;
-        //        }
-        //    }
-
-        //    return bestScore;
-        //}
-
-        //// Alpha-beta pruning min function
-        //private static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn, MoveObject moveToEval)
-        //{
-        //    if (depth == 0) 
-        //    {
-        //        int score = Evaluators.GetByMaterial(board, turn);
-        //        return score += Evaluators.GetPositionalValue(board, moveToEval.EndSquare, turn);
-        //    } 
-
-        //    decimal bestScore = decimal.MaxValue;
-        //    foreach (var move in GetAllPossibleMoves(board, turn, true))
-        //    {
-        //        int[] shadowBoard = (int[])board.Clone();
-        //        MoveHandler.RegisterStaticStates();
-        //        MoveHandler.MakeMove(shadowBoard, move);
-
-        //        decimal score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, turn ^ 1, move);
-        //        MoveHandler.RestoreStateFromSnapshot();
-
-        //        bestScore = Math.Min(bestScore, score);
-        //        beta = Math.Min(beta, score);
-        //        if (beta <= alpha)
-        //        {
-        //            break;
-        //        }
-        //    }
-
-        //    return bestScore;
-        //}
 
         private static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn, MoveObject moveToEval)
         {

@@ -91,10 +91,6 @@ namespace Engine
                 }
             }
 
-
-
-
-
             if (turn == 0)
             {
                 
