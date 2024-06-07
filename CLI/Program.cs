@@ -1,19 +1,18 @@
 ﻿using Engine;
 using Engine.External_Resources;
+using System.Diagnostics;
 
-// test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1       mate in 3
-// test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0  mate in 3
+// test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
+// test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
 
-// test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0 mate in 4
+// test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
+// test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 
 // test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
 // test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
 
-string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
-if (String.IsNullOrEmpty(fen))
-{
-    fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-}
+string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
+
 
 Globals globals = Globals.FenReader(fen);
 
@@ -21,6 +20,7 @@ Globals globals = Globals.FenReader(fen);
 // int perftDepth = 3;
 // RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
+
 
 
 int searchDepth = 20;
@@ -38,25 +38,23 @@ void Run()
     Console.WriteLine();
 
     bool running = true;
+    Globals.TotalTime.Restart();
+    
     while (running)
     {
-
         MoveObject move = new MoveObject();
 
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
         MoveHandler.MakeMove(globals.ChessBoard, move);
-
-
+        Globals.moveHistory.Add(move);  
 
         Globals.Turn ^= 1;
         Console.Clear();
         Console.WriteLine();
 
-      
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
-        
-
+       
         Console.WriteLine();
         Console.Beep(2000, 100);
 
@@ -64,16 +62,22 @@ void Run()
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             running = false;
+            Globals.TotalTime.Stop();
             break;
         }
 
     }
 
     Console.WriteLine();
-    foreach (var pMove in Globals.PrincipalVariation)
+    Console.WriteLine($"Position: {fen} \n");
+    Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
+
+    Console.WriteLine();
+    foreach (var move in Globals.moveHistory)
     {
-        Console.Write(Globals.MoveToString(pMove));
+        Console.Write(Globals.MoveToString(move));
     }
+   
     Console.ReadKey();
 }
 
