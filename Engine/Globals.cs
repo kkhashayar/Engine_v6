@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace Engine;
 
@@ -32,6 +33,8 @@ public sealed class Globals
     public static int Turn { get; set; }
     public static int InitialTurn { get; set; }
     public static string CurrentFEN { get; set; }
+
+    public static Stopwatch TotalTime = new Stopwatch();
 
     public int[] ChessBoard =
     {
@@ -380,7 +383,7 @@ public sealed class Globals
         {
             return castle;
         }
-        if (move.StartSquare == move.EndSquare) return 0.ToString();
+        if (move.StartSquare == move.EndSquare) return "";
         return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
 
