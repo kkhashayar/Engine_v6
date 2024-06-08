@@ -11,26 +11,28 @@ namespace Engine
         private static readonly int RookWeight = 50;
         private static readonly int QueenWeight = 90;
         private static readonly int KingWeight = 10000;
-        private static readonly int MobilityWeight = 1;
+        
 
         public static int NumberOfWhitePieces { get; private set; }
         public static int NumberOfBlackPieces { get; private set; }
         public static int WhiteStaticScore { get; private set; }
         public static int BlackStaticScore { get; private set; }
         public static int PieceValueOnPosition { get; set; }
+
+        
         public static int GetByMaterial(int[] board, int turn)
         {
             ResetScores();
+            Globals.GamePhase = GetGamePhase(); 
 
-            for (int i = 0; i < board.Length; i++)
+            for (int i = 0; i < board.Length; ++i)
             {
                 int square = board[i];
                 if (square == 0) continue;
 
                 if (square == MoveGenerator.whitePawn)
                 {
-                    WhiteStaticScore += PawnWeight;  
-                   
+                    WhiteStaticScore += PawnWeight;
                     NumberOfWhitePieces++;
                 }
                 else if (square == MoveGenerator.blackPawn)
@@ -93,7 +95,6 @@ namespace Engine
 
             if (turn == 0)
             {
-                
                 return (WhiteStaticScore - BlackStaticScore);
             }
             else
@@ -110,6 +111,29 @@ namespace Engine
             NumberOfBlackPieces = 0;
         }
 
-        
+        private static GamePhase GetGamePhase()
+        {
+            if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
+            {
+                return GamePhase.EndGame;
+            }
+            else if (NumberOfWhitePieces + NumberOfBlackPieces <= 20)
+            {
+                return GamePhase.MiddleGame;
+            }
+            else
+            {
+                return GamePhase.Opening;
+            }
+        }
+
     }
+}
+
+
+public enum GamePhase
+{
+    Opening,
+    MiddleGame,
+    EndGame
 }

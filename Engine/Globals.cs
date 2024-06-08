@@ -10,11 +10,14 @@ public sealed class Globals
     public static bool WhiteKingRookMoved { get; set; }
     public static bool WhiteQueenRookMoved { get; set; }
 
+    public static int NumberOfWhitePieces { get; set; } 
+
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
     public static bool BlackKingRookMoved { get; set; }
     public static bool BlackQueenRookMoved { get; set; }
 
+    public static int NumberOfBlackPieces { get; set; }
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
@@ -35,6 +38,9 @@ public sealed class Globals
     public static string CurrentFEN { get; set; }
 
     public static Stopwatch TotalTime = new Stopwatch();
+
+    public static GamePhase GamePhase { get; set; } 
+    public static int ThinkingTime { get; set; } = 0;   
 
     public int[] ChessBoard =
     {
@@ -209,6 +215,15 @@ public sealed class Globals
                 {
                     // If it's a piece, convert and place on the board
                     globals.ChessBoard[index] = FenCharToPieceCode(square);
+                    // Count the number of pieces for each side
+                    if (Piece.IsWhite(globals.ChessBoard[index]))
+                    {
+                        NumberOfWhitePieces++;
+                    }
+                    else if (Piece.IsBlack(globals.ChessBoard[index]))
+                    {
+                        NumberOfBlackPieces++;
+                    }
                     index++;
                 }
             }
@@ -441,7 +456,25 @@ public sealed class Globals
 
         return fenBuilder.ToString();
     }
+    public static GamePhase GetInitialGamePhase()
+    {
+        if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
+        {
+            ThinkingTime = 30;
+            return GamePhase.EndGame;
+        }
+        else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
+        {
+            ThinkingTime = 15;
+            return GamePhase.MiddleGame;
+        }
 
+        else
+        {
+            ThinkingTime = 5;
+            return GamePhase.Opening;
+        }
+    }
     private static char GetFenSymbol(int piece)
     {
         return PieceToFenMap.TryGetValue(piece, out char fenSymbol) ? fenSymbol : ' ';
