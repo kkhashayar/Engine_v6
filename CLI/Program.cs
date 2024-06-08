@@ -11,7 +11,7 @@ using System.Diagnostics;
 // test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
 // test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
 
-string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
+string fen = "r1bq1r1k/pp2n1pp/8/3N1p2/2B4R/8/PPP2QPP/7K w - - 1 0";
 
 
 Globals globals = Globals.FenReader(fen);
@@ -24,7 +24,13 @@ Globals globals = Globals.FenReader(fen);
 
 
 int searchDepth = 20;
-TimeSpan maxTime = TimeSpan.FromSeconds(20);
+Globals.GetInitialGamePhase();
+
+TimeSpan maxTime = TimeSpan.FromSeconds(Globals.ThinkingTime);
+
+//Console.WriteLine($"Max time: {Globals.ThinkingTime}  Max Depth: {searchDepth}");
+//Console.WriteLine("Press a key to continue");
+//Console.ReadKey();  
 
 Run();
 
@@ -77,7 +83,9 @@ void Run()
     {
         Console.Write(Globals.MoveToString(move));
     }
-   
+    
+    Console.Beep(1500, 500);
+    Console.Beep(1500, 500);
     Console.ReadKey();
 }
 
