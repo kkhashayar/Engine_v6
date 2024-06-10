@@ -90,6 +90,10 @@ public static class Search
 
     private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
+        //if(depth == 5)
+        //{
+        //    return Quiescence(board, alpha, beta, turn);
+        //}
         if (depth == 0)
         {
             return Evaluators.GetByMaterial(board, turn);
@@ -116,10 +120,14 @@ public static class Search
 
     private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
+        //if (depth == 5)
+        //{
+        //    return Quiescence(board, alpha, beta, turn);
+        //}
         if (depth == 0)
         {
             return Evaluators.GetByMaterial(board, turn);
-        
+
         }
 
         int bestScore = int.MaxValue;
@@ -151,6 +159,36 @@ public static class Search
                         .ThenByDescending(m => m.IsEnPassant)
                         .ToList();
         return orderedmoves;
+    }
+
+    private static int Quiescence(int[] board, int alpha, int beta, int turn)
+    {
+        int standPat = Evaluators.GetByMaterial(board, turn);
+        if (standPat >= beta)
+            return beta;
+        if (standPat > alpha)
+            alpha = standPat;
+
+        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true).Where(m => m.Priority >= 3).ToList();
+
+        foreach (var move in captures)
+        {
+            int[] shadowBoard = ApplyMove(board, move);
+
+            int score = -Quiescence(shadowBoard, -beta, -alpha, turn ^ 1);
+            MoveHandler.RestoreStateFromSnapshot();
+
+            if (score >= beta)
+            {
+                return beta;
+            }
+            if (score > alpha)
+            {
+                alpha = score;
+            }
+        }
+
+        return alpha;
     }
     private static void DetectStalemateAndCheckmates(int[] board, int turn, MoveObject bestMove, List<MoveObject> allPossibleMoves)
     {
