@@ -11,7 +11,7 @@ namespace Engine
         private static readonly int RookWeight = 50;
         private static readonly int QueenWeight = 90;
         private static readonly int KingWeight = 10000;
-        
+
 
         public static int NumberOfWhitePieces { get; private set; }
         public static int NumberOfBlackPieces { get; private set; }
@@ -19,11 +19,11 @@ namespace Engine
         public static int BlackStaticScore { get; private set; }
         public static int PieceValueOnPosition { get; set; }
 
-        
+
         public static int GetByMaterial(int[] board, int turn)
         {
             ResetScores();
-            Globals.GamePhase = GetGamePhase(); 
+            Globals.GamePhase = GetGamePhase();
 
             for (int i = 0; i < board.Length; ++i)
             {
@@ -38,7 +38,7 @@ namespace Engine
                 else if (square == MoveGenerator.blackPawn)
                 {
                     BlackStaticScore += PawnWeight;
-                    
+
                     NumberOfBlackPieces++;
                 }
                 else if (square == MoveGenerator.whiteKnight)

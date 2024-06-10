@@ -39,6 +39,10 @@ public static class Piece
         return "None";
     }
 
+    public static int[] WhitePieces = new int[6] { 1, 3, 4, 5, 9, 99 };
+    public static int[] BlackPieces = new int[6] { 11, 13, 14, 15, 19, 109 };
+
+
     public static string GetPieceName(int pieceValue)
     {
         switch (pieceValue)
