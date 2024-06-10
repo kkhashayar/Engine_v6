@@ -84,6 +84,20 @@ public static class Search
         }
 
         Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)} ");
+
+
+        // maybe I should add a logic here, to check if it is material loss?
+        if(turn == 0)
+        {
+
+        }
+
+        else
+        {
+
+        }
+
+
         return bestMove;
     }
 
