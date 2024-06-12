@@ -465,7 +465,7 @@ public sealed class Globals
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
         {
-            ThinkingTime = 15;
+            ThinkingTime = 30;
             return GamePhase.MiddleGame;
         }
 

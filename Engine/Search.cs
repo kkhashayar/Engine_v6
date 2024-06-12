@@ -104,7 +104,7 @@ public static class Search
 
     private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
-        //if(depth == 5)
+        //if (depth == 0)
         //{
         //    return Quiescence(board, alpha, beta, turn);
         //}
@@ -134,7 +134,7 @@ public static class Search
 
     private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
-        //if (depth == 5)
+        //if (depth == 0)
         //{
         //    return Quiescence(board, alpha, beta, turn);
         //}
@@ -177,19 +177,30 @@ public static class Search
 
     private static int Quiescence(int[] board, int alpha, int beta, int turn)
     {
+        const int maxDepth = 4;
+        return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
+    }
+
+    private static int QuiescenceInternal(int[] board, int alpha, int beta, int turn, int depth)
+    {
+        if (depth == 0)
+        {
+            return Evaluators.GetByMaterial(board, turn);
+        }
+
         int standPat = Evaluators.GetByMaterial(board, turn);
         if (standPat >= beta)
             return beta;
         if (standPat > alpha)
             alpha = standPat;
 
-        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true).Where(m => m.Priority >= 3).ToList();
+        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true).Where(m => m.IsCapture).ToList();
 
         foreach (var move in captures)
         {
             int[] shadowBoard = ApplyMove(board, move);
 
-            int score = -Quiescence(shadowBoard, -beta, -alpha, turn ^ 1);
+            int score = -QuiescenceInternal(shadowBoard, -beta, -alpha, turn ^ 1, depth - 1);
             MoveHandler.RestoreStateFromSnapshot();
 
             if (score >= beta)
@@ -204,6 +215,7 @@ public static class Search
 
         return alpha;
     }
+
     private static void DetectStalemateAndCheckmates(int[] board, int turn, MoveObject bestMove, List<MoveObject> allPossibleMoves)
     {
         if (!allPossibleMoves.Any())
