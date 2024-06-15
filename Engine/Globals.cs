@@ -416,6 +416,38 @@ public sealed class Globals
         return $"{startFile}{startRank}{endFile}{endRank}";
     }
 
+    public static MoveObject ConvertStringToMoveObject(string move)
+    {
+        // Extract file and rank from the string
+        char startFile = move[0];
+        char startRank = move[1];
+        char endFile = move[2];
+        char endRank = move[3];
+
+        // Convert characters back to board indices
+        int startSquare = (startRank - '1') * 8 + (startFile - 'a');
+        int endSquare = (endRank - '1') * 8 + (endFile - 'a');
+
+        // Create a MoveObject with the calculated indices
+        return new MoveObject
+        {
+            StartSquare = startSquare,
+            EndSquare = endSquare,
+            pieceType = 0, 
+            CapturedPiece = 0,
+            PromotionPiece = 0,
+            ShortCastle = false,
+            LongCastle = false,
+            IsCapture = false,
+            IsEnPassant = false,
+            IsPromotion = false,
+            IsCheck = false,
+            Priority = 0,
+            Score = 0
+        };
+    }
+
+
     public static string BoardToFen(int[] board, int turn)
     {
         StringBuilder fenBuilder = new StringBuilder();
@@ -497,4 +529,9 @@ public sealed class Globals
         };
 
 }
-
+public enum GamePhase
+{
+    Opening,
+    MiddleGame,
+    EndGame
+}

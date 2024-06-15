@@ -11,8 +11,9 @@ using System.Diagnostics;
 
 // test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
 // test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
+// test fen: 8/4r3/3k4/8/3K4/8/8/8 b - - 0 1
 
-string fen = "8/8/4k3/8/8/4PP2/3K4/8 w - - 0 1";
+string fen = "r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0";
 
 
 Globals globals = Globals.FenReader(fen);
