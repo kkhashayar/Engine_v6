@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace Engine;
 
 public static class MoveGenerator
 {
@@ -139,6 +141,8 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
+            if(!Globals.IsValidSquare(square)) continue; 
+
             int piece = chessBoard[square];
 
             // Generate moves for white pieces
@@ -221,6 +225,19 @@ public static class MoveGenerator
     }
 
 
+    public static List<MoveObject> GetKingAttacks(int[] board, int turn)
+    {
+        List<MoveObject> kingMoves = new List<MoveObject>();
+        int KingPosition = turn == 0 ? Globals.GetWhiteKingSquare(board) : Globals.GetBlackKingSquare(board);
+
+        var rowKingMoves = (Kings.GenerateMovesForSquare(KingPosition, turn, board));
+        foreach (var move in rowKingMoves)
+        {
+            if(IsMoveLegal(move, board, turn)) { kingMoves.Add(move); } 
+        }
+        return kingMoves;
+    }
+
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
@@ -278,6 +295,7 @@ public static class MoveGenerator
 
     private static void MakeMove(MoveObject move, int[] board)
     {
+        if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return; 
         if (move.LongCastle || move.ShortCastle)
         {
 
