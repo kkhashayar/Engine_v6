@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine;
 
 public static class MoveHandler
 {
@@ -8,8 +10,8 @@ public static class MoveHandler
         board[move.StartSquare] = 0;
 
 
-
-        if (Globals.Turn == 0)             /////////////////////////////////// WHITE
+        /////////////////////////////////// WHITE
+        if (Globals.Turn == 0)             
         {
             /////////////////////////////////// Pawn Promotion  
             if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)

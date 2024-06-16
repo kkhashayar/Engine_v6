@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace Engine;
+namespace Engine.Core;
 
 public sealed class Globals
 {
@@ -10,7 +10,7 @@ public sealed class Globals
     public static bool WhiteKingRookMoved { get; set; }
     public static bool WhiteQueenRookMoved { get; set; }
 
-    public static int NumberOfWhitePieces { get; set; } 
+    public static int NumberOfWhitePieces { get; set; }
 
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
@@ -39,8 +39,10 @@ public sealed class Globals
 
     public static Stopwatch TotalTime = new Stopwatch();
 
-    public static GamePhase GamePhase { get; set; } 
-    public static int ThinkingTime { get; set; } = 0;   
+    public static GamePhase GamePhase { get; set; }
+    public static GamePhase GameStateForWhiteKing { get; set; }
+    public static GamePhase GameStateForBlackKing { get; set; }
+    public static int ThinkingTime { get; set; } = 0;
 
     public int[] ChessBoard =
     {
@@ -161,8 +163,8 @@ public sealed class Globals
 
     public static Globals FenReader(string fen)
     {
-        
-        if (String.IsNullOrEmpty(fen))
+
+        if (string.IsNullOrEmpty(fen))
         {
             fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         }
@@ -305,8 +307,8 @@ public sealed class Globals
 
     public static int GetDiagonalDirection(int startSquare, int endSquare)
     {
-        int rankDifference = (endSquare / 8) - (startSquare / 8);
-        int fileDifference = (endSquare % 8) - (startSquare % 8);
+        int rankDifference = endSquare / 8 - startSquare / 8;
+        int fileDifference = endSquare % 8 - startSquare % 8;
 
         if (rankDifference > 0 && fileDifference > 0)
             return 9; // Moving up-right
@@ -399,7 +401,7 @@ public sealed class Globals
             return castle;
         }
         if (move.StartSquare == move.EndSquare) return "";
-        return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion} ";
+        return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
 
     // In use with UCI protocol
@@ -408,10 +410,10 @@ public sealed class Globals
         int startSquare = move.StartSquare;
         int endSquare = move.EndSquare;
 
-        char startFile = (char)('a' + (startSquare % 8));
-        char startRank = (char)('1' + (startSquare / 8));
-        char endFile = (char)('a' + (endSquare % 8));
-        char endRank = (char)('1' + (endSquare / 8));
+        char startFile = (char)('a' + startSquare % 8);
+        char startRank = (char)('1' + startSquare / 8);
+        char endFile = (char)('a' + endSquare % 8);
+        char endRank = (char)('1' + endSquare / 8);
 
         return $"{startFile}{startRank}{endFile}{endRank}";
     }
@@ -433,7 +435,7 @@ public sealed class Globals
         {
             StartSquare = startSquare,
             EndSquare = endSquare,
-            pieceType = 0, 
+            pieceType = 0,
             CapturedPiece = 0,
             PromotionPiece = 0,
             ShortCastle = false,
@@ -492,7 +494,7 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 5;
+            ThinkingTime = 8;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
@@ -503,7 +505,7 @@ public sealed class Globals
 
         else
         {
-            ThinkingTime = 5;
+            ThinkingTime = 12;
             return GamePhase.Opening;
         }
     }

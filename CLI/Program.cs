@@ -1,6 +1,6 @@
 ﻿using Engine;
+using Engine.Core;
 using Engine.External_Resources;
-using System.Diagnostics;
 
 // test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
 // test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
@@ -13,7 +13,7 @@ using System.Diagnostics;
 // test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
 // test fen: 8/4r3/3k4/8/3K4/8/8/8 b - - 0 1
 
-string fen = "r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0";
+string fen = "";
 
 
 Globals globals = Globals.FenReader(fen);

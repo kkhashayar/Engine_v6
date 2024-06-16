@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using Engine.Core;
+using Engine.PieceMotions;
 
 namespace Engine;
 
@@ -293,6 +294,7 @@ public static class MoveGenerator
 
 
 
+    // TODO: General check
     private static void MakeMove(MoveObject move, int[] board)
     {
         if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return; 

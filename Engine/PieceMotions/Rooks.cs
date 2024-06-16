@@ -1,7 +1,8 @@
 ﻿
 using System.Net.Quic;
+using Engine.Core;
 
-namespace Engine;
+namespace Engine.PieceMotions;
 
 internal static class Rooks
 {
@@ -11,12 +12,12 @@ internal static class Rooks
 
         List<MoveObject> moves = new();
 
-        if(turn == 0)
+        if (turn == 0)
         {
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
-                if(Globals.IsCrossSliderPathClear(square, targetSquare, board))
+                if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
                 {
                     if (targetsquareColor == "White") continue;
                     else
@@ -32,7 +33,7 @@ internal static class Rooks
             }
             return moves;
         }
-        else if(turn == 1)
+        else if (turn == 1)
         {
             foreach (int targetSquare in targetSquares)
             {
@@ -54,13 +55,13 @@ internal static class Rooks
             }
         }
 
-        return moves;   
+        return moves;
     }
 
     public static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new();
-        
+
         int[] directions = { 1, -1, 8, -8 }; // right, left, up, down
         int originalRank = square / 8;
         int originalFile = square % 8;
@@ -75,6 +76,6 @@ internal static class Rooks
             }
         }
 
-        return squares; 
+        return squares;
     }
 }
