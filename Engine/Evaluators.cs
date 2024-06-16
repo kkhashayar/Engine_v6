@@ -263,10 +263,12 @@ internal static class Evaluators
             else if (piece == MoveGenerator.whiteRook)
             {
                 whiteScore += RookWeight;
+                if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackRook)
             {
                 blackScore += RookWeight;
+                if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteQueen)
             {
@@ -279,10 +281,12 @@ internal static class Evaluators
             else if (piece == MoveGenerator.whiteKing)
             {
                 whiteScore += KingWeight;
+                if (turn == 0) whiteScore += Tables.Kings.GetWhiteSquareWeight(board, i);
             }
             else if (piece == MoveGenerator.blackKing)
             {
                 blackScore += KingWeight;
+                if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i);
             }
         }
 

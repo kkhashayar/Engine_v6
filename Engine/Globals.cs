@@ -40,6 +40,8 @@ public sealed class Globals
     public static Stopwatch TotalTime = new Stopwatch();
 
     public static GamePhase GamePhase { get; set; } 
+    public static GamePhase GameStateForWhiteKing { get; set; }
+    public static GamePhase GameStateForBlackKing { get; set; }
     public static int ThinkingTime { get; set; } = 0;   
 
     public int[] ChessBoard =
@@ -492,7 +494,7 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 5;
+            ThinkingTime = 8;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
@@ -503,7 +505,7 @@ public sealed class Globals
 
         else
         {
-            ThinkingTime = 5;
+            ThinkingTime = 12;
             return GamePhase.Opening;
         }
     }

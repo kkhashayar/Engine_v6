@@ -26,14 +26,71 @@
             -3, -2, -2, -2, -2, -2, -2, -3
         };
 
-        public static int GetWhiteSquareWeight(int square)
+        public static readonly int[] WhiteKingTableMiddleGame = new int[64]
         {
-            return WhiteKingTableEndgame[square];
+             0,  0, -4, -4, -4, -4,  0,  0,
+             0,  0, -3, -3, -3, -3,  0,  0,
+             0,  0, -2, -2, -2, -2,  0,  0,
+             0,  0, -1, -1, -1, -1,  0,  0,
+             1,  1,  0,  0,  0,  0,  1,  1,
+             2,  2,  1,  1,  1,  1,  2,  2,
+             2,  3,  2,  1,  1,  2,  3,  2,
+             2,  2,  3,  0,  0,  1,  3,  2
+        };
+
+        public static readonly int[] BlackKingTableMiddleGame = new int[64]
+        {
+             2,  2,  3,  0,  0,  1,  3,  2,
+             2,  3,  2,  1,  1,  2,  3,  2,
+             2,  2,  1,  1,  1,  1,  2,  2,
+             1,  1,  0,  0,  0,  0,  1,  1,
+             0,  0, -1, -1, -1, -1,  0,  0,
+             0,  0, -2, -2, -2, -2,  0,  0,
+             0,  0, -3, -3, -3, -3,  0,  0,
+             0,  0, -4, -4, -4, -4,  0,  0
+        };
+
+        public static int GetWhiteSquareWeight(int[] board, int square)
+        {
+            GetGamePhaseForKing(board);
+            if (Globals.GameStateForWhiteKing == GamePhase.EndGame)
+            {
+                return WhiteKingTableEndgame[square];
+            }
+                return WhiteKingTableMiddleGame[square];    
         }
 
-        public static int GetBlackSquareWeight(int square)
+        public static int GetBlackSquareWeight(int[] board, int square)
         {
-            return BlackKingTableEndgame[square];
+            GetGamePhaseForKing(board);
+            if (Globals.GameStateForBlackKing == GamePhase.EndGame)
+            {
+                return BlackKingTableEndgame[square];
+            }
+            return BlackKingTableMiddleGame[square];
+        }
+
+        private static void GetGamePhaseForKing(int[] board)
+        {
+            
+            if(board.Any(square => square == MoveGenerator.whiteQueen))
+            {
+                Globals.GameStateForBlackKing = GamePhase.MiddleGame;
+            }
+            else
+            {
+                Globals.GameStateForBlackKing = GamePhase.EndGame;
+            }
+                
+            if(board.Any(square => square == MoveGenerator.blackQueen))
+            {
+                Globals.GameStateForWhiteKing = GamePhase.MiddleGame;
+            }
+            else
+            {
+                Globals.GameStateForWhiteKing= GamePhase.EndGame;   
+            }
+                   
         }
     }
 }
