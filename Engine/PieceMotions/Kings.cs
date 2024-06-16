@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Kings
 {
@@ -85,7 +87,7 @@ internal static class Kings
             }
 
 
-            if ( board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
+            if (board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
                 && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject

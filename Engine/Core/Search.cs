@@ -1,89 +1,12 @@
 ﻿using System.Diagnostics;
+using Engine.Core;
 
 namespace Engine;
 public static class Search
 {
     static GamePhase gamePhase = new(); 
     static OpeningManager openingManager = new OpeningManager();
-    //public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
-    //{
-    //    // Initialize stopwatch to enforce maxTime
-    //    Stopwatch stopwatch = new Stopwatch();
-    //    stopwatch.Start();
-
-    //    int alpha = int.MinValue;
-    //    int beta = int.MaxValue;
-
-    //    MoveObject bestMove = default;
-    //    List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
-
-    //    // Check for no possible moves and handle stalemate/checkmate
-    //    DetectStalemateAndCheckmates(board, turn, bestMove, allPossibleMoves);
-
-    //    // Iterative deepening
-    //    for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
-    //    {
-    //        for (int i = 0; i < allPossibleMoves.Count; i++)
-    //        {
-    //            var move = allPossibleMoves[i];
-
-    //            // Clone the board and make the move
-    //            int[] shadowBoard = ApplyMove(board, move);
-
-    //            int score = (turn == 0) ?
-    //                AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, move) :
-    //                AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, move);
-
-    //            // Restore the board state
-    //            MoveHandler.RestoreStateFromSnapshot();
-
-
-
-    //            //Update the best move based on the score
-    //            if ((turn == 0 && score > alpha) || (turn == 1 && score < beta))
-    //            {
-    //                if (turn == 0) alpha = score;
-    //                else beta = score;
-    //                bestMove = move;
-    //            }
-
-    //            //Check for forced mate move and  return early
-    //            if (score >= 999999 || score <= -999999)
-    //            {
-    //                Console.WriteLine($"Forced mate move{currentDepth}: {Globals.MoveToString(bestMove)}");
-    //                return bestMove;
-    //            }
-
-    //            if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
-
-    //            // Check if the time limit is exceeded
-    //            if (stopwatch.Elapsed >= maxTime)
-    //            {
-    //                Console.WriteLine("Stopping search due to time limit.");
-    //                return bestMove;
-    //            }
-
-    //        }
-    //        Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)}");
-    //    }
-
-    //    Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)} ");
-
-
-    //    // maybe I should add a logic here, to check if it is material loss?
-    //    //if (turn == 0)
-    //    //{
-
-    //    //}
-
-    //    //else
-    //    //{
-
-    //    //}
-
-    //    return bestMove;
-    //}
-
+ 
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
         // Initialize stopwatch to enforce maxTime
@@ -152,6 +75,19 @@ public static class Search
             }
             Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)}");
         }
+        //    // maybe I should add a logic here, to check if it is material loss?
+        //    //if (turn == 0)
+        //    //{
+
+        //    //}
+
+        //    //else
+        //    //{
+
+        //    //}
+
+        //    return bestMove;
+        //}
 
         Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)} ");
 

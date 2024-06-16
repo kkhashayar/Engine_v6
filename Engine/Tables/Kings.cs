@@ -1,4 +1,6 @@
-﻿namespace Engine.Tables
+﻿using Engine.Core;
+
+namespace Engine.Tables
 {
     public static class Kings
     {

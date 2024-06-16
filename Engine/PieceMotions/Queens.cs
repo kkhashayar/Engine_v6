@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Queens
 {
@@ -10,13 +12,13 @@ internal static class Queens
         foreach (int targetSquare in targetSquares)
         {
             var targetSquareColor = Piece.GetColor(board[targetSquare]);
-            bool isDiagonalMove = Math.Abs((targetSquare / 8) - (square / 8)) == Math.Abs((targetSquare % 8) - (square % 8));
+            bool isDiagonalMove = Math.Abs(targetSquare / 8 - square / 8) == Math.Abs(targetSquare % 8 - square % 8);
 
-            if ((isDiagonalMove && Globals.IsDiagonalPathClear(square, targetSquare, board)) ||
-                (!isDiagonalMove && Globals.IsCrossSliderPathClear(square, targetSquare, board)))
+            if (isDiagonalMove && Globals.IsDiagonalPathClear(square, targetSquare, board) ||
+                !isDiagonalMove && Globals.IsCrossSliderPathClear(square, targetSquare, board))
             {
                 // Skip if the target square has a piece of the same color
-                if ((turn == 0 && targetSquareColor == "White") || (turn == 1 && targetSquareColor == "Black"))
+                if (turn == 0 && targetSquareColor == "White" || turn == 1 && targetSquareColor == "Black")
                     continue;
 
                 moves.Add(new MoveObject
