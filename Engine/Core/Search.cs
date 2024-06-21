@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 using Engine.Core;
+using Engine.Enums;
 
 namespace Engine;
 public static class Search
 {
-    static GamePhase gamePhase = new(); 
+    static GamePhase gamePhase = new();
     static OpeningManager openingManager = new OpeningManager();
- 
+
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
-        // Initialize stopwatch to enforce maxTime
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -19,17 +19,18 @@ public static class Search
         MoveObject bestMove = default;
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
 
-        // Check for no possible moves and handle stalemate/checkmate
         DetectStalemateAndCheckmates(board, turn, bestMove, allPossibleMoves);
 
-        // Adjust maxDepth based on the initial turn
-        if (Globals.InitialTurn == 0 && turn == 1)
+
+        if (Globals.InitialTurn == 0 && turn == 1 && !Globals.InitialDepthAdjusted)
         {
-            maxDepth += 1;  // Give Black one extra depth of search when White starts first
+            maxDepth += 1;
+            Globals.InitialDepthAdjusted = true;
         }
-        else if (Globals.InitialTurn == 1 && turn == 0)
+        else if (Globals.InitialTurn == 1 && turn == 0 && !Globals.InitialDepthAdjusted)
         {
-            maxDepth += 1;  // Give White one extra depth of search when Black starts first
+            maxDepth += 1;
+            Globals.InitialDepthAdjusted = true;
         }
 
         // Iterative deepening
@@ -55,6 +56,7 @@ public static class Search
                     if (turn == 0) alpha = score;
                     else beta = score;
                     bestMove = move;
+                    bestMove.Score = score; 
                 }
 
                 // Check for forced mate move and return early
@@ -73,22 +75,8 @@ public static class Search
                     return bestMove;
                 }
             }
-            Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)}");
+            Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)} Score: {bestMove.Score}");
         }
-        //    // maybe I should add a logic here, to check if it is material loss?
-        //    //if (turn == 0)
-        //    //{
-
-        //    //}
-
-        //    //else
-        //    //{
-
-        //    //}
-
-        //    return bestMove;
-        //}
-
         Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)} ");
 
         return bestMove;
@@ -97,10 +85,11 @@ public static class Search
 
     private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
+        
         if (depth == 0)
         {
-            return Evaluators.EvaluatePosition(board, turn);
-            // return Quiescence(board, alpha, beta, turn);
+            return Quiescence(board, alpha, beta, turn);
+            //return Evaluators.EvaluatePosition(board, turn);
         }
         int bestScore = int.MinValue;
         foreach (var move in GetAllPossibleMoves(board, turn, true))
@@ -123,11 +112,12 @@ public static class Search
 
     private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
     {
-        
+
         if (depth == 0)
         {
-            return Evaluators.EvaluatePosition(board, turn);
-            // return Quiescence(board, alpha, beta, turn);
+            return Quiescence(board, alpha, beta, turn);
+            //return Evaluators.EvaluatePosition(board, turn);
+            
         }
 
         int bestScore = int.MaxValue;
@@ -151,14 +141,6 @@ public static class Search
     private static int Quiescence(int[] board, int alpha, int beta, int turn)
     {
         int maxDepth = 2;
-        if (Globals.InitialTurn == 0 && turn == 1)
-        {
-            maxDepth += 1;  // Give Black one extra depth of search when White starts first
-        }
-        else if (Globals.InitialTurn == 1 && turn == 0)
-        {
-            maxDepth += 1;  // Give White one extra depth of search when Black starts first
-        }
         return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
     }
 
@@ -175,9 +157,8 @@ public static class Search
         if (standPat > alpha)
             alpha = standPat;
 
-        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true)
-        .Where(m => m.IsCapture).ToList();
-               
+        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true).Where(m => m.IsCapture).ToList();
+
         foreach (var move in captures)
         {
             int[] shadowBoard = ApplyMove(board, move);
@@ -200,12 +181,8 @@ public static class Search
     private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-        var orderedmoves = moves.OrderByDescending(m => m.Priority)
-                        .ThenByDescending(m => m.IsCapture)
-                        .ThenByDescending(m => m.IsCheck)
-                        .ThenByDescending(m => m.IsPromotion)
-                        .ThenByDescending(m => m.IsEnPassant)
-                        .ToList();
+        var orderedmoves = moves.OrderByDescending(m => m.Priority >= 2)
+                        .ThenByDescending(m => m.ShortCastle || m.LongCastle).ToList();
         return orderedmoves;
     }
 
@@ -236,3 +213,4 @@ public static class Search
         return shadowBoard;
     }
 }
+

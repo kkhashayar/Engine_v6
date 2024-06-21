@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
-
+using Engine.Enums;
 namespace Engine.Core;
 
 public sealed class Globals
@@ -35,6 +35,7 @@ public sealed class Globals
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
     public static int InitialTurn { get; set; }
+    public static bool InitialDepthAdjusted { get; set; } = false;
     public static string CurrentFEN { get; set; }
 
     public static Stopwatch TotalTime = new Stopwatch();
@@ -42,7 +43,11 @@ public sealed class Globals
     public static GamePhase GamePhase { get; set; }
     public static GamePhase GameStateForWhiteKing { get; set; }
     public static GamePhase GameStateForBlackKing { get; set; }
+    public static GamePhase GameStateForWhiteRook { get; set; } 
+    public static GamePhase GameStateForBlackRook { get; set; }
     public static int ThinkingTime { get; set; } = 0;
+
+    public static List<int> OnBoardPieces = new List<int>();
 
     public int[] ChessBoard =
     {
@@ -486,28 +491,77 @@ public sealed class Globals
         }
 
         fenBuilder.Append(turn == 0 ? " w " : " b ");
-        fenBuilder.Append("- - 0 1"); // Default castling rights, en passant, halfmove, fullmove
+        fenBuilder.Append("- - 0 1"); // Default castling rights
 
         return fenBuilder.ToString();
     }
-    public static GamePhase GetInitialGamePhase()
+    public static GamePhase GetGamePhase()
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 8;
+            ThinkingTime = 5;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
         {
-            ThinkingTime = 30;
+            ThinkingTime = 10;
             return GamePhase.MiddleGame;
         }
 
         else
         {
-            ThinkingTime = 12;
+            ThinkingTime = 6;
             return GamePhase.Opening;
         }
+    }
+
+    public static EndGames GetEndGameType(int[]board) 
+    { 
+        if(IsSingleRookOnBoard(board)) return EndGames.RookKing;
+        return EndGames.None;
+    }
+
+    public static void GetOnBoardPieces(int[]board)
+    {
+        OnBoardPieces.Clear(); 
+        OnBoardPieces = board.Where(x => x > 0).ToList();
+       
+    }
+    public static bool IsSingleRookOnBoard(int[] board)
+    {
+        int rookCount = 0;
+
+        foreach (int piece in board)
+        {
+            if (piece == MoveGenerator.whiteRook || piece == MoveGenerator.blackRook)
+            {
+                rookCount++;
+
+                if (rookCount > 1)
+                {
+                    return false;
+                }
+            }
+            else if (piece != 0 && piece != MoveGenerator.whiteKing && piece != MoveGenerator.blackKing)
+            {
+                return false;
+            }
+        }
+
+        return rookCount == 1;
+    }
+
+    public static int ManhattanDistance(MoveObject move, int otherKingPosition)
+    {
+        int endFile = move.EndSquare % 8;
+        int endRank = move.EndSquare / 8;
+
+        int kingFile = otherKingPosition % 8;
+        int kingRank = otherKingPosition / 8;
+
+        int distance = Math.Abs(endFile - kingFile) + Math.Abs(endRank - kingRank);
+
+        return distance;
     }
     private static char GetFenSymbol(int piece)
     {
@@ -531,9 +585,4 @@ public sealed class Globals
         };
 
 }
-public enum GamePhase
-{
-    Opening,
-    MiddleGame,
-    EndGame
-}
+

@@ -1,4 +1,8 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+using Engine.Enums;
+using System.Net;
+
+namespace Engine;
 
 internal static class Evaluators
 {
@@ -9,11 +13,17 @@ internal static class Evaluators
     private static readonly int QueenWeight = 90;
     private static readonly int KingWeight = 10000;
 
+
     private static int[] whitePawnFiles = new int[8];
     private static int[] blackPawnFiles = new int[8];
 
+    private static GamePhase gamePhase = new GamePhase();
+    private static EndGames endGames = new EndGames();
+
+
     public static int EvaluatePosition(int[] board, int turn)
     {
+        
         int whiteScore = 0;
         int blackScore = 0;
 
@@ -30,6 +40,7 @@ internal static class Evaluators
                 whiteScore += PawnWeight;
                 if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
                 whitePawnFiles[file]++;
+                 
             }
             else if (piece == MoveGenerator.blackPawn)
             {
@@ -60,12 +71,12 @@ internal static class Evaluators
             else if (piece == MoveGenerator.whiteRook)
             {
                 whiteScore += RookWeight;
-                if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
+                //if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackRook)
             {
                 blackScore += RookWeight;
-                if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i);
+                //if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteQueen)
             {
@@ -97,6 +108,32 @@ internal static class Evaluators
         if (turn == 0) return (whiteScore - blackScore); 
         return (blackScore - whiteScore);
        
+    }
+
+    public static EndGames DettectEndGameType (int[] board)
+    {
+        gamePhase = Globals.GetGamePhase();
+        
+        if(gamePhase == GamePhase.EndGame)
+        {
+            Globals.GetOnBoardPieces(board);
+            int numberOfOnBoardPieces = Globals.OnBoardPieces.Count;    
+
+            if(numberOfOnBoardPieces == 3)
+            {
+                if(Globals.OnBoardPieces.Any(p => p == MoveGenerator.whiteRook || p == MoveGenerator.blackRook))
+                {
+                    return EndGames.RookKing;
+                }
+
+                if (Globals.OnBoardPieces.Any(p => p == MoveGenerator.whiteQueen || p == MoveGenerator.blackQueen))
+                {
+                    return EndGames.RookKing;
+                }
+            }
+        }
+
+        return EndGames.None;
     }
 
 
