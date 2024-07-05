@@ -6,87 +6,91 @@ public static class MoveHandler
 {
     public static void MakeMove(int[] board, MoveObject move)
     {
-        board[move.EndSquare] = move.pieceType;
-        board[move.StartSquare] = 0;
-
-
-        /////////////////////////////////// WHITE
-        if (Globals.Turn == 0)             
+        if(move is not null)
         {
-            /////////////////////////////////// Pawn Promotion  
-            if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
-            {
-                var piece = move.PromotionPiece;    
-                board[move.EndSquare] = piece;
-            }
+            board[move.EndSquare] = move.pieceType;
+            board[move.StartSquare] = 0;
 
-            if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
-            {
-                Globals.WhiteKingRookMoved = true;
-            }
 
-            // ROOK ON LONG CASLTE 
-            if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+            /////////////////////////////////// WHITE
+            if (Globals.Turn == 0)
             {
-                Globals.WhiteQueenRookMoved = true;
-            }
-            /////////////////////////////////// Castling   
+                /////////////////////////////////// Pawn Promotion  
+                if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
+                {
+                    var piece = move.PromotionPiece;
+                    board[move.EndSquare] = piece;
+                }
 
-            if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
-            {
-                board[56] = 0; board[59] = MoveGenerator.whiteRook;
-                Globals.WhiteLongCastle = false;
-                Globals.WhiteShortCastle = false;
-                Globals.WhiteQueenRookMoved = true;
-            }
+                if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
+                {
+                    Globals.WhiteKingRookMoved = true;
+                }
 
-            if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+                // ROOK ON LONG CASLTE 
+                if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+                {
+                    Globals.WhiteQueenRookMoved = true;
+                }
+                /////////////////////////////////// Castling   
+
+                if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
+                {
+                    board[56] = 0; board[59] = MoveGenerator.whiteRook;
+                    Globals.WhiteLongCastle = false;
+                    Globals.WhiteShortCastle = false;
+                    Globals.WhiteQueenRookMoved = true;
+                }
+
+                if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+                {
+                    board[63] = 0; board[61] = MoveGenerator.whiteRook;
+                    Globals.WhiteLongCastle = false;
+                    Globals.WhiteShortCastle = false;
+                    Globals.WhiteKingRookMoved = true;
+                }
+            }
+            ///////////////////////////////// BLACK 
+            else
             {
-                board[63] = 0; board[61] = MoveGenerator.whiteRook;
-                Globals.WhiteLongCastle = false;
-                Globals.WhiteShortCastle = false;
-                Globals.WhiteKingRookMoved = true;
+
+                /////////////////////////////////// Pawn Promotion
+                if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
+                {
+                    var piece = move.PromotionPiece;
+                    board[move.EndSquare] = piece;
+                }
+
+                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+                {
+                    Globals.BlackQueenRookMoved = true;
+                }
+
+
+                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
+                {
+                    Globals.BlackKingRookMoved = true;
+                }
+
+
+                if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+                {
+                    board[0] = 0; board[3] = MoveGenerator.blackRook;
+                    Globals.BlackLongCastle = false;
+                    Globals.BlackShortCastle = false;
+                    Globals.BlackQueenRookMoved = true;
+
+                }
+                if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
+                {
+                    board[7] = 0; board[5] = MoveGenerator.blackRook;
+                    Globals.BlackShortCastle = false;
+                    Globals.BlackLongCastle = false;
+                    Globals.BlackKingRookMoved = true;
+                }
             }
         }
-        ///////////////////////////////// BLACK 
-        else
-        {
-
-            /////////////////////////////////// Pawn Promotion
-            if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
-            {
-                var piece = move.PromotionPiece;
-                board[move.EndSquare] = piece;
-            }
-
-            if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
-            {
-                Globals.BlackQueenRookMoved = true;
-            }
-
-
-            if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
-            {
-                Globals.BlackKingRookMoved = true;
-            }
-
-
-            if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
-            {
-                board[0] = 0; board[3] = MoveGenerator.blackRook;
-                Globals.BlackLongCastle = false;
-                Globals.BlackShortCastle = false;
-                Globals.BlackQueenRookMoved = true;
-
-            }
-            if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
-            {
-                board[7] = 0; board[5] = MoveGenerator.blackRook;
-                Globals.BlackShortCastle = false;
-                Globals.BlackLongCastle = false;
-                Globals.BlackKingRookMoved = true;
-            }
-        }
+        
 
     }
 

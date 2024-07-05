@@ -46,6 +46,7 @@ public sealed class Globals
     public static GamePhase GameStateForWhiteRook { get; set; } 
     public static GamePhase GameStateForBlackRook { get; set; }
     public static int ThinkingTime { get; set; } = 0;
+    public static int MaxDepth = 20; 
 
     public static List<int> OnBoardPieces = new List<int>();
 
@@ -398,14 +399,25 @@ public sealed class Globals
     // Only in use with Old cli version
     public static string MoveToString(MoveObject move)
     {
-        string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
-        string castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
+        string promotion = string.Empty;
+        string castle = string.Empty;
+        if (move is not null)
+        {
+            promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
+            castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
+        }
+        
 
         if (!string.IsNullOrEmpty(castle))
         {
             return castle;
         }
-        if (move.StartSquare == move.EndSquare) return "";
+        if (move == null) return "";
+        // if (move.StartSquare == move.EndSquare) return "";
+        if (move.IsCheck)
+        {
+            return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare) + "+" }{promotion}";
+        }
         return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
 
@@ -504,13 +516,13 @@ public sealed class Globals
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
         {
-            ThinkingTime = 10;
+            ThinkingTime = 60;
             return GamePhase.MiddleGame;
         }
 
         else
         {
-            ThinkingTime = 6;
+            ThinkingTime = 10;
             return GamePhase.Opening;
         }
     }
@@ -551,6 +563,7 @@ public sealed class Globals
         return rookCount == 1;
     }
 
+    // Usefull for king based end games.
     public static int ManhattanDistance(MoveObject move, int otherKingPosition)
     {
         int endFile = move.EndSquare % 8;
