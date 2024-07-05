@@ -511,7 +511,7 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 5;
+            ThinkingTime = 10;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
@@ -522,7 +522,7 @@ public sealed class Globals
 
         else
         {
-            ThinkingTime = 10;
+            ThinkingTime = 5;
             return GamePhase.Opening;
         }
     }

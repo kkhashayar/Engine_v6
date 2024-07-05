@@ -13,6 +13,7 @@ public static class Search
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
         DetectStalemateAndCheckmates(board, turn, bestMove, allPossibleMoves);
 
+
         int alpha = int.MinValue;
         int beta = int.MaxValue;
 
@@ -59,7 +60,11 @@ public static class Search
     {
         if (depth == 0)
         {
-            // return Quiescence(board, alpha, beta, turn);
+            if(moveToEval.IsCheck || moveToEval.IsCapture)
+                {
+                return Quiescence(board, alpha, beta, turn);
+            }
+            
             return Evaluators.EvaluatePosition(board, turn);
         }
 
@@ -87,7 +92,11 @@ public static class Search
     {
         if (depth == 0)
         {
-            // return Quiescence(board, alpha, beta, turn);
+            if (moveToEval.IsCheck || moveToEval.IsCapture)
+            {
+                return Quiescence(board, alpha, beta, turn);
+            }
+
             return Evaluators.EvaluatePosition(board, turn);
         }
 
@@ -129,7 +138,8 @@ public static class Search
         if (standPat > alpha)
             alpha = standPat;
 
-        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true).Where(m => m.IsCapture).ToList();
+        List<MoveObject> captures = GetAllPossibleMoves(board, turn, true)
+            .Where(m => m.Priority >= 2).ToList();
 
         foreach (var move in captures)
         {
