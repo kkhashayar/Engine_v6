@@ -9,6 +9,8 @@ public static class Evaluators
     private static readonly int QueenValue = 900;
     private static readonly int KingValue = 20000;
 
+    private static int[] whitePawnFiles = new int[8];
+    private static int[] blackPawnFiles = new int[8];
     public static int EvaluatePosition(int[] board, int turn)
     {
         int whiteScore = 0;
@@ -17,13 +19,19 @@ public static class Evaluators
         for (int i = 0; i < board.Length; ++i)
         {
             int piece = board[i];
+            int file = i % 8;
+
             if (piece == MoveGenerator.whitePawn)
             {
                 whiteScore += PawnValue;
+                if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
+                whitePawnFiles[file]++;   
             }
             else if (piece == MoveGenerator.blackPawn)
             {
                 blackScore += PawnValue;
+                if (turn == 1) blackScore -= Tables.Pawns.GetBlackSquareWeight(i);
+                blackPawnFiles[file]++;
             }
             else if (piece == MoveGenerator.whiteKnight)
             {

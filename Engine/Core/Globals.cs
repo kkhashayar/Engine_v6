@@ -416,7 +416,7 @@ public sealed class Globals
         // if (move.StartSquare == move.EndSquare) return "";
         if (move.IsCheck)
         {
-            return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare) + "+" }{promotion}";
+            return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} \"+\" ";
         }
         return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} ";
     }
