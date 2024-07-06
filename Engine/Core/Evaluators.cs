@@ -24,7 +24,7 @@ public static class Evaluators
             if (piece == MoveGenerator.whitePawn)
             {
                 whiteScore += PawnValue;
-                 
+                
             }
             else if (piece == MoveGenerator.blackPawn)
             {
