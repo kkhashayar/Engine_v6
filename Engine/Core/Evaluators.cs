@@ -76,3 +76,4 @@ public static class Evaluators
         return (turn == 0) ? (whiteScore - blackScore) : (blackScore - whiteScore);
     }
 }
+
