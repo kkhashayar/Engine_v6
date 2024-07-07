@@ -60,12 +60,7 @@ public static class Search
     {
         if (depth == 0)
         {
-            if (moveToEval.IsCheck || moveToEval.IsCapture)
-            {
-                return Quiescence(board, alpha, beta, turn);
-            }
-
-            return Evaluators.EvaluatePosition(board, turn);
+            return Quiescence(board, alpha, beta, turn);
         }
 
         int bestScore = int.MinValue;
@@ -92,12 +87,8 @@ public static class Search
     {
         if (depth == 0)
         {
-            if (moveToEval.IsCheck || moveToEval.IsCapture)
-            {
-                return Quiescence(board, alpha, beta, turn);
-            }
-
-            return Evaluators.EvaluatePosition(board, turn);
+            return Quiescence(board, alpha, beta, turn);
+            // return Evaluators.EvaluatePosition(board, turn);
         }
 
         int bestScore = int.MaxValue;
@@ -139,7 +130,11 @@ public static class Search
             alpha = standPat;
 
         List<MoveObject> captures = GetAllPossibleMoves(board, turn, true)
-            .Where(m => m.Priority >= 2).ToList();
+            .Where(m => m.IsCapture && m.IsCheck)
+            .OrderByDescending(m => m.IsCapture && m.IsCheck)
+            .ThenByDescending(m => m.IsCheck)
+            .ThenByDescending (m => m.IsCapture)  
+            .ToList();
 
         foreach (var move in captures)
         {
