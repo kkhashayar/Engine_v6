@@ -24,11 +24,13 @@ public static class Evaluators
             if (piece == MoveGenerator.whitePawn)
             {
                 whiteScore += PawnValue;
+                if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
                 
             }
             else if (piece == MoveGenerator.blackPawn)
             {
                 blackScore += PawnValue;
+                if (turn == 1) blackScore -= Tables.Pawns.GetBlackSquareWeight(i);
                 
             }
             else if (piece == MoveGenerator.whiteKnight)
