@@ -9,11 +9,11 @@ using Engine.External_Resources;
 // test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
 
-// test fen: 8/8/4k3/4pp2/8/8/6N1/3K4 w - - 0 1 
-// test fen: 8/8/3k4/8/8/3K4/8/4R3 w - - 0 1
-// test fen: 8/4r3/3k4/8/3K4/8/8/8 b - - 0 1
 
-string fen = "";
+// test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
+// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
+
+string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
 
 
 Globals globals = Globals.FenReader(fen);
@@ -25,8 +25,8 @@ Globals globals = Globals.FenReader(fen);
 
 
 
-int searchDepth = 20;
-Globals.GetInitialGamePhase();
+int searchDepth = Globals.MaxDepth;
+Globals.GetGamePhase();
 
 TimeSpan maxTime = TimeSpan.FromSeconds(Globals.ThinkingTime);
 
@@ -51,9 +51,10 @@ void Run()
     while (running)
     {
         MoveObject move = new MoveObject();
-
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+        
         MoveHandler.MakeMove(globals.ChessBoard, move);
+        Console.Beep(2000, 100);
         Globals.moveHistory.Add(move);  
 
         Globals.Turn ^= 1;
@@ -64,7 +65,7 @@ void Run()
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
        
         Console.WriteLine();
-        Console.Beep(2000, 100);
+       
 
       
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)

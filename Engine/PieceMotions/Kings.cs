@@ -103,6 +103,7 @@ internal static class Kings
     }
 
 
+
     static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new();

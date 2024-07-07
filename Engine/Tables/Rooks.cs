@@ -1,4 +1,7 @@
-﻿namespace Engine.Tables
+﻿using Engine.Core;
+using Engine.Enums;
+
+namespace Engine.Tables
 {
     internal class Rooks
     {
@@ -37,5 +40,6 @@
         {
             return BlackRookTable[index];
         }
+
     }
 }
