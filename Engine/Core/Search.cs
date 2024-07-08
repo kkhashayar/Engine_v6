@@ -1,16 +1,27 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Engine.Core;
 
 namespace Engine;
 public static class Search
 {
+    public static Dictionary<string, int> transpositionTables = new Dictionary<string, int>();
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
+        // Initial position
+        var initialPosition = Globals.BoardToFen(board, turn);
+        transpositionTables.Add(initialPosition, 0);    
+
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
+        // Implementing PV 
+        PrincipalVariation pv = new();
         MoveObject bestMove = null;
+
         List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
+        
+
         DetectStalemateAndCheckmates(board, turn, bestMove, allPossibleMoves);
 
 
@@ -23,9 +34,15 @@ public static class Search
             {
                 int[] shadowBoard = ApplyMove(board, move);
 
+                PrincipalVariation currentPv = new PrincipalVariation();
+
                 int score = (turn == 0) ?
-                    AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, move) :
-                    AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, move);
+                    AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, move, pv) :
+                    AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, move, pv);
+
+                var position = Globals.BoardToFen(shadowBoard, turn);
+
+                if (transpositionTables.ContainsKey(position))
 
                 MoveHandler.RestoreStateFromSnapshot();
 
@@ -37,6 +54,11 @@ public static class Search
                     else beta = score;
                     bestMove = move;
                     bestMove.Score = score;
+
+                    // Svae the PV  
+                    pv.Moves.Clear();
+                    pv.AddMove(move);
+                    pv.Moves.AddRange(currentPv.Moves);
                 }
 
                 if (stopwatch.Elapsed >= maxTime)
@@ -48,6 +70,7 @@ public static class Search
             if (bestMove is not null)
             {
                 Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)} Score: {bestMove.Score}");
+                Console.WriteLine("Principal Variation: " + string.Join(", ", pv.Moves.Select(Globals.MoveToString)));
             }
 
         }
@@ -56,23 +79,31 @@ public static class Search
         return bestMove;
     }
 
-    private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
+    private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval, PrincipalVariation pv)
     {
         if (depth == 0)
         {
-            return Quiescence(board, alpha, beta, turn);
+            pv.Count = 0;
+
+            if (moveToEval.IsCapture || moveToEval.IsCheck) return Quiescence(board, alpha, beta, turn);
+            return Evaluators.EvaluatePosition(board, turn);
         }
 
         int bestScore = int.MinValue;
+        PrincipalVariation line = new PrincipalVariation();
+
         foreach (var move in GetAllPossibleMoves(board, turn, true))
         {
             int[] shadowBoard = ApplyMove(board, move);
-            int score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, 1 - turn, move);
+            int score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, 1 - turn, move, line);
             MoveHandler.RestoreStateFromSnapshot();
 
             if (score > bestScore)
             {
                 bestScore = score;
+                pv.Moves.Clear();
+                pv.AddMove(move);
+                pv.Moves.AddRange(line.Moves);
             }
             alpha = Math.Max(alpha, score);
             if (beta <= alpha)
@@ -83,24 +114,31 @@ public static class Search
         return bestScore;
     }
 
-    private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval)
+    private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval, PrincipalVariation pv)
     {
         if (depth == 0)
         {
-            return Quiescence(board, alpha, beta, turn);
-            // return Evaluators.EvaluatePosition(board, turn);
+            pv.Count = 0;
+            if (moveToEval.IsCapture || moveToEval.IsCheck) return Quiescence(board, alpha, beta, turn);
+            return Evaluators.EvaluatePosition(board, turn);
         }
 
         int bestScore = int.MaxValue;
+
+        PrincipalVariation line = new PrincipalVariation();
+
         foreach (var move in GetAllPossibleMoves(board, turn, true))
         {
             int[] shadowBoard = ApplyMove(board, move);
-            int score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, 1 - turn, move);
+            int score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, 1 - turn, move, line);
             MoveHandler.RestoreStateFromSnapshot();
 
             if (score < bestScore)
             {
                 bestScore = score;
+                pv.Moves.Clear();
+                pv.AddMove(move);
+                pv.Moves.AddRange(line.Moves);
             }
             beta = Math.Min(beta, score);
             if (beta <= alpha)
@@ -113,7 +151,7 @@ public static class Search
 
     private static int Quiescence(int[] board, int alpha, int beta, int turn)
     {
-        int maxDepth = 2;
+        int maxDepth = 4;
         return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
     }
     private static int QuiescenceInternal(int[] board, int alpha, int beta, int turn, int depth)
@@ -133,7 +171,7 @@ public static class Search
             .Where(m => m.IsCapture && m.IsCheck)
             .OrderByDescending(m => m.IsCapture && m.IsCheck)
             .ThenByDescending(m => m.IsCheck)
-            .ThenByDescending (m => m.IsCapture)  
+            .ThenByDescending(m => m.IsCapture)
             .ToList();
 
         foreach (var move in captures)
@@ -159,9 +197,8 @@ public static class Search
     private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-        var orderedmoves = moves.OrderByDescending(m => m.Priority >= 2)
-                        .ThenByDescending(m => m.ShortCastle || m.LongCastle).ToList();
-        return orderedmoves;
+        // Need to implement move ordering
+        return moves;
     }
 
     private static int[] ApplyMove(int[] board, MoveObject move)
@@ -190,4 +227,11 @@ public static class Search
             }
         }
     }
+}
+
+
+public struct ScoreInDept
+{
+    public int Dept;
+    public int Score; 
 }

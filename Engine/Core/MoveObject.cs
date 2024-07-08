@@ -14,7 +14,6 @@ public class MoveObject
     public bool IsEnPassant { get; set; }
     public bool IsPromotion { get; set; }
     public bool IsCheck { get; set; }
-    public decimal Priority { get; set; } 
     public int Score { get; set; }
     public int Depth { get; set; }  
 }

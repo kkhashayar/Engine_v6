@@ -36,26 +36,32 @@ public static class Evaluators
             else if (piece == MoveGenerator.whiteKnight)
             {
                 whiteScore += KnightValue;
+                //if (turn == 0) whiteScore += Tables.Knights.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackKnight)
             {
                 blackScore += KnightValue;
+                //if (turn == 1) blackScore -= Tables.Knights.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteBishop)
             {
                 whiteScore += BishopValue;
+                //if (turn == 0) whiteScore += Tables.Bishops.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackBishop)
             {
                 blackScore += BishopValue;
+                //if (turn == 1) blackScore -= Tables.Bishops.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteRook)
             {
                 whiteScore += RookValue;
+                // if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackRook)
             {
                 blackScore += RookValue;
+                // if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i); 
             }
             else if (piece == MoveGenerator.whiteQueen)
             {
@@ -68,10 +74,12 @@ public static class Evaluators
             else if (piece == MoveGenerator.whiteKing)
             {
                 whiteScore += KingValue;
+                //if (turn == 0) whiteScore += Tables.Kings.GetWhiteSquareWeight(board, i);
             }
             else if (piece == MoveGenerator.blackKing)
             {
                 blackScore += KingValue;
+                //if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i);
             }
         }
 
