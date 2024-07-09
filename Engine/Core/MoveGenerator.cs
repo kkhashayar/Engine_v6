@@ -50,15 +50,15 @@ public static class MoveGenerator
                     var move = whitePseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                        move.Priority = 1;
+                        
                         if (chessBoard[move.EndSquare] != 0) 
                         {
                             move.IsCapture = true;
-                            move.Priority += 1;
+                            
                         }  
                         if(move.EndSquare == blackKingPosition)
                         {
-                            move.Priority += 1;
+                            move.IsCheck = true;
                         }
                         if(move.pieceType == whitePawn)
                         {
@@ -66,12 +66,12 @@ public static class MoveGenerator
                             var rightKillSquare = move.EndSquare - 9;
                             if(Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
                             {
-                                move.Priority += 1;
+                                move.IsCapture = true;
                             }
 
                             if(Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
                             {
-                                move.Priority += 1;
+                                move.IsCapture = true;   
                             }
                             
                         }
@@ -87,14 +87,14 @@ public static class MoveGenerator
                     var move = blackPseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                        move.Priority = 1;
+                        
                         if (chessBoard[move.EndSquare] != 0)
                         {
-                            move.Priority += 1;
+                            move.IsCapture = true; 
                         }
                         if(move.EndSquare == whiteKingPosition)
                         {
-                            move.Priority += 1;  
+                            move.IsCheck = true;   
                         }
                         if(move.pieceType == blackPawn)
                         {
@@ -102,12 +102,12 @@ public static class MoveGenerator
                             var rightKillSquare = move.EndSquare + 9;
                             if(Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
                             {
-                                move.Priority += 1;
+                                move.IsCapture= true;   
                             }
 
                             if(Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
                             {
-                                move.Priority += 1;
+                                move.IsCapture = true;  
                             }
                             
                         }

@@ -461,7 +461,6 @@ public sealed class Globals
             IsEnPassant = false,
             IsPromotion = false,
             IsCheck = false,
-            Priority = 0,
             Score = 0
         };
     }

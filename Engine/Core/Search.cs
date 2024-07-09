@@ -113,7 +113,7 @@ public static class Search
 
     private static int Quiescence(int[] board, int alpha, int beta, int turn)
     {
-        int maxDepth = 2;
+        int maxDepth = 6;
         return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
     }
     private static int QuiescenceInternal(int[] board, int alpha, int beta, int turn, int depth)
@@ -159,9 +159,7 @@ public static class Search
     private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
         var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-        var orderedmoves = moves.OrderByDescending(m => m.Priority >= 2)
-                        .ThenByDescending(m => m.ShortCastle || m.LongCastle).ToList();
-        return orderedmoves;
+        return moves; 
     }
 
     private static int[] ApplyMove(int[] board, MoveObject move)
