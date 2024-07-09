@@ -151,7 +151,7 @@ public static class Search
 
     private static int Quiescence(int[] board, int alpha, int beta, int turn)
     {
-        int maxDepth = 4;
+        int maxDepth = 6;
         return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
     }
     private static int QuiescenceInternal(int[] board, int alpha, int beta, int turn, int depth)
@@ -196,9 +196,8 @@ public static class Search
 
     private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
-        var moves = MoveGenerator.GenerateAllMoves(board, turn);
-        // Need to implement move ordering
-        return moves;
+        var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
+        return moves; 
     }
 
     private static int[] ApplyMove(int[] board, MoveObject move)

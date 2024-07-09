@@ -51,16 +51,30 @@ public static class MoveGenerator
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
                         
-                        if (chessBoard[move.EndSquare] != 0)
+                        if (chessBoard[move.EndSquare] != 0) 
                         {
                             move.IsCapture = true;
                             
-                        }
-                        if (move.EndSquare == blackKingPosition)
+                        }  
+                        if(move.EndSquare == blackKingPosition)
                         {
-                            move.IsCheck = true;    
+                            move.IsCheck = true;
                         }
-                      
+                        if(move.pieceType == whitePawn)
+                        {
+                            var leftKillSquare = move.EndSquare - 7; 
+                            var rightKillSquare = move.EndSquare - 9;
+                            if(Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
+                            {
+                                move.IsCapture = true;
+                            }
+
+                            if(Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
+                            {
+                                move.IsCapture = true;   
+                            }
+                            
+                        }
                         moves.Add(move);
                     }
                 }
@@ -73,17 +87,31 @@ public static class MoveGenerator
                     var move = blackPseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                       
+                        
                         if (chessBoard[move.EndSquare] != 0)
                         {
-                            move.IsCapture = true;
+                            move.IsCapture = true; 
                         }
                         if (move.EndSquare == whiteKingPosition)
                         {
-                            move.IsCheck= true; 
+                            move.IsCheck = true;   
                         }
-                       
+                        if(move.pieceType == blackPawn)
+                        {
+                            var leftKillSquare = move.EndSquare + 7; 
+                            var rightKillSquare = move.EndSquare + 9;
+                            if(Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
+                            {
+                                move.IsCapture= true;   
+                            }
 
+                            if(Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
+                            {
+                                move.IsCapture = true;  
+                            }
+                            
+                        }
+                        
                         moves.Add(move);
                     }
                 }
