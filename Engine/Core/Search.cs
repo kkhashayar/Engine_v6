@@ -196,7 +196,7 @@ public static class Search
 
     private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
     {
-        var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
+        var moves = MoveGenerator.GenerateAllMoves(board, turn);
         // Need to implement move ordering
         return moves;
     }
