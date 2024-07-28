@@ -2,6 +2,7 @@
 using Engine.Core;
 using Engine.External_Resources;
 
+
 // test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
 // test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
 
@@ -23,16 +24,10 @@ Globals globals = Globals.FenReader(fen);
 // RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
-
-
 int searchDepth = Globals.MaxDepth;
 Globals.GetGamePhase();
 
 TimeSpan maxTime = TimeSpan.FromSeconds(Globals.ThinkingTime);
-
-//Console.WriteLine($"Max time: {Globals.ThinkingTime}  Max Depth: {searchDepth}");
-//Console.WriteLine("Press a key to continue");
-//Console.ReadKey();  
 
 Run();
 
@@ -55,7 +50,7 @@ void Run()
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
         
         MoveHandler.MakeMove(globals.ChessBoard, move);
-        Console.Beep(2000, 100);
+
         Globals.moveHistory.Add(move);  
 
         Globals.Turn ^= 1;
@@ -66,8 +61,6 @@ void Run()
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
        
         Console.WriteLine();
-       
-
       
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
@@ -75,7 +68,7 @@ void Run()
             Globals.TotalTime.Stop();
             break;
         }
-        
+        Console.Beep(1000, 100);
     }
 
     Console.WriteLine();
@@ -87,9 +80,8 @@ void Run()
     {
         Console.Write(Globals.MoveToString(move));
     }
-    
-    Console.Beep(1500, 500);
-    Console.Beep(1500, 500);
+    Console.Beep(500, 150);
+    Console.Beep(500, 150);
     Console.ReadKey();
 }
 
@@ -128,7 +120,6 @@ void printBoardBlackDown(int[] board)
     Console.ForegroundColor = ConsoleColor.Black;
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" };
-
 
     for (int rank = 7; rank >= 0; rank--)
     {
