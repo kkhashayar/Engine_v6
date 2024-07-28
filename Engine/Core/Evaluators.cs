@@ -36,14 +36,17 @@ public static class Evaluators
             else if (piece == MoveGenerator.whiteKnight)
             {
                 whiteScore += KnightValue;
+                if (turn == 0) whiteScore += Tables.Knights.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackKnight)
             {
                 blackScore += KnightValue;
+                if (turn == 1) blackScore -= Tables.Knights.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteBishop)
             {
                 whiteScore += BishopValue;
+
             }
             else if (piece == MoveGenerator.blackBishop)
             {
@@ -68,10 +71,12 @@ public static class Evaluators
             else if (piece == MoveGenerator.whiteKing)
             {
                 whiteScore += KingValue;
+                if (turn == 0) whiteScore += Tables.Kings.GetWhiteSquareWeight(board, i);
             }
             else if (piece == MoveGenerator.blackKing)
             {
                 blackScore += KingValue;
+                if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i); 
             }
         }
 
