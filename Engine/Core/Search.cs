@@ -87,8 +87,8 @@ namespace Engine
             {
                 pv.Count = 0;
 
-                if (moveToEval.IsCapture || moveToEval.IsCheck) return Quiescence(board, alpha, beta, turn);
-                return Evaluators.EvaluatePosition(board, turn);
+                return Quiescence(board, alpha, beta, turn);
+                // return Evaluators.EvaluatePosition(board, turn);
             }
 
             int bestScore = int.MinValue;
@@ -121,8 +121,9 @@ namespace Engine
             if (depth == 0)
             {
                 pv.Count = 0;
-                if (moveToEval.IsCapture || moveToEval.IsCheck) return Quiescence(board, alpha, beta, turn);
-                return Evaluators.EvaluatePosition(board, turn);
+                // if (moveToEval.IsCapture || moveToEval.IsCheck)
+                return Quiescence(board, alpha, beta, turn);
+                // return Evaluators.EvaluatePosition(board, turn);
             }
 
             int bestScore = int.MaxValue;
