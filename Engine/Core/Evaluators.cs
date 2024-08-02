@@ -46,19 +46,22 @@ public static class Evaluators
             else if (piece == MoveGenerator.whiteBishop)
             {
                 whiteScore += BishopValue;
-
+                if (turn == 0) whiteScore += Tables.Bishops.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackBishop)
             {
                 blackScore += BishopValue;
+                if (turn == 1) blackScore -= Tables.Bishops.GetBlackSquareWeight(i);
             }
             else if (piece == MoveGenerator.whiteRook)
             {
                 whiteScore += RookValue;
+                if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
             }
             else if (piece == MoveGenerator.blackRook)
             {
                 blackScore += RookValue;
+                if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i); 
             }
             else if (piece == MoveGenerator.whiteQueen)
             {
