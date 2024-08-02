@@ -1,186 +1,238 @@
-﻿using System.Diagnostics;
-using Engine.Core;
+﻿using Engine.Core;
+using System.Diagnostics;
 
-namespace Engine;
-public static class Search
+namespace Engine
 {
-    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
+    public static class Search
     {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        MoveObject bestMove = default;
-        List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
-        DetectStalemateAndCheckmates(board, turn, allPossibleMoves);
-
-        int alpha = int.MinValue;
-        int beta = int.MaxValue;
-
-        for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+        public static List<MoveObject> tempMoves = new List<MoveObject>();  
+        public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
         {
-            int tempAlpha = alpha;
-            int tempBeta = beta;
+            Console.WriteLine();
+            Console.WriteLine($"King's Game state: {Globals.GameStateForWhiteKing}");
+            Console.WriteLine();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-            foreach (var move in allPossibleMoves)
+            // Implementing PV 
+            PrincipalVariation pv = new();
+            MoveObject bestMove = null;
+
+            List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
+
+            DetectStalemateAndCheckmates(board, turn, bestMove, allPossibleMoves);
+
+            int alpha = int.MinValue;
+            int beta = int.MaxValue;
+
+            for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+            {
+                foreach (var move in allPossibleMoves)
+                {
+                    int[] shadowBoard = ApplyMove(board, move);
+
+                    PrincipalVariation currentPv = new PrincipalVariation();
+
+                    int score = (turn == 0) ?
+                        AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, move, currentPv) :
+                        AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, move, currentPv);
+
+                    MoveHandler.RestoreStateFromSnapshot();
+
+                    if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
+
+                    if ((turn == 0 && score > alpha) || (turn == 1 && score < beta))
+                    {
+                        if (turn == 0) alpha = score;
+                        else beta = score;
+                        bestMove = move;
+                        bestMove.Score = score;
+
+                        // Save the PV
+                        pv.Moves.Clear();
+                        pv.AddMove(move);
+                        pv.Moves.AddRange(currentPv.Moves);
+                    }
+                    if (!tempMoves.Contains(bestMove))
+                    {
+                        tempMoves.Add(bestMove);
+                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Candidate: {Globals.MoveToString(bestMove)} Score:{bestMove.Score} Depth: {currentDepth}");
+                    }
+                    
+
+                    if (stopwatch.Elapsed >= maxTime)
+                    {
+                        Console.WriteLine("Stopping search due to time limit.");
+                        return bestMove;
+                    }
+                }
+                if (bestMove is not null)
+                {
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    
+                    Console.WriteLine();
+                    Console.WriteLine($"Best in Depth {currentDepth}: {Globals.MoveToString(bestMove)} Score: {bestMove.Score}");
+                    Console.WriteLine("Principal Variation: " + string.Join(", ", pv.Moves.Select(Globals.MoveToString)));
+                    Console.WriteLine();
+                }
+            }
+            Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)} ");
+            return bestMove;
+        }
+
+        private static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval, PrincipalVariation pv)
+        {
+            if (depth == 0)
+            {
+                pv.Count = 0;
+
+                return Quiescence(board, alpha, beta, turn);
+                // return Evaluators.EvaluatePosition(board, turn);
+            }
+
+            int bestScore = int.MinValue;
+            PrincipalVariation line = new PrincipalVariation();
+
+            foreach (var move in GetAllPossibleMoves(board, turn, true))
+            {
+                int[] shadowBoard = ApplyMove(board, move);
+                int score = AlphaBetaMin(depth - 1, alpha, beta, shadowBoard, 1 - turn, move, line);
+                MoveHandler.RestoreStateFromSnapshot();
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    pv.Moves.Clear();
+                    pv.AddMove(move);
+                    pv.Moves.AddRange(line.Moves);
+                }
+                alpha = Math.Max(alpha, score);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return bestScore;
+        }
+
+        private static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, MoveObject moveToEval, PrincipalVariation pv)
+        {
+            if (depth == 0)
+            {
+                pv.Count = 0;
+                // if (moveToEval.IsCapture || moveToEval.IsCheck)
+                return Quiescence(board, alpha, beta, turn);
+                // return Evaluators.EvaluatePosition(board, turn);
+            }
+
+            int bestScore = int.MaxValue;
+
+            PrincipalVariation line = new PrincipalVariation();
+
+            foreach (var move in GetAllPossibleMoves(board, turn, true))
+            {
+                int[] shadowBoard = ApplyMove(board, move);
+                int score = AlphaBetaMax(depth - 1, alpha, beta, shadowBoard, 1 - turn, move, line);
+                MoveHandler.RestoreStateFromSnapshot();
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    pv.Moves.Clear();
+                    pv.AddMove(move);
+                    pv.Moves.AddRange(line.Moves);
+                }
+                beta = Math.Min(beta, score);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return bestScore;
+        }
+
+        private static int Quiescence(int[] board, int alpha, int beta, int turn)
+        {
+            int maxDepth = 6;
+            return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
+        }
+
+        private static int QuiescenceInternal(int[] board, int alpha, int beta, int turn, int depth)
+        {
+            if (depth == 0)
+            {
+                return Evaluators.EvaluatePosition(board, turn);
+            }
+
+            int standPat = Evaluators.EvaluatePosition(board, turn);
+            if (standPat >= beta)
+                return beta;
+            if (standPat > alpha)
+                alpha = standPat;
+
+            List<MoveObject> captures = GetAllPossibleMoves(board, turn, true)
+                .Where(m => m.IsCapture && m.IsCheck).ToList();
+
+            foreach (var move in captures)
             {
                 int[] shadowBoard = ApplyMove(board, move);
 
-                int score = (turn == 0) ?
-                      AlphaBetaMin(shadowBoard, currentDepth - 1, tempAlpha, tempBeta, 1)
-                    : AlphaBetaMax(shadowBoard, currentDepth - 1, tempAlpha, tempBeta, 0);
-
+                int score = -QuiescenceInternal(shadowBoard, -beta, -alpha, turn ^ 1, depth - 1);
                 MoveHandler.RestoreStateFromSnapshot();
 
-                if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
-
-                if (turn == 0 && score > tempAlpha)
+                if (score >= beta)
                 {
-                    tempAlpha = score;
-                    bestMove = move;
-                    bestMove.Score = score;
+                    return beta;
                 }
-                if (turn == 1 && score < tempBeta)
+                if (score > alpha)
                 {
-                    tempBeta = score;
-                    bestMove = move;
-                    bestMove.Score = score;
-                }
-
-                if (stopwatch.Elapsed >= maxTime)
-                {
-                    bestMove.Score = score;
-                    return bestMove;
-                }
-
-                if (score >= 99999 || score <= -99999)
-                {
-                    bestMove = move;
-                    bestMove.Score = score;
-                    return bestMove;
+                    alpha = score;
                 }
             }
 
-            if (tempAlpha != alpha || tempBeta != beta)
-            {
-                alpha = tempAlpha;
-                beta = tempBeta;
-
-                Console.WriteLine($"Depth {currentDepth} completed. Best move: {Globals.MoveToString(bestMove)} with score {bestMove.Score}");
-            }
+            return alpha;
         }
 
-        return bestMove;
+        private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
+        {
+            var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
+            return moves;
+        }
+
+        private static int[] ApplyMove(int[] board, MoveObject move)
+        {
+            int[] shadowBoard = (int[])board.Clone();
+            MoveHandler.RegisterStaticStates();
+            MoveHandler.MakeMove(shadowBoard, move);
+            return shadowBoard;
+        }
+
+        private static void DetectStalemateAndCheckmates(int[] board, int turn, MoveObject bestMove, List<MoveObject> allPossibleMoves)
+        {
+            if (!allPossibleMoves.Any())
+            {
+                if (turn == 0)
+                {
+                    var blackMoves = GetAllPossibleMoves(board, 1, true);
+                    if (!blackMoves.Any()) Globals.Stalemate = true;
+                    Globals.CheckmateWhite = true;
+                }
+                else if (turn == 1)
+                {
+                    var whiteMoves = GetAllPossibleMoves(board, 0, true);
+                    if (!whiteMoves.Any()) Globals.Stalemate = true;
+                    Globals.CheckmateBlack = true;
+                }
+            }
+        }
     }
 
-    private static int AlphaBetaMax(int[] board, int depth, int alpha, int beta, int turn)
+    public struct ScoreInDept
     {
-        if (depth == 0)
-        {
-            return Quiescence(board, alpha, beta, turn);
-        }
-
-        var possibleMoves = GetAllPossibleMoves(board, turn, true);
-        foreach (var move in possibleMoves)
-        {
-            int[] shadowBoard = ApplyMove(board, move);
-            int score = AlphaBetaMin(shadowBoard, depth - 1, alpha, beta, 1 - turn);
-            MoveHandler.RestoreStateFromSnapshot();
-
-            if (score > alpha)
-            {
-                alpha = score;
-                if (alpha >= beta) break; // Beta cut-off
-            }
-        }
-        return alpha;
-    }
-
-    private static int AlphaBetaMin(int[] board, int depth, int alpha, int beta, int turn)
-    {
-        if (depth == 0)
-        {
-            return Quiescence(board, alpha, beta, turn);
-        }
-
-        var possibleMoves = GetAllPossibleMoves(board, turn, true);
-        foreach (var move in possibleMoves)
-        {
-            int[] shadowBoard = ApplyMove(board, move);
-            int score = AlphaBetaMax(shadowBoard, depth - 1, alpha, beta, 1 - turn);
-            MoveHandler.RestoreStateFromSnapshot();
-
-            if (score < beta)
-            {
-                beta = score;
-                if (beta <= alpha) break; // Alpha cut-off
-            }
-        }
-        return beta;
-    }
-
-    private static int Quiescence(int[] board, int alpha, int beta, int turn)
-    {
-        int standPat = Evaluators.EvaluatePosition(board, turn);
-        if (standPat >= beta)
-            return beta;
-        if (standPat > alpha)
-            alpha = standPat;
-
-        List<MoveObject> priorityMoves = GetAllPossibleMoves(board, turn, true)
-            .Where(move => move.IsCapture || move.IsCheck).ToList();
-
-        foreach (var move in priorityMoves)
-        {
-            int[] shadowBoard = ApplyMove(board, move);
-            int score = -Quiescence(shadowBoard, -beta, -alpha, 1 - turn);
-            MoveHandler.RestoreStateFromSnapshot();
-
-            if (score >= beta)
-            {
-                return beta;
-            }
-            if (score > alpha)
-            {
-                alpha = score;
-            }
-        }
-
-        return alpha;
-    }
-
-    private static List<MoveObject> GetAllPossibleMoves(int[] board, int turn, bool filter)
-    {
-        // Have to implement better move_priority in move generator.
-        var moves = MoveGenerator.GenerateAllMoves(board, turn, filter);
-        // return moves.OrderByDescending(m => m.Priority).ToList();
-
-        return moves;
-    }
-
-    private static int[] ApplyMove(int[] board, MoveObject move)
-    {
-        int[] shadowBoard = (int[])board.Clone();
-        MoveHandler.RegisterStaticStates();
-        MoveHandler.MakeMove(shadowBoard, move);
-        return shadowBoard;
-    }
-
-    private static void DetectStalemateAndCheckmates(int[] board, int turn, List<MoveObject> allPossibleMoves)
-    {
-        if (!allPossibleMoves.Any())
-        {
-            if (turn == 0)
-            {
-                var blackMoves = GetAllPossibleMoves(board, 1, true);
-                if (!blackMoves.Any()) Globals.Stalemate = true;
-                Globals.CheckmateWhite = true;
-            }
-            else if (turn == 1)
-            {
-                var whiteMoves = GetAllPossibleMoves(board, 0, true);
-                if (!whiteMoves.Any()) Globals.Stalemate = true;
-                Globals.CheckmateBlack = true;
-            }
-        }
+        public int Dept;
+        public int Score;
     }
 }

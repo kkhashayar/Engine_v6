@@ -111,79 +111,70 @@ namespace Engine
             int blackScore = 0;
             int phase = 0;
 
-            for (int i = 0; i < board.Length; ++i)
+        for (int i = 0; i < board.Length; ++i)
+        {
+            int piece = board[i];
+            int file = i % 8;
+
+            if (piece == MoveGenerator.whitePawn)
             {
-                int piece = board[i];
-                if (piece == MoveGenerator.whitePawn)
-                {
-                    whiteScore += PawnValue;
-                    if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
-                    phase += PhaseValues[0];
-                }
-                else if (piece == MoveGenerator.blackPawn)
-                {
-                    blackScore += PawnValue;
-                    if (turn == 1) blackScore -= Tables.Pawns.GetBlackSquareWeight(i);
-                    phase += PhaseValues[0];
-                }
-                else if (piece == MoveGenerator.whiteKnight)
-                {
-                    whiteScore += KnightValue;
-                    if (turn == 0) whiteScore += Tables.Knights.GetWhiteSquareWeight(i);
-                    phase += PhaseValues[1];
-                }
-                else if (piece == MoveGenerator.blackKnight)
-                {
-                    blackScore += KnightValue;
-                    if (turn == 1) blackScore -= Tables.Knights.GetBlackSquareWeight(i);
-                    phase += PhaseValues[1];
-                }
-                else if (piece == MoveGenerator.whiteBishop)
-                {
-                    whiteScore += BishopValue;
-                    if (turn == 0) whiteScore += Tables.Bishops.GetWhiteSquareWeight(i);
-                    phase += PhaseValues[2];
-                }
-                else if (piece == MoveGenerator.blackBishop)
-                {
-                    blackScore += BishopValue;
-                    if (turn == 1) blackScore -= Tables.Bishops.GetBlackSquareWeight(i);
-                    phase += PhaseValues[2];
-                }
-                else if (piece == MoveGenerator.whiteRook)
-                {
-                    whiteScore += RookValue;
-                    if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
-                    phase += PhaseValues[3];
-                }
-                else if (piece == MoveGenerator.blackRook)
-                {
-                    blackScore += RookValue;
-                    if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i);
-                    phase += PhaseValues[3];
-                }
-                else if (piece == MoveGenerator.whiteQueen)
-                {
-                    whiteScore += QueenValue;
-                    phase += PhaseValues[4];
-                }
-                else if (piece == MoveGenerator.blackQueen)
-                {
-                    blackScore += QueenValue;
-                    phase += PhaseValues[4];
-                }
-                else if (piece == MoveGenerator.whiteKing)
-                {
-                    whiteScore += KingValue;
-                    if (turn == 0) whiteScore += Tables.Kings.GetWhiteSquareWeight(board, i);
-                    phase += PhaseValues[5];
-                }
-                else if (piece == MoveGenerator.blackKing)
-                {
-                    blackScore += KingValue;
-                    if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i);
-                    phase += PhaseValues[5];
-                }
+                whiteScore += PawnValue;
+                if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
+                
+            }
+            else if (piece == MoveGenerator.blackPawn)
+            {
+                blackScore += PawnValue;
+                if (turn == 1) blackScore -= Tables.Pawns.GetBlackSquareWeight(i);
+                
+            }
+            else if (piece == MoveGenerator.whiteKnight)
+            {
+                whiteScore += KnightValue;
+                if (turn == 0) whiteScore += Tables.Knights.GetWhiteSquareWeight(i);
+            }
+            else if (piece == MoveGenerator.blackKnight)
+            {
+                blackScore += KnightValue;
+                if (turn == 1) blackScore -= Tables.Knights.GetBlackSquareWeight(i);
+            }
+            else if (piece == MoveGenerator.whiteBishop)
+            {
+                whiteScore += BishopValue;
+                if (turn == 0) whiteScore += Tables.Bishops.GetWhiteSquareWeight(i);
+            }
+            else if (piece == MoveGenerator.blackBishop)
+            {
+                blackScore += BishopValue;
+                if (turn == 1) blackScore -= Tables.Bishops.GetBlackSquareWeight(i);
+            }
+            else if (piece == MoveGenerator.whiteRook)
+            {
+                whiteScore += RookValue;
+                if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
+            }
+            else if (piece == MoveGenerator.blackRook)
+            {
+                blackScore += RookValue;
+                if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i); 
+            }
+            else if (piece == MoveGenerator.whiteQueen)
+            {
+                whiteScore += QueenValue;
+            }
+            else if (piece == MoveGenerator.blackQueen)
+            {
+                blackScore += QueenValue;
+            }
+            else if (piece == MoveGenerator.whiteKing)
+            {
+                whiteScore += KingValue;
+                if (turn == 0) whiteScore += Tables.Kings.GetWhiteSquareWeight(board, i);
+            }
+            else if (piece == MoveGenerator.blackKing)
+            {
+                blackScore += KingValue;
+                if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i); 
             }
 
             double phaseRatio = Linstep(MidgamePhase, EndgamePhase, phase);
