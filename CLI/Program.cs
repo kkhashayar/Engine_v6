@@ -14,7 +14,7 @@ using Engine.External_Resources;
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
 
-string fen = "";
+string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 1";
 
 
 Globals globals = Globals.FenReader(fen);
@@ -51,6 +51,8 @@ void Run()
         
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
+        
+
         Globals.moveHistory.Add(move);  
 
         Globals.Turn ^= 1;
@@ -58,7 +60,10 @@ void Run()
         Console.WriteLine();
 
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+
        
         Console.WriteLine();
       

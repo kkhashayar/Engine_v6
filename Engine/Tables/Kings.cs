@@ -39,12 +39,12 @@ namespace Engine.Tables
              1,  1,  0,  0,  0,  0,  1,  1,
              2,  2,  1,  1,  1,  1,  2,  2,
              2,  3,  2,  1,  1,  2,  3,  2,
-             2,  2,  5,  0,  0,  1,  5,  2
+             2,  2,  8,  0,  0,  1,  8,  2
         };
 
         public static readonly int[] BlackKingTableMiddleGame = new int[64]
         {
-             2,  2,  5,  0,  0,  1,  5,  2,
+             2,  2,  8,  0,  0,  1,  8,  2,
              2,  3,  2,  1,  1,  2,  3,  2,
              2,  2,  1,  1,  1,  1,  2,  2,
              1,  1,  0,  0,  0,  0,  1,  1,
@@ -60,6 +60,7 @@ namespace Engine.Tables
             var kingAttackSquares = MoveGenerator.GetKingAttacks(board, 0);
             GetGamePhaseForKing(board);
 
+            
             if (Globals.GameStateForWhiteKing == GamePhase.EndGame)
             {
                 return WhiteKingTableEndgame[square];

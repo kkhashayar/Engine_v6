@@ -8,7 +8,9 @@ namespace Engine
         public static List<MoveObject> tempMoves = new List<MoveObject>();  
         public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
         {
-
+            Console.WriteLine();
+            Console.WriteLine($"King's Game state: {Globals.GameStateForWhiteKing}");
+            Console.WriteLine();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 

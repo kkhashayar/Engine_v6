@@ -396,7 +396,7 @@ public sealed class Globals
             '\u265D','\u265C','\u265B','\u265A'
     };
 
-    // Only in use with Old cli version
+    // Only in use with old cli version
     public static string MoveToString(MoveObject move)
     {
         // Early return if move is null
@@ -523,7 +523,7 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 10;
+            ThinkingTime = 5;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
