@@ -156,7 +156,7 @@ namespace Engine
 
         private static int Quiescence(int[] board, int alpha, int beta, int turn)
         {
-            int maxDepth = 6;
+            int maxDepth = 2;
             return QuiescenceInternal(board, alpha, beta, turn, maxDepth);
         }
 
@@ -174,8 +174,11 @@ namespace Engine
                 alpha = standPat;
 
             List<MoveObject> captures = GetAllPossibleMoves(board, turn, true)
-                .Where(m => m.IsCapture && m.IsCheck).ToList();
+                .Where(m => m.IsCapture && m.IsCheck)
+                .OrderByDescending(m => m.IsCapture && m.IsCheck)
+                .ToList();
 
+     
             foreach (var move in captures)
             {
                 int[] shadowBoard = ApplyMove(board, move);

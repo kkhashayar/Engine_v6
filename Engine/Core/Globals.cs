@@ -404,6 +404,7 @@ public sealed class Globals
 
         string promotion = string.Empty;
         string castle = string.Empty;
+        string check = string.Empty;
 
         // Check if the move includes a promotion and append the appropriate string
         if (move.IsPromotion)
@@ -420,15 +421,11 @@ public sealed class Globals
         {
             return "O-O-O";
         }
-
+        if (move.IsCheck) check = "+";
         // Building the basic move string
-        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}";
+        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}{check} ";
 
-        // Append the check indicator if the move results in a check
-        if (move.IsCheck)
-        {
-            moveString += "+";
-        }
+        
 
         return moveString;
     }
