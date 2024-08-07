@@ -1,5 +1,7 @@
 ﻿using Engine.Core;
 using Engine.PieceMotions;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.NetworkInformation;
 
 namespace Engine;
 
@@ -21,7 +23,7 @@ public static class MoveGenerator
 
 
 
-    public static readonly int None = Piece.None;   
+    public static readonly int None = Piece.None;
 
     public static bool WhiteKingIsCheck { get; set; } = false;
     public static bool BlackKingIsCheck { get; set; } = false;
@@ -92,7 +94,7 @@ public static class MoveGenerator
                         {
                             move.IsCapture = true; 
                         }
-                        if(move.EndSquare == whiteKingPosition)
+                        if (move.EndSquare == whiteKingPosition)
                         {
                             move.IsCheck = true;   
                         }
@@ -141,7 +143,7 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
-            if(!Globals.IsValidSquare(square)) continue; 
+            if (!Globals.IsValidSquare(square)) continue;
 
             int piece = chessBoard[square];
 
@@ -233,7 +235,7 @@ public static class MoveGenerator
         var rowKingMoves = (Kings.GenerateMovesForSquare(KingPosition, turn, board));
         foreach (var move in rowKingMoves)
         {
-            if(IsMoveLegal(move, board, turn)) { kingMoves.Add(move); } 
+            if (IsMoveLegal(move, board, turn)) { kingMoves.Add(move); }
         }
         return kingMoves;
     }
@@ -241,7 +243,7 @@ public static class MoveGenerator
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
-        
+
         if (turn == 0)
         {
             if (move.LongCastle)
@@ -263,7 +265,7 @@ public static class MoveGenerator
             var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
 
             if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
-         
+
             return true;
         }
 
@@ -296,7 +298,7 @@ public static class MoveGenerator
     // TODO: General check
     private static void MakeMove(MoveObject move, int[] board)
     {
-        if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return; 
+        if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return;
         if (move.LongCastle || move.ShortCastle)
         {
 

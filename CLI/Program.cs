@@ -2,6 +2,7 @@
 using Engine.Core;
 using Engine.External_Resources;
 
+
 // test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
 // test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
 
@@ -13,7 +14,7 @@ using Engine.External_Resources;
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
 
-string fen = "5R2/3Q1b2/6kp/1prq1ppN/6P1/7P/5P2/6K1 w - - 0 1";
+string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 1";
 
 
 Globals globals = Globals.FenReader(fen);
@@ -23,16 +24,10 @@ Globals globals = Globals.FenReader(fen);
 // RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
-
-
 int searchDepth = Globals.MaxDepth;
 Globals.GetGamePhase();
 
 TimeSpan maxTime = TimeSpan.FromSeconds(Globals.ThinkingTime);
-
-//Console.WriteLine($"Max time: {Globals.ThinkingTime}  Max Depth: {searchDepth}");
-//Console.WriteLine("Press a key to continue");
-//Console.ReadKey();  
 
 Run();
 
@@ -50,11 +45,14 @@ void Run()
     
     while (running)
     {
+         
         MoveObject move = new MoveObject();
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
         
         MoveHandler.MakeMove(globals.ChessBoard, move);
-        Console.Beep(2000, 100);
+
+        
+
         Globals.moveHistory.Add(move);  
 
         Globals.Turn ^= 1;
@@ -62,11 +60,12 @@ void Run()
         Console.WriteLine();
 
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+
        
         Console.WriteLine();
-       
-
       
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
@@ -74,7 +73,7 @@ void Run()
             Globals.TotalTime.Stop();
             break;
         }
-
+        Console.Beep(1000, 100);
     }
 
     Console.WriteLine();
@@ -86,15 +85,16 @@ void Run()
     {
         Console.Write(Globals.MoveToString(move));
     }
-    
-    Console.Beep(1500, 500);
-    Console.Beep(1500, 500);
+    Console.Beep(500, 150);
+    Console.Beep(500, 150);
     Console.ReadKey();
 }
 
 
 void printBoardWhiteDown(int[] board)
 {
+    Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.Black;
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
     var ranks = new int[] { 8, 7, 6, 5, 4, 3, 2, 1 };
@@ -121,9 +121,10 @@ void printBoardWhiteDown(int[] board)
 
 void printBoardBlackDown(int[] board)
 {
+    Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.Black;
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" };
-
 
     for (int rank = 7; rank >= 0; rank--)
     {

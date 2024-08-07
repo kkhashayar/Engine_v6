@@ -396,30 +396,43 @@ public sealed class Globals
             '\u265D','\u265C','\u265B','\u265A'
     };
 
-    // Only in use with Old cli version
+    // Only in use with old cli version
     public static string MoveToString(MoveObject move)
     {
+        // Early return if move is null
+        if (move == null) return "";
+
         string promotion = string.Empty;
         string castle = string.Empty;
-        if (move is not null)
-        {
-            promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
-            castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
-        }
-        
 
-        if (!string.IsNullOrEmpty(castle))
+        // Check if the move includes a promotion and append the appropriate string
+        if (move.IsPromotion)
         {
-            return castle;
+            promotion = $"({Piece.GetPieceName(move.PromotionPiece)})";
         }
-        if (move == null) return "";
-        // if (move.StartSquare == move.EndSquare) return "";
+
+        // Check if the move is a castling move and set the appropriate string
+        if (move.ShortCastle)
+        {
+            return "O-O";
+        }
+        else if (move.LongCastle)
+        {
+            return "O-O-O";
+        }
+
+        // Building the basic move string
+        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}";
+
+        // Append the check indicator if the move results in a check
         if (move.IsCheck)
         {
-            return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} \"+\" ";
+            moveString += "+";
         }
-        return $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion} ";
+
+        return moveString;
     }
+
 
     // In use with UCI protocol
     public static string ConvertMoveToString(MoveObject move)
@@ -510,7 +523,7 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 10;
+            ThinkingTime = 5;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
