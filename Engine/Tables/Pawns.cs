@@ -1,41 +1,26 @@
-﻿
-
-namespace Engine.Tables;
-
-public static class Pawns
+﻿namespace Engine.Tables
 {
-    public static readonly int[] WhitePawnTable = new int[64]
+    public static class Pawns
     {
-        0, 0, 0, 0, 0, 0, 0, 0,
-        11, 11, 11, 11, 11, 11, 11, 11,
-        10, 10, 10, 10, 10, 10, 10, 10,
-        0,  0,  0,  20, 20, 0, 0, 0,
-        5,  5,  10, 50, 50, 10, 5, 5,
-        10, 10, 20, 25, 25, 20, 10, 10,
-        10, 10, 10, 10, 10, 10, 10, 10,
-        0,  0,  0,  0,  0,  0,  0,  0
-    };
+        public static readonly int[] PawnTable = new int[64]
+        {
+            0,  0,  0,  0,  0,  0,  0,  0,
+            50, 50, 50, 50, 50, 50, 50, 50,
+            10, 10, 20, 30, 30, 20, 10, 10,
+            5,  5,  10, 27, 27, 10, 5, 5,
+            0,  0,  0,  25, 25, 0, 0, 0,
+            5, -5, -10, 0, 0, -10, -5, 5,
+            5, 10, 10, -25, -25, 10, 10, 5,
+            0,  0,  0,  0,  0,  0,  0,  0
+        };
 
-    public static readonly int[] BlackPawnTable = new int[64]
-    {
-        0,  0,  0,  0,  0,  0,  0,  0,
-        10, 10, 10, 10, 10, 10, 10, 10,
-        10, 10, 20, 25, 25, 20, 10, 10,
-        5,  5,  10, 50, 50, 10, 5, 5,
-        0,  0,  0,  20, 20, 0, 0, 0,
-        10, 10, 10, 10, 10, 10, 10, 10,
-        11, 11, 11, 11, 11, 11, 11, 11,
-        0,  0,  0,  0,  0,  0,  0,  0
-    };
-
-
-    public static int GetWhiteSquareWeight(int square)
-    {
-        return WhitePawnTable[square];
-    }
-
-    public static int GetBlackSquareWeight(int square)
-    {
-        return BlackPawnTable[square];
+        public static int GetSquareWeight(int square, bool isWhite)
+        {
+            if (!isWhite)
+            {
+                square = 63 - square; 
+            }
+            return PawnTable[square];
+        }
     }
 }

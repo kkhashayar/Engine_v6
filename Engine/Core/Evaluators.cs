@@ -1,86 +1,157 @@
-﻿using Engine.Core;
+﻿//namespace Engine;
+//public static class Evaluators
+//{
+//    private static readonly int PawnValue = 10;
+//    private static readonly int KnightValue = 320;
+//    private static readonly int BishopValue = 325;
+//    private static readonly int RookValue = 500;
+//    private static readonly int QueenValue = 975;
+//    private static readonly int KingValue = 32767;
 
-namespace Engine;
+//    public static int EvaluatePosition(int[] board, int turn)
+//    {
+//        int score = 0;
 
-public static class Evaluators
+//        for (int i = 0; i < board.Length; ++i)
+//        {
+//            int piece = board[i];
+//            if (piece == MoveGenerator.whitePawn)
+//            {                
+//                score += PawnValue;
+//                if (turn == 0) score += Tables.Pawns.GetSquareWeight(i, true);
+//            }
+//            else if (piece == MoveGenerator.blackPawn)
+//            {  
+//                score += PawnValue;
+//                if (turn == 1) score -= Tables.Pawns.GetSquareWeight(i, false);
+//            }
+//            else if (piece == MoveGenerator.whiteKnight)
+//            {  
+//                score += KnightValue;
+//                if (turn == 0) score += Tables.Knights.GetSquareWeight(i, true);
+//            }
+//            else if (piece == MoveGenerator.blackKnight)
+//            {
+//                score += KnightValue;
+//                if (turn == 1) score -= Tables.Knights.GetSquareWeight(i, false);
+//            }
+//            else if (piece == MoveGenerator.whiteBishop)
+//            {
+//                score += BishopValue;
+//                if (turn == 0) score += Tables.Bishops.GetSquareWeight(i, true);
+//            }
+//            else if (piece == MoveGenerator.blackBishop)
+//            {
+//                score += BishopValue;
+//                if (turn == 1) score -= Tables.Bishops.GetSquareWeight(i, false);
+//            }
+//            else if (piece == MoveGenerator.whiteRook)
+//            {   
+//                score += RookValue;
+//            }
+//            else if (piece == MoveGenerator.blackRook)
+//            {
+//                score += RookValue;
+//            }
+//            else if (piece == MoveGenerator.whiteQueen)
+//            {
+//                score += QueenValue;
+//            }
+//            else if (piece == MoveGenerator.blackQueen)
+//            {   
+//                score += QueenValue;
+//            }
+//            else if (piece == MoveGenerator.whiteKing)
+//            {
+//                score += KingValue;
+//                if (turn == 0) score += Tables.Kings.GetSquareWeight(board, i, true);
+//            }
+//            else if (piece == MoveGenerator.blackKing)
+//            {
+//                score += KingValue;
+//                if (turn == 1) score -= Tables.Kings.GetSquareWeight(board, i, false);
+//            }
+//        }
+//        if(turn == 1) return -score;
+//        return score;
+//    }
+//}
+
+using Engine.Core;
+using Engine.Enums;
+
+namespace Engine
 {
-    private static readonly int PawnValue = 10;
-    private static readonly int KnightValue = 320;
-    private static readonly int BishopValue = 330;
-    private static readonly int RookValue = 500;
-    private static readonly int QueenValue = 900;
-    private static readonly int KingValue = 20000;
-
-    public static int EvaluatePosition(int[] board, int turn)
+    public static class Evaluators
     {
-        int whiteScore = 0;
-        int blackScore = 0;
+        private static readonly int PawnValue = 100;
+        private static readonly int KnightValue = 320;
+        private static readonly int BishopValue = 330;
+        private static readonly int RookValue = 500;
+        private static readonly int QueenValue = 900;
 
-        for (int i = 0; i < board.Length; ++i)
+        // King value is not static; it changes based on the game's phase
+        private static int KingValue => Globals.GetGamePhase() == GamePhase.EndGame ? 20000 : 10000;
+
+        public static int EvaluatePosition(int[] board, int turn)
         {
-            int piece = board[i];
-            if (piece == MoveGenerator.whitePawn)
+            int score = 0;
+
+            for (int i = 0; i < board.Length; ++i)
             {
-                whiteScore += PawnValue;
-                if (turn == 0) whiteScore += Tables.Pawns.GetWhiteSquareWeight(i);
+                int piece = board[i];
+                if (piece == MoveGenerator.whitePawn)
+                {
+                    score += PawnValue + Tables.Pawns.GetSquareWeight(i, true);
+                }
+                else if (piece == MoveGenerator.blackPawn)
+                {
+                    score -= PawnValue + Tables.Pawns.GetSquareWeight(i, false);
+                }
+                else if (piece == MoveGenerator.whiteKnight)
+                {
+                    score += KnightValue + Tables.Knights.GetSquareWeight(i, true);
+                }
+                else if (piece == MoveGenerator.blackKnight)
+                {
+                    score -= KnightValue + Tables.Knights.GetSquareWeight(i, false);
+                }
+                else if (piece == MoveGenerator.whiteBishop)
+                {
+                    score += BishopValue + Tables.Bishops.GetSquareWeight(i, true);
+                }
+                else if (piece == MoveGenerator.blackBishop)
+                {
+                    score -= BishopValue + Tables.Bishops.GetSquareWeight(i, false);
+                }
+                else if (piece == MoveGenerator.whiteRook)
+                {
+                    score += RookValue;
+                }
+                else if (piece == MoveGenerator.blackRook)
+                {
+                    score -= RookValue;
+                }
+                else if (piece == MoveGenerator.whiteQueen)
+                {
+                    score += QueenValue;
+                }
+                else if (piece == MoveGenerator.blackQueen)
+                {
+                    score -= QueenValue;
+                }
+                else if (piece == MoveGenerator.whiteKing)
+                {
+                    score += KingValue + Tables.Kings.GetSquareWeight(board, i, true);
+                }
+                else if (piece == MoveGenerator.blackKing)
+                {
+                    score -= KingValue + Tables.Kings.GetSquareWeight(board, i, false);
+                }
             }
-            else if (piece == MoveGenerator.blackPawn)
-            {
-                blackScore += PawnValue;
-                if (turn == 1) blackScore -= Tables.Pawns.GetBlackSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.whiteKnight)
-            {
-                whiteScore += KnightValue;
-                //if (turn == 0) whiteScore += Tables.Knights.GetWhiteSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.blackKnight)
-            {
-                blackScore += KnightValue;
-                //if (turn == 1) blackScore -= Tables.Knights.GetBlackSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.whiteBishop)
-            {
-                whiteScore += BishopValue;
-                //if (turn == 0) whiteScore += Tables.Bishops.GetWhiteSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.blackBishop)
-            {
-                blackScore += BishopValue;
-                //if (turn == 1) blackScore -= Tables.Bishops.GetBlackSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.whiteRook)
-            {
-                whiteScore += RookValue;
-                //if (turn == 0) whiteScore += Tables.Rooks.GetWhiteSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.blackRook)
-            {
-                blackScore += RookValue;
-                //if (turn == 1) blackScore -= Tables.Rooks.GetBlackSquareWeight(i);
-            }
-            else if (piece == MoveGenerator.whiteQueen)
-            {
-                whiteScore += QueenValue;
-            }
-            else if (piece == MoveGenerator.blackQueen)
-            {
-                blackScore += QueenValue;
-            }
-            else if (piece == MoveGenerator.whiteKing)
-            {
-                whiteScore += KingValue;
-                if (turn == 0) whiteScore += Tables.Kings.GetBlackSquareWeight(board, i);
-            }
-            else if (piece == MoveGenerator.blackKing)
-            {
-                blackScore += KingValue;
-                if (turn == 1) blackScore -= Tables.Kings.GetBlackSquareWeight(board, i);
-            }
+
+            // Adjust score based on the turn
+            return turn == 0 ? score : -score;
         }
-
-
-        return (turn == 0) ? (whiteScore - blackScore)
-                           : (blackScore - whiteScore);
     }
 }
