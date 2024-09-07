@@ -233,23 +233,26 @@ public static class MoveGenerator
         {
             if (move.LongCastle)
             {
+                // If any opposite piece can target  58-59 squares  
                 var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
-                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58)) return false;
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58 || bMove.EndSquare == 60)) return false;
             }
             else if (move.ShortCastle)
             {
+                // If any opposite piece can target  61-62 squares
                 var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
-                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62)) return false;
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62 || bMove.EndSquare == 60)) return false;
             }
 
             MakeMove(move, shadowBoard);
 
-            int whiteKingSquare = Globals.GetWhiteKingSquare(shadowBoard);
-            var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
+            //int whiteKingSquare = Globals.GetWhiteKingSquare(shadowBoard);
+            //var blackResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 1);
 
-            if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
+            //if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
 
-           
+            move.IsCheck = IsMoveCheck(move, board, turn); // Set IsCheck property
+
             return true;
         }
 
@@ -267,10 +270,10 @@ public static class MoveGenerator
 
         MakeMove(move, shadowBoard);
 
-        int blackKingSquare = Globals.GetBlackKingSquare(shadowBoard);
-        var whiteResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 0);
+        //int blackKingSquare = Globals.GetBlackKingSquare(shadowBoard);
+        //var whiteResponseMoves = GeneratePseudoLegalMoves(shadowBoard, 0);
 
-        if (whiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
+        //if (whiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
         move.IsCheck = IsMoveCheck(move, board, turn); // Set IsCheck property
         return true;
