@@ -34,7 +34,7 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
-            // int[] shadowBoard = (int[])board.Clone();
+            //int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
 
             var pieceMoving = move.pieceType;
@@ -45,7 +45,7 @@ public static class Perft
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 1000, move);
+            //ShowDebugBoard(board, 300, move);
             ////////////////////////////////////   DEBUG BOARD 
             ///
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);

@@ -14,14 +14,14 @@ using Engine.External_Resources;
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
 
-string fen = "rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0";
+string fen = "r3k3/8/8/8/8/8/8/4K2R w Kq - 0 1";
 
 
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
-// int perftDepth = 3;
-// RunPerft(fen, globals, perftDepth);
+int perftDepth = 2;
+RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
@@ -29,7 +29,7 @@ Globals.GetGamePhase();
 
 TimeSpan maxTime = TimeSpan.FromSeconds(Globals.ThinkingTime);
 
-Run();
+//Run();
 
 void Run()
 {
@@ -143,9 +143,6 @@ void printBoardBlackDown(int[] board)
     {
         Console.Write(fileName + " "); // Print file names
     }
-    //Console.WriteLine();
-    //showBoardValuesBlack(board);
-    //Console.ReadKey();
 }
 
 
@@ -189,7 +186,7 @@ void showBoardValuesBlack(int[] board)
 
 void VerifyWithStockfish(string fen, int depth)
 {
-    string stockfishPath = "\"C:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
+    string stockfishPath = "\"D:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
     StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
     stockfish.StartStockfish();
 
@@ -212,14 +209,11 @@ void VerifyWithStockfish(string fen, int depth)
 
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
-    Console.ReadLine();
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine("******* Engine 6 *******  \n");
     Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
     Console.WriteLine($"{fen} \n");
     Perft.Calculate(globals.ChessBoard, perftDepth, Globals.Turn);
-    Console.WriteLine();
-    Console.Beep(2000, 50);
     Console.WriteLine("Press 'V' to verify with Stockfish or 'I' \n");
     Console.WriteLine("Press 'I' to increase depth and test again \n");
     Console.WriteLine("Enter to return to Boards \n");
