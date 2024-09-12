@@ -6,14 +6,21 @@ internal static class Kings
 {
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
+        int blackKingSquareIndex = Globals.GetBlackKingSquare(board);
+        int whiteKingSquareIndex = Globals.GetWhiteKingSquare(board);  
+
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
         /////////////////////////////////////////// WHITE KING ///////////////////////////////////////////
         if (turn == 0)
         {
+
+            List<int> blackKingTargetSquares = GetMasksForSquare(blackKingSquareIndex);
+            targetSquares.RemoveAll(square => blackKingTargetSquares.Contains(square));
             foreach (int targetSquare in targetSquares)
             {
+               
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
 
                 if (targetsquareColor == "White") continue;
@@ -59,6 +66,8 @@ internal static class Kings
         /////////////////////////////////////////// BLACK KING ///////////////////////////////////////////
         else if (turn == 1)
         {
+            List<int> whiteKingTargetSquares = GetMasksForSquare(whiteKingSquareIndex);
+            targetSquares.RemoveAll(square => whiteKingTargetSquares.Contains(square));
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
