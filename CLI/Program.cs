@@ -20,8 +20,8 @@ string fen = "r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0";
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
-// int perftDepth = 3;
-// RunPerft(fen, globals, perftDepth);
+int perftDepth = 3;
+RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
@@ -212,7 +212,7 @@ void VerifyWithStockfish(string fen, int depth)
 
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
-    Console.ReadLine();
+   
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine("******* Engine 6 *******  \n");
     Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
