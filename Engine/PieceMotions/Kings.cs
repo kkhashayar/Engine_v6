@@ -1,4 +1,5 @@
 ﻿using Engine.Core;
+using System.Runtime.CompilerServices;
 
 namespace Engine.PieceMotions;
 
@@ -54,26 +55,34 @@ internal static class Kings
             if (board[60] == MoveGenerator.whiteKing && Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0
                 && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
             {
-                moves.Add(new MoveObject
+                if (!Globals.WhiteKingRookMoved)
                 {
-                    pieceType = MoveGenerator.whiteKing,
-                    StartSquare = 60,
-                    EndSquare = 62,
-                    ShortCastle = true
-                });
+                    moves.Add(new MoveObject
+                    {
+                        pieceType = MoveGenerator.whiteKing,
+                        StartSquare = 60,
+                        EndSquare = 62,
+                        ShortCastle = true
+                    });
+                } 
+                
             }
 
             //////////// LONG CASTLE //////////// 
             if (board[60] == MoveGenerator.whiteKing && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
                 && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
             {
-                moves.Add(new MoveObject
+                if (!Globals.WhiteQueenRookMoved)
                 {
-                    pieceType = MoveGenerator.whiteKing,
-                    StartSquare = 60,
-                    EndSquare = 58,
-                    LongCastle = true
-                });
+                    moves.Add(new MoveObject
+                    {
+                        pieceType = MoveGenerator.whiteKing,
+                        StartSquare = 60,
+                        EndSquare = 58,
+                        LongCastle = true
+                    });
+                }
+                
             }
             return moves;
         }

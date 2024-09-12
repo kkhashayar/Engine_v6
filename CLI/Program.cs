@@ -14,13 +14,13 @@ using Engine.External_Resources;
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
 
-string fen = "r3k3/8/8/8/8/8/8/4K2R w Kq - 0 1";
+string fen = "4k3/8/8/8/8/8/8/4K3 w - - 0 1";
 
 
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
-int perftDepth = 2;
+int perftDepth = 6;
 RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 

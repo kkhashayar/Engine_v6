@@ -6,92 +6,119 @@ public static class MoveHandler
 {
     public static void MakeMove(int[] board, MoveObject move)
     {
-        if(move is not null)
+        if (move is not null)
         {
             board[move.EndSquare] = move.pieceType;
             board[move.StartSquare] = 0;
 
-
-            /////////////////////////////////// WHITE
+            /////////////////////////////////// WHITE TURN ///////////////////////////////////
             if (Globals.Turn == 0)
             {
-                /////////////////////////////////// Pawn Promotion  
+                // Pawn Promotion
                 if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
                 {
                     var piece = move.PromotionPiece;
                     board[move.EndSquare] = piece;
                 }
 
+                // If white's king-side rook moves, disable short castling
                 if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
                 {
                     Globals.WhiteKingRookMoved = true;
+                    Globals.WhiteShortCastle = false;
                 }
 
-                // ROOK ON LONG CASLTE 
+                // If white's queen-side rook moves, disable long castling
                 if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
                 {
                     Globals.WhiteQueenRookMoved = true;
+                    Globals.WhiteLongCastle = false;
                 }
-                /////////////////////////////////// Castling   
 
+                // Handle White Short Castling
+                if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+                {
+                    board[63] = 0;
+                    board[61] = MoveGenerator.whiteRook;
+                    Globals.WhiteShortCastle = false;
+                    Globals.WhiteLongCastle = false;
+                    Globals.WhiteKingRookMoved = true;
+                    Globals.WhiteQueenRookMoved = true; // Ensure both are false after castling
+                }
+
+                // Handle White Long Castling
                 if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
                 {
-                    board[56] = 0; board[59] = MoveGenerator.whiteRook;
+                    board[56] = 0;
+                    board[59] = MoveGenerator.whiteRook;
                     Globals.WhiteLongCastle = false;
                     Globals.WhiteShortCastle = false;
                     Globals.WhiteQueenRookMoved = true;
+                    Globals.WhiteKingRookMoved = true; // Ensure both are false after castling
                 }
 
-                if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+                // If the white king moves, disable both castling rights
+                if (move.pieceType == MoveGenerator.whiteKing)
                 {
-                    board[63] = 0; board[61] = MoveGenerator.whiteRook;
-                    Globals.WhiteLongCastle = false;
                     Globals.WhiteShortCastle = false;
-                    Globals.WhiteKingRookMoved = true;
+                    Globals.WhiteLongCastle = false;
                 }
             }
-            ///////////////////////////////// BLACK 
+
+            /////////////////////////////////// BLACK TURN ///////////////////////////////////
             else
             {
-
-                /////////////////////////////////// Pawn Promotion
+                // Pawn Promotion
                 if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
                 {
                     var piece = move.PromotionPiece;
                     board[move.EndSquare] = piece;
                 }
 
-                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
-                {
-                    Globals.BlackQueenRookMoved = true;
-                }
-
-
+                // If black's king-side rook moves, disable short castling
                 if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
                 {
                     Globals.BlackKingRookMoved = true;
-                }
-
-
-                if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
-                {
-                    board[0] = 0; board[3] = MoveGenerator.blackRook;
-                    Globals.BlackLongCastle = false;
                     Globals.BlackShortCastle = false;
-                    Globals.BlackQueenRookMoved = true;
-
                 }
+
+                // If black's queen-side rook moves, disable long castling
+                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+                {
+                    Globals.BlackQueenRookMoved = true;
+                    Globals.BlackLongCastle = false;
+                }
+
+                // Handle Black Short Castling
                 if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
                 {
-                    board[7] = 0; board[5] = MoveGenerator.blackRook;
+                    board[7] = 0;
+                    board[5] = MoveGenerator.blackRook;
                     Globals.BlackShortCastle = false;
                     Globals.BlackLongCastle = false;
                     Globals.BlackKingRookMoved = true;
+                    Globals.BlackQueenRookMoved = true;
+                }
+
+                // Handle Black Long Castling
+                if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+                {
+                    board[0] = 0;
+                    board[3] = MoveGenerator.blackRook;
+                    Globals.BlackLongCastle = false;
+                    Globals.BlackShortCastle = false;
+                    Globals.BlackKingRookMoved = true;
+                    Globals.BlackQueenRookMoved = true;
+                }
+
+                // If the black king moves, disable both castling rights
+                if (move.pieceType == MoveGenerator.blackKing)
+                {
+                    Globals.BlackShortCastle = false;
+                    Globals.BlackLongCastle = false;
                 }
             }
         }
-        
-
     }
 
     public static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare, int promotedTo)
@@ -99,52 +126,48 @@ public static class MoveHandler
         board[move.StartSquare] = pieceMoving;
         board[move.EndSquare] = targetSquare;
 
+        // Undo pawn promotion
         if ((move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) && move.IsPromotion is true)
         {
             board[move.EndSquare] = 0;
             board[move.StartSquare] = move.pieceType;
         }
 
+        // Undo white king castling
         if (move.pieceType == MoveGenerator.whiteKing)
         {
             if (move.ShortCastle)
             {
                 board[61] = 0;
                 board[63] = MoveGenerator.whiteRook;
-
             }
 
             if (move.LongCastle)
             {
                 board[59] = 0;
                 board[56] = MoveGenerator.whiteRook;
-
             }
-
         }
 
-
+        // Undo black king castling
         if (move.pieceType == MoveGenerator.blackKing)
         {
-            if (move.LongCastle)
-            {
-                board[3] = 0;
-                board[0] = MoveGenerator.blackRook;
-
-
-            }
-
             if (move.ShortCastle)
             {
                 board[5] = 0;
                 board[7] = MoveGenerator.blackRook;
+            }
 
+            if (move.LongCastle)
+            {
+                board[3] = 0;
+                board[0] = MoveGenerator.blackRook;
             }
         }
     }
+
     public static void RegisterStaticStates()
     {
-
         StateSnapshotBase.WhiteShortCastle = Globals.WhiteShortCastle;
         StateSnapshotBase.WhiteLongCastle = Globals.WhiteLongCastle;
 

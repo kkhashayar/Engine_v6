@@ -266,34 +266,40 @@ public sealed class Globals
     {
         int direction = GetCrossDirection(startSquare, endSquare);
         int currentSquare = startSquare + direction;
-        bool pieceColor = Piece.IsBlack(board[startSquare]);
 
+        // Traverse the path between the startSquare and the endSquare
         while (currentSquare != endSquare)
         {
+            // If there's a piece between the start and end squares, the path is blocked
             if (board[currentSquare] != 0) return false;
             currentSquare += direction;
         }
 
+        // Final check for the end square: must either be empty or contain an enemy piece
+        bool pieceColor = Piece.IsBlack(board[startSquare]);
         return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
     }
 
+
     public static int GetCrossDirection(int startSquare, int endSquare)
     {
+        // Determine if the move is vertical or horizontal
         if (endSquare > startSquare) // Moving up or right
         {
             if (endSquare % 8 == startSquare % 8) // Vertical move
-                return 8;
+                return 8;  // Moving upwards along a file
             else // Horizontal move
-                return 1;
+                return 1;  // Moving to the right along a rank
         }
         else // Moving down or left
         {
             if (endSquare % 8 == startSquare % 8) // Vertical move
-                return -8;
+                return -8; // Moving downwards along a file
             else // Horizontal move
-                return -1;
+                return -1; // Moving to the left along a rank
         }
     }
+
 
     public static bool IsDiagonalPathClear(int startSquare, int endSquare, int[] board)
     {
