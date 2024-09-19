@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "rqr3k1/3bppBp/3p2P1/p7/1n2P3/1p3P2/1PPQ2P1/2KR3R w - - 1 0";
+string fen = "8/8/7k/8/7K/8/8/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -10,8 +10,8 @@ if (String.IsNullOrEmpty(fen))
 Globals globals = Globals.FenReader(fen);
 
 ////////////////////   PERFT And stockfish verification
-//int perftDepth = 5;
-//RunPerft(fen, globals, perftDepth);
+int perftDepth = 10;
+RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
 
@@ -150,7 +150,7 @@ void showBoardValuesBlack(int[] board)
 
 void VerifyWithStockfish(string fen, int depth)
 {
-    string stockfishPath = "\"C:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
+    string stockfishPath = "\"D:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
     StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
     stockfish.StartStockfish();
 
