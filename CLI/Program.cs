@@ -10,7 +10,7 @@ if (String.IsNullOrEmpty(fen))
 Globals globals = Globals.FenReader(fen);
 
 ////////////////////   PERFT And stockfish verification
-int perftDepth = 10;
+int perftDepth = 5;
 RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
@@ -163,7 +163,6 @@ void VerifyWithStockfish(string fen, int depth)
 
     while ((output = stockfish.ReadOutput()) != null)
     {
-
         Console.WriteLine(output);
         if (output.StartsWith("Stockfish result:  ")) break;
     }

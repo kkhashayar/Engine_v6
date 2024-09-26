@@ -88,11 +88,16 @@ public static class MoveGenerator
                 if (piece == whiteKing)
                 {
                     pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+
                 }
 
                 else if (piece == whiteKnight)
                 {
-                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                    // pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                    ulong kingPseudoMoves = Bitboards.Kings.GetWhiteKingMoves(square);
+                    List<MoveObject> kingMoves = Helpers.ConvertBitboardToMoveObjects(kingPseudoMoves, square, MoveGenerator.whiteKing);
+                    pseudoMoves.AddRange(kingMoves);                    
+
                 }
 
                 else if (piece == whiteRook)
@@ -121,7 +126,10 @@ public static class MoveGenerator
             {
                 if (piece == blackKing)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                    // pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                    ulong kingPseudoMoves = Bitboards.Kings.GetBlackKingMoves(square);
+                    List<MoveObject> kingMoves = Helpers.ConvertBitboardToMoveObjects(kingPseudoMoves, square, MoveGenerator.blackKing);
+                    pseudoMoves.AddRange(kingMoves);    
                 }
 
                 else if (piece == blackKnight)
