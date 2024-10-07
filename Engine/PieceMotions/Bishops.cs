@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Bishops
 {
@@ -14,7 +16,7 @@ internal static class Bishops
             if (Globals.IsDiagonalPathClear(square, targetSquare, board))
             {
                 // Skip if the target square has a piece of the same color
-                if ((turn == 0 && targetSquareColor == "White") || (turn == 1 && targetSquareColor == "Black"))
+                if (turn == 0 && targetSquareColor == "White" || turn == 1 && targetSquareColor == "Black")
                     continue;
 
                 moves.Add(new MoveObject

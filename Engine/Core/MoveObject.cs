@@ -1,7 +1,7 @@
 ﻿
 namespace Engine;
 
-public struct MoveObject
+public class MoveObject
 {
     public int pieceType { get; set; }
     public int CapturedPiece { get; set; }
@@ -14,5 +14,6 @@ public struct MoveObject
     public bool IsEnPassant { get; set; }
     public bool IsPromotion { get; set; }
     public bool IsCheck { get; set; }
-    public decimal Score { get; set; }  
+    public int Score { get; set; }
+    public int Depth { get; set; }  
 }

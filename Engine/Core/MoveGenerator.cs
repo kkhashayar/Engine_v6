@@ -16,12 +16,9 @@ public static class MoveGenerator
     public static readonly int blackKnight = Piece.Knight + Piece.BlackPieceOffset;
     public static readonly int blackBishop = Piece.Bishop + Piece.BlackPieceOffset;
     public static readonly int blackPawn = Piece.Pawn + Piece.BlackPieceOffset;
+    public static readonly int None = Piece.None;
 
-    public static bool WhiteKingIsCheck { get; set; } = false;
-    public static bool BlackKingIsCheck { get; set; } = false;
 
-    public static List<int>? BlackDefendedSquares { get; set; }
-    public static List<int>? WhiteDefendedSquares { get; set; }
 
     // Removed the unused 'globals' instance
     // static Globals globals = new Globals();
@@ -57,6 +54,8 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
+            if (!Globals.IsValidSquare(square)) continue;
+
             int piece = chessBoard[square];
 
             // Generate moves for white pieces

@@ -1,17 +1,26 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Kings
 {
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
+        int blackKingSquareIndex = Globals.GetBlackKingSquare(board);
+        int whiteKingSquareIndex = Globals.GetWhiteKingSquare(board);  
+
         List<int> targetSquares = GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
         /////////////////////////////////////////// WHITE KING ///////////////////////////////////////////
         if (turn == 0)
         {
+
+            List<int> blackKingTargetSquares = GetMasksForSquare(blackKingSquareIndex);
+            targetSquares.RemoveAll(square => blackKingTargetSquares.Contains(square));
             foreach (int targetSquare in targetSquares)
             {
+               
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
 
                 if (targetsquareColor == "White") continue;
@@ -57,6 +66,8 @@ internal static class Kings
         /////////////////////////////////////////// BLACK KING ///////////////////////////////////////////
         else if (turn == 1)
         {
+            List<int> whiteKingTargetSquares = GetMasksForSquare(whiteKingSquareIndex);
+            targetSquares.RemoveAll(square => whiteKingTargetSquares.Contains(square));
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
@@ -85,7 +96,7 @@ internal static class Kings
             }
 
 
-            if ( board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
+            if (board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
                 && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
@@ -99,6 +110,7 @@ internal static class Kings
         }
         return moves;
     }
+
 
 
     static List<int> GetMasksForSquare(int square)

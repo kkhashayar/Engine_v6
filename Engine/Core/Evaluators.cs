@@ -64,9 +64,5 @@ namespace Engine
             score += mobilityScore;
             return score;
         }
-
-
-        
-
     }
 }

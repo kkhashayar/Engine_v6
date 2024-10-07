@@ -1,18 +1,23 @@
-﻿namespace Engine;
+﻿using System.Diagnostics;
+using System.Text;
+using Engine.Enums;
+namespace Engine.Core;
 
 public sealed class Globals
 {
-
     public static bool WhiteShortCastle { get; set; }
     public static bool WhiteLongCastle { get; set; }
     public static bool WhiteKingRookMoved { get; set; }
     public static bool WhiteQueenRookMoved { get; set; }
+
+    public static int NumberOfWhitePieces { get; set; }
 
     public static bool BlackShortCastle { get; set; }
     public static bool BlackLongCastle { get; set; }
     public static bool BlackKingRookMoved { get; set; }
     public static bool BlackQueenRookMoved { get; set; }
 
+    public static int NumberOfBlackPieces { get; set; }
     public static bool CheckmateWhite { get; set; } = false;
     public static bool CheckmateBlack { get; set; } = false;
     public static bool CheckWhite { get; set; } = false;
@@ -30,6 +35,20 @@ public sealed class Globals
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
     public static int InitialTurn { get; set; }
+    public static bool InitialDepthAdjusted { get; set; } = false;
+    public static string CurrentFEN { get; set; }
+
+    public static Stopwatch TotalTime = new Stopwatch();
+
+    public static GamePhase GamePhase { get; set; }
+    public static GamePhase GameStateForWhiteKing { get; set; }
+    public static GamePhase GameStateForBlackKing { get; set; }
+    public static GamePhase GameStateForWhiteRook { get; set; } 
+    public static GamePhase GameStateForBlackRook { get; set; }
+    public static int ThinkingTime { get; set; } = 0;
+    public static int MaxDepth = 20; 
+
+    public static List<int> OnBoardPieces = new List<int>();
 
     public int[] ChessBoard =
     {
@@ -150,6 +169,12 @@ public sealed class Globals
 
     public static Globals FenReader(string fen)
     {
+
+        if (string.IsNullOrEmpty(fen))
+        {
+            fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        }
+
         var globals = new Globals();
         string[] parts = fen.Split(' ');
 
@@ -198,6 +223,15 @@ public sealed class Globals
                 {
                     // If it's a piece, convert and place on the board
                     globals.ChessBoard[index] = FenCharToPieceCode(square);
+                    // Count the number of pieces for each side
+                    if (Piece.IsWhite(globals.ChessBoard[index]))
+                    {
+                        NumberOfWhitePieces++;
+                    }
+                    else if (Piece.IsBlack(globals.ChessBoard[index]))
+                    {
+                        NumberOfBlackPieces++;
+                    }
                     index++;
                 }
             }
@@ -279,8 +313,8 @@ public sealed class Globals
 
     public static int GetDiagonalDirection(int startSquare, int endSquare)
     {
-        int rankDifference = (endSquare / 8) - (startSquare / 8);
-        int fileDifference = (endSquare % 8) - (startSquare % 8);
+        int rankDifference = endSquare / 8 - startSquare / 8;
+        int fileDifference = endSquare % 8 - startSquare % 8;
 
         if (rankDifference > 0 && fileDifference > 0)
             return 9; // Moving up-right
@@ -362,4 +396,215 @@ public sealed class Globals
             '\u265D','\u265C','\u265B','\u265A'
     };
 
+    // Only in use with old cli version
+    public static string MoveToString(MoveObject move)
+    {
+        // Early return if move is null
+        if (move == null) return "";
+
+        string promotion = string.Empty;
+        string castle = string.Empty;
+        string check = string.Empty;
+
+        // Check if the move includes a promotion and append the appropriate string
+        if (move.IsPromotion)
+        {
+            promotion = $"({Piece.GetPieceName(move.PromotionPiece)})";
+        }
+
+        // Check if the move is a castling move and set the appropriate string
+        if (move.ShortCastle)
+        {
+            return "O-O";
+        }
+        else if (move.LongCastle)
+        {
+            return "O-O-O";
+        }
+        if (move.IsCheck) check = "+";
+        // Building the basic move string
+        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}{check} ";
+
+        
+
+        return moveString;
+    }
+
+
+    // In use with UCI protocol
+    public static string ConvertMoveToString(MoveObject move)
+    {
+        int startSquare = move.StartSquare;
+        int endSquare = move.EndSquare;
+
+        char startFile = (char)('a' + startSquare % 8);
+        char startRank = (char)('1' + startSquare / 8);
+        char endFile = (char)('a' + endSquare % 8);
+        char endRank = (char)('1' + endSquare / 8);
+
+        return $"{startFile}{startRank}{endFile}{endRank}";
+    }
+
+    public static MoveObject ConvertStringToMoveObject(string move)
+    {
+        // Extract file and rank from the string
+        char startFile = move[0];
+        char startRank = move[1];
+        char endFile = move[2];
+        char endRank = move[3];
+
+        // Convert characters back to board indices
+        int startSquare = (startRank - '1') * 8 + (startFile - 'a');
+        int endSquare = (endRank - '1') * 8 + (endFile - 'a');
+
+        // Create a MoveObject with the calculated indices
+        return new MoveObject
+        {
+            StartSquare = startSquare,
+            EndSquare = endSquare,
+            pieceType = 0,
+            CapturedPiece = 0,
+            PromotionPiece = 0,
+            ShortCastle = false,
+            LongCastle = false,
+            IsCapture = false,
+            IsEnPassant = false,
+            IsPromotion = false,
+            IsCheck = false,
+            Score = 0
+        };
+    }
+
+
+    public static string BoardToFen(int[] board, int turn)
+    {
+        StringBuilder fenBuilder = new StringBuilder();
+
+        int emptyCount = 0;
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (board[i] == 0)
+            {
+                emptyCount++;
+            }
+            else
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                fenBuilder.Append(GetFenSymbol(board[i]));
+            }
+
+            if ((i + 1) % 8 == 0)
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                if (i < board.Length - 1)
+                {
+                    fenBuilder.Append('/');
+                }
+            }
+        }
+
+        fenBuilder.Append(turn == 0 ? " w " : " b ");
+        fenBuilder.Append("- - 0 1"); // Default castling rights
+
+        return fenBuilder.ToString();
+    }
+    public static GamePhase GetGamePhase()
+    {
+        if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
+        {
+            ThinkingTime = 15;
+            return GamePhase.EndGame;
+        }
+        else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
+        {
+            ThinkingTime = 60;
+            return GamePhase.MiddleGame;
+        }
+
+        else
+        {
+            ThinkingTime = 5;
+            return GamePhase.Opening;
+        }
+    }
+
+    public static EndGames GetEndGameType(int[]board) 
+    { 
+        if(IsSingleRookOnBoard(board)) return EndGames.RookKing;
+        return EndGames.None;
+    }
+
+    public static void GetOnBoardPieces(int[]board)
+    {
+        OnBoardPieces.Clear(); 
+        OnBoardPieces = board.Where(x => x > 0).ToList();
+       
+    }
+    public static bool IsSingleRookOnBoard(int[] board)
+    {
+        int rookCount = 0;
+
+        foreach (int piece in board)
+        {
+            if (piece == MoveGenerator.whiteRook || piece == MoveGenerator.blackRook)
+            {
+                rookCount++;
+
+                if (rookCount > 1)
+                {
+                    return false;
+                }
+            }
+            else if (piece != 0 && piece != MoveGenerator.whiteKing && piece != MoveGenerator.blackKing)
+            {
+                return false;
+            }
+        }
+
+        return rookCount == 1;
+    }
+
+    // Usefull for king based end games.
+    public static int ManhattanDistance(MoveObject move, int otherKingPosition)
+    {
+        int endFile = move.EndSquare % 8;
+        int endRank = move.EndSquare / 8;
+
+        int kingFile = otherKingPosition % 8;
+        int kingRank = otherKingPosition / 8;
+
+        int distance = Math.Abs(endFile - kingFile) + Math.Abs(endRank - kingRank);
+
+        return distance;
+    }
+    private static char GetFenSymbol(int piece)
+    {
+        return PieceToFenMap.TryGetValue(piece, out char fenSymbol) ? fenSymbol : ' ';
+    }
+
+    private static readonly Dictionary<int, char> PieceToFenMap = new Dictionary<int, char>
+        {
+            { Piece.Pawn, 'P' },
+            { Piece.Knight, 'N' },
+            { Piece.Bishop, 'B' },
+            { Piece.Rook, 'R' },
+            { Piece.Queen, 'Q' },
+            { Piece.King, 'K' },
+            { Piece.Pawn + Piece.BlackPieceOffset, 'p' },
+            { Piece.Knight + Piece.BlackPieceOffset, 'n' },
+            { Piece.Bishop + Piece.BlackPieceOffset, 'b' },
+            { Piece.Rook + Piece.BlackPieceOffset, 'r' },
+            { Piece.Queen + Piece.BlackPieceOffset, 'q' },
+            { Piece.King + Piece.BlackPieceOffset, 'k' }
+        };
+
 }
+

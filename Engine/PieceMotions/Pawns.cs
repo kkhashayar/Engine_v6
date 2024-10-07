@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Pawns
 {
@@ -16,7 +18,7 @@ internal static class Pawns
             AddPawnMove(square, forwardSquare, promotionRank, moves, turn);
 
             // Double move from starting position
-            if ((square / 8) == startRank)
+            if (square / 8 == startRank)
             {
                 int doubleForwardSquare = square + 2 * direction;
                 if (board[doubleForwardSquare] == 0)
@@ -44,7 +46,7 @@ internal static class Pawns
                 if (board[potentialCaptureSquare] != 0)
                 {
                     string colorOfCapturedPiece = Piece.GetColor(board[potentialCaptureSquare]);
-                    if ((turn == 0 && colorOfCapturedPiece == "Black") || (turn == 1 && colorOfCapturedPiece == "White"))
+                    if (turn == 0 && colorOfCapturedPiece == "Black" || turn == 1 && colorOfCapturedPiece == "White")
                     {
                         AddPawnMove(square, potentialCaptureSquare, promotionRank, moves, turn);
                     }
@@ -54,7 +56,7 @@ internal static class Pawns
                 if (Globals.LastMoveWasPawn)
                 {
                     int currentPawnRank = Globals.BoardOfRanks[square];
-                    if ((turn == 0 && currentPawnRank == 5) || (turn == 1 && currentPawnRank == 4))
+                    if (turn == 0 && currentPawnRank == 5 || turn == 1 && currentPawnRank == 4)
                     {
                         if (turn == 0)
                         {
@@ -89,7 +91,7 @@ internal static class Pawns
 
     private static void AddPawnMove(int startSquare, int endSquare, int promotionRank, List<MoveObject> moves, int turn)
     {
-        if ((endSquare / 8) == promotionRank)
+        if (endSquare / 8 == promotionRank)
         {
             MoveObject[] promotionMoves;
             if (turn == 0)

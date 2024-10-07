@@ -1,4 +1,6 @@
-﻿namespace Engine;
+﻿using Engine.Core;
+
+namespace Engine.PieceMotions;
 
 internal static class Knights
 {
@@ -8,39 +10,39 @@ internal static class Knights
         List<int> targetSquares = GetMasksForSquare(square);
         List<MoveObject> moves = new();
 
-        if(turn == 0)
+        if (turn == 0)
         {
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
                 if (targetsquareColor == "White") continue;
                 else
+                {
+                    moves.Add(new MoveObject
                     {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.whiteKnight,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
+                        pieceType = MoveGenerator.whiteKnight,
+                        StartSquare = square,
+                        EndSquare = targetSquare
+                    });
+                }
             }
             return moves;
         }
-        else if(turn == 1)
+        else if (turn == 1)
         {
             foreach (int targetSquare in targetSquares)
             {
                 var targetsquareColor = Piece.GetColor(board[targetSquare]);
                 if (targetsquareColor == "Black") continue;
-                else 
+                else
+                {
+                    moves.Add(new MoveObject
                     {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.blackKnight,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
+                        pieceType = MoveGenerator.blackKnight,
+                        StartSquare = square,
+                        EndSquare = targetSquare
+                    });
+                }
             }
         }
         return moves;
@@ -72,5 +74,5 @@ internal static class Knights
 
         return moves;
     }
-    
+
 }
