@@ -90,33 +90,41 @@ public static class MoveHandler
 
     public static void UndoMove(int[] board, MoveObject move, int pieceMoving, int targetSquare, int promotedTo)
     {
-        board[move.StartSquare] = pieceMoving;
-        board[move.EndSquare] = targetSquare;
+        // Set the original piece back to the starting square
+        var originalPiece = move.pieceType;
 
-        if ((move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) && move.IsPromotion is true)
+        // If the move was a promotion, revert it to the original pawn
+        if (move.IsPromotion)
         {
+            // Clear the target square and place the pawn back to its start square
             board[move.EndSquare] = 0;
-            board[move.StartSquare] = move.pieceType;
+            board[move.StartSquare] = (originalPiece == MoveGenerator.whiteQueen || originalPiece == MoveGenerator.whiteRook ||
+                                        originalPiece == MoveGenerator.whiteBishop || originalPiece == MoveGenerator.whiteKnight)
+                                        ? MoveGenerator.whitePawn
+                                        : MoveGenerator.blackPawn;
+        }
+        else
+        {
+            // Otherwise, set the target square back to its original state
+            board[move.EndSquare] = targetSquare;
+            board[move.StartSquare] = pieceMoving;
         }
 
+        // Undo castling if necessary
         if (move.pieceType == MoveGenerator.whiteKing)
         {
             if (move.ShortCastle)
             {
                 board[61] = 0;
                 board[63] = MoveGenerator.whiteRook;
-
             }
 
             if (move.LongCastle)
             {
                 board[59] = 0;
                 board[56] = MoveGenerator.whiteRook;
-
             }
-
         }
-
 
         if (move.pieceType == MoveGenerator.blackKing)
         {
@@ -124,18 +132,17 @@ public static class MoveHandler
             {
                 board[3] = 0;
                 board[0] = MoveGenerator.blackRook;
-
-
             }
 
             if (move.ShortCastle)
             {
                 board[5] = 0;
                 board[7] = MoveGenerator.blackRook;
-
             }
         }
     }
+
+
     public static void RegisterStaticStates()
     {
 

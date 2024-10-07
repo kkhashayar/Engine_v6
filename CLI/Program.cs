@@ -1,7 +1,7 @@
 ﻿using Engine;
 using Engine.External_Resources;
 
-string fen = "8/8/7k/8/7K/8/8/8 w - - 0 1";
+string fen = "";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -15,7 +15,7 @@ RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
 
-int searchDepth = 6;
+int searchDepth = 1;
 TimeSpan maxTime = TimeSpan.FromSeconds(searchDepth * searchDepth);
 Run();
 printBoardWhiteDown(globals.ChessBoard);
@@ -24,9 +24,9 @@ void Run()
     bool running = true;
     while (running && !Globals.CheckmateWhite && !Globals.CheckmateBlack)
     {
-        
+
         MoveObject move = new MoveObject();
-        if(Globals.Turn == 0)
+        if (Globals.Turn == 0)
         {
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
@@ -36,12 +36,12 @@ void Run()
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
         }
-        Globals.Turn ^= 1;  
+        Globals.Turn ^= 1;
 
         Console.WriteLine();
-        
-        if(Globals.InitialTurn == 0)   printBoardWhiteDown(globals.ChessBoard);
-        else if(Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+        if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+        else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
 
         Console.WriteLine();
         Console.Beep(2000, 50);
@@ -163,6 +163,7 @@ void VerifyWithStockfish(string fen, int depth)
 
     while ((output = stockfish.ReadOutput()) != null)
     {
+
         Console.WriteLine(output);
         if (output.StartsWith("Stockfish result:  ")) break;
     }
@@ -200,3 +201,4 @@ void RunPerft(string fen, Globals globals, int perftDepth)
 
 
 }
+
