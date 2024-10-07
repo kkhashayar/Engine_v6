@@ -2,7 +2,7 @@
 using Engine.Core;
 using Engine.External_Resources;
 
-string fen = "";
+string fen = "8/8/2k5/8/6p1/2K5/5PPP/8 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -25,7 +25,7 @@ if (String.IsNullOrEmpty(fen))
 Globals globals = Globals.FenReader(fen);
 
 ////////////////////   PERFT And stockfish verification
-int perftDepth = 5;
+int perftDepth = 2;
 RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
