@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Bitboards
+namespace Engine.BItBoards
 {
     public static class Kings
     {

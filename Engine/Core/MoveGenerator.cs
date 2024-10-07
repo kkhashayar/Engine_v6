@@ -1,6 +1,7 @@
 ﻿
 namespace Engine;
-
+using Engine.Core;
+using Engine.PieceMotions;
 public static class MoveGenerator
 {
     public static readonly int whiteKing = Piece.King;
