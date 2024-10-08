@@ -2,7 +2,7 @@
 using Engine.Core;
 using Engine.External_Resources;
 
-string fen = "8/8/2k5/8/6p1/2K5/5PPP/8 w - - 0 1";
+string fen = "8/ppp5/6k1/1P6/6p1/8/5PPP/6K1 w - - 0 1";
 if (String.IsNullOrEmpty(fen))
 {
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
