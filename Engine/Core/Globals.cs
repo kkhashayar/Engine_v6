@@ -43,10 +43,12 @@ public sealed class Globals
     public static GamePhase GamePhase { get; set; }
     public static GamePhase GameStateForWhiteKing { get; set; }
     public static GamePhase GameStateForBlackKing { get; set; }
-    public static GamePhase GameStateForWhiteRook { get; set; } 
+    public static GamePhase GameStateForWhiteRook { get; set; }
     public static GamePhase GameStateForBlackRook { get; set; }
+
+    // Thinking and depth!
     public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 20; 
+    public static int MaxDepth = 20;
 
     public static List<int> OnBoardPieces = new List<int>();
 
@@ -169,11 +171,7 @@ public sealed class Globals
 
     public static Globals FenReader(string fen)
     {
-
-        if (string.IsNullOrEmpty(fen))
-        {
-            fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        }
+        if (string.IsNullOrEmpty(fen)) fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         var globals = new Globals();
         string[] parts = fen.Split(' ');
@@ -425,7 +423,7 @@ public sealed class Globals
         // Building the basic move string
         string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}{check} ";
 
-        
+
 
         return moveString;
     }
@@ -531,22 +529,22 @@ public sealed class Globals
 
         else
         {
-            ThinkingTime = 5;
+            ThinkingTime = 2;
             return GamePhase.Opening;
         }
     }
 
-    public static EndGames GetEndGameType(int[]board) 
-    { 
-        if(IsSingleRookOnBoard(board)) return EndGames.RookKing;
+    public static EndGames GetEndGameType(int[] board)
+    {
+        if (IsSingleRookOnBoard(board)) return EndGames.RookKing;
         return EndGames.None;
     }
 
-    public static void GetOnBoardPieces(int[]board)
+    public static void GetOnBoardPieces(int[] board)
     {
-        OnBoardPieces.Clear(); 
+        OnBoardPieces.Clear();
         OnBoardPieces = board.Where(x => x > 0).ToList();
-       
+
     }
     public static bool IsSingleRookOnBoard(int[] board)
     {
