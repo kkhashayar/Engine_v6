@@ -32,7 +32,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.whiteKing)
                 {
-                    score += 5;
+                    score += 999;
                 }
                 else if (piece == MoveGenerator.blackPawn)
                 {
@@ -56,7 +56,7 @@ namespace Engine
                 }
                 else if (piece == MoveGenerator.blackKing)
                 {
-                    score -= 5;
+                    score -= 999;
                 }
             }
             int mobilityScore = (numberOfWhiteMoves - numberOfBlackMoves) * 1;

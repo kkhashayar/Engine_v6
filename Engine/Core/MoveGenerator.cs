@@ -31,7 +31,7 @@ public static class MoveGenerator
         {
             foreach (var move in pseudoMoves)
             {
-                if (IsMoveLegal(move, chessBoard, turn)) moves.Add(move);
+                if (IsMoveLegal(move, chessBoard, turn) is not null) moves.Add(move);
             }
         }
         else
@@ -129,7 +129,7 @@ public static class MoveGenerator
         return pseudoMoves;
     }
 
-    private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
+    private static MoveObject IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         MoveHandler.RegisterStaticStates();
         int[] shadowBoard = (int[])board.Clone();
@@ -148,11 +148,10 @@ public static class MoveGenerator
         // Check if the move is a king move
         if (move.pieceType == MoveGenerator.whiteKing || move.pieceType == MoveGenerator.blackKing)
         {
+            // Moving into the same square attacked by enemy king is illegal
             // If it's a king move, remove the squares attacked by the enemy king
-            if (enemyKingAttackSquares.Contains(move.EndSquare))
-            {
-                return false; // Moving into the same square attacked by enemy king is illegal
-            }
+            if (enemyKingAttackSquares.Contains(move.EndSquare))   return null; 
+            
         }
         /* prevent overlapping kings */
 
@@ -168,12 +167,25 @@ public static class MoveGenerator
         var diagonalAttacks = GenerateDiagonalAttacks(shadowBoard, opponentTurn);
 
         // Final king check
-        if (verticalAndHorizontalAttacks.Contains(kingSquare) || diagonalAttacks.Contains(kingSquare)) return false;
+        if (verticalAndHorizontalAttacks.Contains(kingSquare) || diagonalAttacks.Contains(kingSquare)) return null;
 
         // If the king is in check after the move, it's illegal
 
+        // Simple move ordering flags, we can use in search class
+        if (shadowBoard[move.EndSquare] != MoveGenerator.None)
+        {
+            move.IsCapture = true;
+            move.CapturedPiece = shadowBoard[move.EndSquare];
+        }
+
+        // Check if move puts the enemy king in check! 
+        if (move.pieceType != MoveGenerator.whiteKing && move.pieceType != MoveGenerator.blackKing && move.EndSquare == enemyKingSquare)
+        {
+            move.IsCheck = true;
+        }
         MoveHandler.RestoreStateFromSnapshot(); 
-        return !kingInCheck;
+        
+        return move;
     }
 
 
