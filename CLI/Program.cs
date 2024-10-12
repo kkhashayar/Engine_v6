@@ -2,31 +2,21 @@
 using Engine.Core;
 using Engine.External_Resources;
 
-string fen = "";
-if (String.IsNullOrEmpty(fen))
-{
-    fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-}
+string? fen = "";
 
 // test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
 // test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
-
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
 // test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
-
-
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
-
-
-
 
 Globals globals = Globals.FenReader(fen);
 
 ////////////////////   PERFT And stockfish verification
-int perftDepth = 5;
-RunPerft(fen, globals, perftDepth);
+//int perftDepth = 2;
+//RunPerft(fen, globals, perftDepth);
 ////////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
@@ -49,47 +39,49 @@ void Run()
 
     while (running)
     {
-
         MoveObject move = new MoveObject();
         if (Globals.Turn == 0)
         {
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
+
+            if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) running = false;
+
+            Globals.Turn ^= 1;
         }
-        else
+        else if(Globals.Turn == 1)
         {
             move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
             MoveHandler.MakeMove(globals.ChessBoard, move);
+
+            if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) running = false;
+
+            Globals.Turn ^= 1;
         }
-        Globals.Turn ^= 1;
-
-        if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
-
-
 
         Console.WriteLine();
 
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
-
-        Console.WriteLine();
-        Console.WriteLine($"Position: {fen} \n");
-        Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
-
-        Console.WriteLine();
         foreach (var historyMove in Globals.moveHistory)
         {
             Console.Write(Globals.MoveToString(historyMove));
         }
         Console.Beep(500, 150);
         Console.Beep(500, 150);
-        Console.ReadKey();
+        // Console.ReadKey();
     }
+
+    Console.WriteLine();
+    Console.WriteLine();
+    Console.WriteLine($"Position: {fen} \n");
+    Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
 }
 
 
     void printBoardWhiteDown(int[] board)
     {
+        Console.Clear();
         Console.ResetColor();
         Console.ForegroundColor = ConsoleColor.Black;
         Console.OutputEncoding = System.Text.Encoding.Unicode;
@@ -118,6 +110,7 @@ void Run()
 
     void printBoardBlackDown(int[] board)
     {
+        Console.Clear();
         Console.ResetColor();
         Console.ForegroundColor = ConsoleColor.Black;
         Console.OutputEncoding = System.Text.Encoding.Unicode;
