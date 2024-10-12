@@ -70,6 +70,12 @@ namespace Engine
             List<MoveObject> allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
             if (allPossibleMoves == null || allPossibleMoves.Count == 0) return int.MinValue;
 
+            // Sort moves: captures first, then check moves, and then promotions
+            allPossibleMoves = allPossibleMoves.OrderByDescending(m => m.IsCapture)
+                                               .ThenByDescending(m => m.IsCheck)
+                                               .ThenByDescending(m => m.IsPromotion)
+                                               .ToList();
+
             var whiteAttacksNumber = MoveGenerator.GetTotalNumberOfAttackSquares(board, 0);
             var blackAttackNumber = MoveGenerator.GetTotalNumberOfAttackSquares(board, 1);
             if (depth == 0) return Evaluators.GetByMaterial(board, whiteAttacksNumber, blackAttackNumber);
@@ -100,16 +106,20 @@ namespace Engine
             List<MoveObject> allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
             if (allPossibleMoves == null || allPossibleMoves.Count == 0) return int.MaxValue;
 
+            // Sort moves: captures first, then check moves, and then promotions
+            allPossibleMoves = allPossibleMoves.OrderByDescending(m => m.IsCapture)
+                                               .ThenByDescending(m => m.IsCheck)
+                                               .ThenByDescending(m => m.IsPromotion)
+                                               .ToList();
+
             var whiteAttacksNumber = MoveGenerator.GetTotalNumberOfAttackSquares(board, 0);
             var blackAttackNumber = MoveGenerator.GetTotalNumberOfAttackSquares(board, 1);
-
 
             if (depth == 0) return Evaluators.GetByMaterial(board, whiteAttacksNumber, blackAttackNumber);
 
             foreach (var move in allPossibleMoves)
             {
                 MoveHandler.RegisterStaticStates();
-
                 var pieceMoving = move.pieceType;
                 var targetSquare = board[move.EndSquare];
                 var promotedTo = move.PromotionPiece;
@@ -127,6 +137,7 @@ namespace Engine
 
             return beta;
         }
+
         public static string MoveToString(MoveObject move)
         {
             string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
