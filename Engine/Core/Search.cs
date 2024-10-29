@@ -107,6 +107,9 @@ namespace Engine
 
             MoveObject bestMove = default;
             List<MoveObject> allPossibleMoves = GetAllPossibleMoves(board, turn, true);
+
+            if(allPossibleMoves.Count == 1) return allPossibleMoves[0];
+
             for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
             {
                 if (!allPossibleMoves.Any())
