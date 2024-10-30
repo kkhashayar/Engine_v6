@@ -199,14 +199,7 @@ public static class MoveGenerator
                 }
             }
         }
-        if (turn == 0)
-        {
-            if (pseudoMoves.Count == 0) { Globals.CheckmateWhite = true; }
-        }
-        else if (turn == 1)
-        {
-            if (pseudoMoves.Count == 0) { Globals.CheckmateBlack = true; }
-        }
+       
         return pseudoMoves;
     }
 

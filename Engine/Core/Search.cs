@@ -11,32 +11,45 @@ namespace Engine
 
         public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
         {
+            //decimal alpha = decimal.MinValue;
+            //decimal beta = decimal.MaxValue;
+
+            decimal alpha = -999999;
+            decimal beta = 999999;
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-            decimal alpha = decimal.MinValue;
-            decimal beta = decimal.MaxValue;
 
             MoveObject bestMove = default;
 
             var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
 
             allPossibleMoves = allPossibleMoves
                 .OrderByDescending(mo => mo.IsCapture)
                 .ThenByDescending(mo => mo.IsCheck)
                 .ToList();
 
-            if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
+           
+            if (allPossibleMoves.Count == 0)
+            {
+                if (turn == 0) 
+                {
+                    Globals.CheckmateWhite = true;
+                } 
+                else if(turn == 1)
+                {
+                    Globals.CheckmateBlack = true;
+                }
+                
+                else Globals.Stalemate = true;  
+                return bestMove;
+            }
 
             for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
             {
-                if (!allPossibleMoves.Any())
-                {
-                    if (turn == 0) Globals.CheckmateWhite = true;
-                    else Globals.CheckmateBlack = true;
-                    return bestMove;
-                }
 
+                
                 foreach (var move in allPossibleMoves)
                 {
                     if (stopwatch.Elapsed >= maxTime)
@@ -65,24 +78,19 @@ namespace Engine
                     }
                 }
 
-                Console.WriteLine($"Depth {currentDepth}: Best Move Found - {MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}");
+                Console.WriteLine($"Depth {currentDepth}: Best Move Found - {Globals.MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}");
             }
 
             
-            Console.WriteLine($"Best Move: {MoveToString(bestMove)}");
+            Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)}");
             return bestMove;
         }
         public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn)
         {
-            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
-            
-
-            if (allPossibleMoves == null || allPossibleMoves.Count == 0) return decimal.MinValue;
-            // allPossibleMoves.Where(mo =>  Piece.IsWhite(mo.pieceType)).Count(), allPossibleMoves.Where(mo => Piece.IsBlack(mo.pieceType)).Count()
-            
-            
+   
             if (depth == 0) return Evaluators.GetByMaterial(board, turn);
-
+            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            if (allPossibleMoves == null || allPossibleMoves.Count == 0) return decimal.MinValue;
             allPossibleMoves = allPossibleMoves
                 .OrderByDescending(mo => mo.IsCapture)
                 .ThenByDescending(mo => mo.IsCheck)
@@ -112,13 +120,10 @@ namespace Engine
 
         public static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn)
         {
-
-
+            
+            if (depth == 0) return Evaluators.GetByMaterial(board, turn);
             var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
             if (allPossibleMoves == null || allPossibleMoves.Count == 0) return decimal.MaxValue;
-
-
-            if (depth == 0) return Evaluators.GetByMaterial(board, turn);
 
             allPossibleMoves = allPossibleMoves
                 .OrderByDescending(mo => mo.IsCapture)
@@ -145,17 +150,6 @@ namespace Engine
 
             return beta;
         }
-        public static string MoveToString(MoveObject move)
-        {
-            string promotion = move.IsPromotion ? $"({Piece.GetPieceName(move.PromotionPiece)})" : "";
-            string castle = move.ShortCastle ? "O-O" : move.LongCastle ? "O-O-O" : "";
-
-            if (!string.IsNullOrEmpty(castle))
-            {
-                return castle;
-            }
-
-            return $"{Piece.GetPieceName(move.pieceType)}{Globals.GetSquareCoordinate(move.StartSquare)}-{Globals.GetSquareCoordinate(move.EndSquare)}{promotion}";
-        }
+      
     }
 }

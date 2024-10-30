@@ -531,7 +531,7 @@ public sealed class Globals
 
         else
         {
-            ThinkingTime = 5;
+            ThinkingTime = 15;
             return GamePhase.Opening;
         }
     }
