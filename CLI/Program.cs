@@ -14,7 +14,7 @@ using Engine.External_Resources;
 // test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
 
-string fen = "r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0";
+string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
 
 
 Globals globals = Globals.FenReader(fen);
