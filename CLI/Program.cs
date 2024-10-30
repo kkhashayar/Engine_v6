@@ -33,6 +33,7 @@ Run();
 
 void Run()
 {
+    Console.Clear(); 
     Console.WriteLine();
     if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
     else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
