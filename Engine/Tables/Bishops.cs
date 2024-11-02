@@ -2,19 +2,20 @@
 {
     public static class Bishops
     {
-        public static readonly int[] BishopTable = new int[64]
+        public static readonly decimal[] BishopTable = new decimal[64]
         {
-            -20,-10,-10,-10,-10,-10,-10,-20,
-            -10, 0, 0, 0, 0, 0, 0,-10,
-            -10, 0, 5, 10, 10, 5, 0,-10,
-            -10, 5, 5, 10, 10, 5, 5,-10,
-            -10, 0, 10, 10, 10, 10, 0,-10,
-            -10, 10, 10, 10, 10, 10, 10,-10,
-            -10, 5, 0, 0, 0, 0, 5,-10,
-            -20,-10,-40,-10,-10,-40,-10,-20,
+            -0.20m, -0.10m, -0.10m, -0.10m, -0.10m, -0.10m, -0.10m, -0.20m,
+            -0.10m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m, -0.10m,
+            -0.10m,  0.00m,  0.05m,  0.10m,  0.10m,  0.05m,  0.00m, -0.10m,
+            -0.10m,  0.05m,  0.05m,  0.10m,  0.10m,  0.05m,  0.05m, -0.10m,
+            -0.10m,  0.00m,  0.10m,  0.10m,  0.10m,  0.10m,  0.00m, -0.10m,
+            -0.10m,  0.10m,  0.10m,  0.10m,  0.10m,  0.10m,  0.10m, -0.10m,
+            -0.10m,  0.05m,  0.00m,  0.00m,  0.00m,  0.00m,  0.05m, -0.10m,
+            -0.20m, -0.10m, -0.40m, -0.10m, -0.10m, -0.40m, -0.10m, -0.20m
         };
 
-        public static int GetSquareWeight(int square, bool isWHite)
+
+        public static decimal GetSquareWeight(int square, bool isWHite)
         {
             if (!isWHite)
             {

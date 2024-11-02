@@ -1,4 +1,5 @@
-﻿using Engine.Tables;
+﻿using Engine.Core;
+using Engine.Tables;
 
 namespace Engine;
 
@@ -17,13 +18,14 @@ internal static class Evaluators
             {
                 case 1:
                     score += 1;
-                    // if(turn == 0) score += Pawns.GetSquareWeight(i, true);    
+                    if(turn == 0) score += Pawns.GetSquareWeight(i, true);    
                     break;
                 case 3:
                     score += 3;
                     break;
                 case 4:
                     score += 3.2m;
+                    if(turn == 0) score += Bishops.GetSquareWeight(i, true);    
                     break;
                 case 5:
                     score += 5;
@@ -33,16 +35,18 @@ internal static class Evaluators
                     break;
                 case 99:
                     score += 999999;
+                    if(turn == 0 && Globals.GamePhase == Enums.GamePhase.EndGame)score += Kings.GetEndGameWeight(i, true);
                     break;
                 case 11:
                     score -= 1;
-                    //if(turn == 1) score -= Pawns.GetSquareWeight(i, false);   
+                    if(turn == 1) score -= Pawns.GetSquareWeight(i, false);   
                     break;
                 case 13:
                     score -= 3;
                     break;
                 case 14:
                     score -= 3.2m;
+                    if(turn == 1) score -= Bishops.GetSquareWeight(i, false);   
                     break;
                 case 15:
                     score -= 5;
@@ -52,19 +56,14 @@ internal static class Evaluators
                     break;
                 case 109:
                     score -= 999999;
+                    if (turn == 1 && Globals.GamePhase == Enums.GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false); 
                     break;
                 default:
                     break;
             }
         }
 
-        // Mobility-based adjustment
-        //int moveCount = (turn == 0) ? blackMoveCount : whiteMoveCount;
-        //int MobilityWeight = 10; // Adjust this value as needed
-        //int adjustment = moveCount * MobilityWeight;
-
-        //score += (turn == 0) ? adjustment : -adjustment;
-
+   
         if (turn == 0)
         {
             score += blackMoveCount switch

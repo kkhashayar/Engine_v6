@@ -134,72 +134,80 @@ public static class MoveGenerator
             // Generate moves for white pieces
             if (turn == 0)
             {
-                if (piece == whiteKing)
+                switch (piece)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 99:
+                        //pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == whiteKnight)
-                {
-                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 3:
+                        //pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == whiteRook)
-                {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 5:
+                        //pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == whiteBishop)
-                {
-                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 4:
+                        //pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == whiteQueen)
-                {
-                    pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 9:
+                        //pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
 
-                else if (piece == whitePawn)
-                {
-                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                        break;
 
+                    case 1:
+                        pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                        // pseudoMoves.AddRange(Pawns.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+                }
             }
             // Generate moves for black pieces
             else if (turn == 1)
             {
-                if (piece == blackKing)
+                switch (piece)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 109:
+                        //pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == blackKnight)
-                {
-                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 13:
+                        //pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == blackRook)
-                {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 15:
+                        //pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == blackBishop)
-                {
-                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 14:
+                        //pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == blackQueen)
-                {
-                    pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
-                }
+                    case 19:
+                        //pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
 
-                else if (piece == blackPawn)
-                {
-                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                    case 11:
+                        pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                        // pseudoMoves.AddRange(Pawns.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+
+                        break;
                 }
             }
         }
-       
+
+
         return pseudoMoves;
     }
 

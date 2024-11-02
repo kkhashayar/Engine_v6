@@ -520,18 +520,18 @@ public sealed class Globals
     {
         if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
         {
-            ThinkingTime = 15;
+            ThinkingTime = 25;
             return GamePhase.EndGame;
         }
         else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
         {
-            ThinkingTime = 90;
+            ThinkingTime = 45;
             return GamePhase.MiddleGame;
         }
 
         else
         {
-            ThinkingTime = 15;
+            ThinkingTime = 10;
             return GamePhase.Opening;
         }
     }
