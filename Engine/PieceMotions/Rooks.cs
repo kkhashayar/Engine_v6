@@ -163,7 +163,7 @@ internal static class Rooks
     // Generate rook moves using magic bitboards or sliding attacks
     private static ulong GenerateRookMoves(int square, ulong allPiecesBitboard)
     {
-        // For simplicity, we'll use a basic sliding attack generation
+        //sliding attack generation
         ulong attacks = 0UL;
 
         int[] directions = { 8, -8, 1, -1 }; // up, down, right, left

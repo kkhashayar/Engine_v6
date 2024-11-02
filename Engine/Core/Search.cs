@@ -5,7 +5,6 @@ namespace Engine;
 
 public static class Search
 {
-
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
     {
         decimal alpha = -999999;
@@ -18,14 +17,10 @@ public static class Search
         List<MoveObject> principalVariation = new();
 
         var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+        
         if (allPossibleMoves.Count == 1) return allPossibleMoves[0];
 
-        allPossibleMoves = allPossibleMoves
-            .OrderByDescending(mo => mo.IsCapture)
-            .ThenByDescending(mo => mo.IsCheck)
-            .ToList();
-
-
+   
         if (allPossibleMoves.Count == 0)
         {
             if (turn == 0)
@@ -43,7 +38,6 @@ public static class Search
 
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
-
             foreach (var move in allPossibleMoves)
             {
                 if (stopwatch.Elapsed >= maxTime)
@@ -60,6 +54,7 @@ public static class Search
                 decimal score = (turn == 0) ? AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, ref line) : AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, ref line);
                 MoveHandler.RestoreStateFromSnapshot();
 
+                //decimal score = 0;
                 if (turn == 0 && score > alpha)
                 {
                     alpha = score;
@@ -75,18 +70,19 @@ public static class Search
                     principalVariation.AddRange(line);
                 }
             }
-
-            //Console.WriteLine($"Depth {currentDepth}: Best Move Found - {Globals.MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}");
-            Console.WriteLine("Principal Variation: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
+            // : Best Move Found - {Globals.MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}
+            Console.WriteLine($"Depth {currentDepth} score {(turn == 0 ? alpha : beta)}");
+            Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         }
 
         //Console.WriteLine($"Best Move: {Globals.MoveToString(bestMove)}");
-        Console.WriteLine("Principal Variation: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
+        Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         return bestMove;
     }
 
     public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn, ref List<MoveObject> pvLine)
     {
+
 
         if (depth == 0)
         {

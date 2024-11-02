@@ -431,7 +431,7 @@ public sealed class Globals
     }
 
 
-    // In use with UCI protocol
+    // Only in use with UCI protocol
     public static string ConvertMoveToString(MoveObject move)
     {
         int startSquare = move.StartSquare;
