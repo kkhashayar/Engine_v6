@@ -1,17 +1,17 @@
 ﻿using Engine.Core;
+using Engine.PieceMotions;
 using System.Diagnostics;
 
 namespace Engine;
 
 public static class Search
 {
-    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxTime)
+    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth)
     {
-        decimal alpha = -999999;
-        decimal beta = 999999;
+        
 
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
+        //Stopwatch stopwatch = new Stopwatch();
+        //stopwatch.Start();
 
         MoveObject bestMove = default;
         List<MoveObject> principalVariation = new();
@@ -38,13 +38,15 @@ public static class Search
 
         for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
         {
+            decimal alpha = -999999;
+            decimal beta = 999999;
             foreach (var move in allPossibleMoves)
             {
-                if (stopwatch.Elapsed >= maxTime)
-                {
-                    Console.WriteLine("Stopping search due to time limit.");
-                    return bestMove;
-                }
+                //if (stopwatch.Elapsed >= maxTime)
+                //{
+                //    Console.WriteLine("Stopping search due to time limit.");
+                //    return bestMove;
+                //}
 
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
@@ -296,4 +298,7 @@ public static class Search
 
         return (turn == 0) ? alpha : beta;
     }
+    
 }
+
+

@@ -46,7 +46,7 @@ public sealed class Globals
     public static GamePhase GameStateForWhiteRook { get; set; } 
     public static GamePhase GameStateForBlackRook { get; set; }
     public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 20; 
+    public static int MaxDepth = 6; 
 
     public static List<int> OnBoardPieces = new List<int>();
 
