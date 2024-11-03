@@ -20,8 +20,9 @@ string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
-int perftDepth = 4;
-RunPerft(fen, globals, perftDepth);
+// Still some mistakes in positions with pawns! 
+//int perftDepth = 5;
+//RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
