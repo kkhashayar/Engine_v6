@@ -11,10 +11,10 @@ using Engine.External_Resources;
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
 
 
-// test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
-// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
+// test fen:  8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
+// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
 
 
 Globals globals = Globals.FenReader(fen);
@@ -51,7 +51,7 @@ void Run()
         MoveObject move = new MoveObject();
 
 
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
         
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
@@ -258,9 +258,9 @@ void StartUCIMode()
 
         if (input == "uci")
         {
-            Console.WriteLine("id name KChess.v6");
+            Console.WriteLine("id name KChess.v7");
             Console.WriteLine("id author Khashayar Nariman");
-            Console.WriteLine("uciok");
+            Console.WriteLine("uci ok");
         }
         else if (input == "isready")
         {
@@ -312,7 +312,6 @@ void HandlePositionCommand(string input)
 
 void HandleGoCommand(string input)
 {
-    //Globals.Turn ^= 1;
     Console.WriteLine("Received go command");
 
     int maxDepth = 1;
@@ -320,15 +319,16 @@ void HandleGoCommand(string input)
 
     try
     {
+        Console.WriteLine("In Handling command method");
         MoveObject bestMove = default;
 
-        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
+        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
 
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
         Console.WriteLine($"bestmove {bestMoveString}");
 
         MoveHandler.MakeMove(globals.ChessBoard, bestMove);
-        //Globals.Turn ^= 1;  // Switch turns after making a move
+        Globals.Turn ^= 1;  // Switch turns after making a move
         Globals.CurrentFEN = Globals.BoardToFen(globals.ChessBoard, Globals.Turn);
         Console.WriteLine("Move calculation completed");
     }
@@ -337,6 +337,7 @@ void HandleGoCommand(string input)
         Console.WriteLine($"Error during move calculation: {ex.Message}");
     }
 }
+
 
 
 MoveObject StringToMove(string moveString)
@@ -357,9 +358,10 @@ MoveObject StringToMove(string moveString)
 int ConvertToBoardIndex(string position)
 {
     int file = position[0] - 'a';
-    int rank = position[1] - '1';
+    int rank = 8 - int.Parse(position[1].ToString()); // Convert rank to 0-based index from top
     return rank * 8 + file;
 }
+
 
 // In order to test the UCI mode, comment out the Run() method and call StartUCIMode() instead
 //StartUCIMode();

@@ -1,17 +1,17 @@
 ﻿using Engine.Core;
-using Engine.PieceMotions;
 using System.Diagnostics;
 
 namespace Engine;
 
 public static class Search
 {
-    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth)
+    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
-        
+        decimal alpha = -999999;
+        decimal beta = 999999;
 
-        //Stopwatch stopwatch = new Stopwatch();
-        //stopwatch.Start();
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
 
         MoveObject bestMove = default;
         List<MoveObject> principalVariation = new();
@@ -36,17 +36,16 @@ public static class Search
             return bestMove;
         }
 
-        for (int currentDepth = 1; currentDepth <= maxDepth; currentDepth++)
+        for (int currentDepth = 2; currentDepth <= maxDepth; currentDepth+=2)
         {
-            decimal alpha = -999999;
-            decimal beta = 999999;
+            
             foreach (var move in allPossibleMoves)
             {
-                //if (stopwatch.Elapsed >= maxTime)
-                //{
-                //    Console.WriteLine("Stopping search due to time limit.");
-                //    return bestMove;
-                //}
+                if (stopwatch.Elapsed >= maxtime)
+                {
+                    Console.WriteLine("Stopping search due to time limit.");
+                    return bestMove;
+                }
 
                 int[] shadowBoard = (int[])board.Clone();
                 MoveHandler.RegisterStaticStates();
@@ -73,7 +72,7 @@ public static class Search
                 }
             }
             // : Best Move Found - {Globals.MoveToString(bestMove)} with score {(turn == 0 ? alpha : beta)}
-            Console.WriteLine($"Depth {currentDepth} score {(turn == 0 ? alpha : beta)}");
+            Console.WriteLine($"Depth {currentDepth/2 } score {(turn == 0 ? alpha : beta)}");
             Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         }
 

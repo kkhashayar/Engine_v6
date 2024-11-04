@@ -35,7 +35,7 @@ internal static class Evaluators
                     break;
                 case 99:
                     score += 999999;
-                    if(turn == 0 && Globals.GamePhase == Enums.GamePhase.EndGame)score += Kings.GetEndGameWeight(i, true);
+                    //if(turn == 0 && Globals.GamePhase == Enums.GamePhase.EndGame)score += Kings.GetEndGameWeight(i, true);
                     break;
                 case 11:
                     score -= 1;
@@ -56,14 +56,12 @@ internal static class Evaluators
                     break;
                 case 109:
                     score -= 999999;
-                    if (turn == 1 && Globals.GamePhase == Enums.GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false); 
+                    //if (turn == 1 && Globals.GamePhase == Enums.GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false); 
                     break;
                 default:
                     break;
             }
         }
-
-   
         if (turn == 0)
         {
             score += blackMoveCount switch
