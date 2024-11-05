@@ -66,7 +66,7 @@ internal static class Evaluators
                     break;
                 case 109:
                     score -= 999999;
-                    if (gamePhase == "End") score -= Kings.GetEndGameWeight(i, false); 
+                    if if(gamePhase == "End")score -= Kings.GetEndGameWeight(i, false); 
                     break;
                 default:
                     break;
