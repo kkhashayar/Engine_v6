@@ -516,25 +516,7 @@ public sealed class Globals
 
         return fenBuilder.ToString();
     }
-    public static GamePhase GetGamePhase()
-    {
-        if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
-        {
-            ThinkingTime = 15;
-            return GamePhase.EndGame;
-        }
-        else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
-        {
-            ThinkingTime = 60;
-            return GamePhase.MiddleGame;
-        }
-
-        else
-        {
-            ThinkingTime = 20;
-            return GamePhase.Opening;
-        }
-    }
+    
 
     public static EndGames GetEndGameType(int[]board) 
     { 

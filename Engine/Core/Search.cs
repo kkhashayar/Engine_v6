@@ -5,8 +5,23 @@ namespace Engine;
 
 public static class Search
 {
+    static int whitePieces = 0;
+    static int blackPieces = 0;
+    static int totalPiecesOnTheBoard = 0;
+    static string  gamePhase = "";
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
+        whitePieces = board.Where(p => Piece.IsWhite(p)).Count();
+        blackPieces = board.Where(p => Piece.IsBlack(p)).Count();
+        totalPiecesOnTheBoard = whitePieces + blackPieces;
+
+        
+        if (totalPiecesOnTheBoard == 32) gamePhase = "Opening";
+        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10) gamePhase = "Middle";
+        else gamePhase = "End";
+
+
+
         decimal alpha = -999999;
         decimal beta = 999999;
 
@@ -88,8 +103,8 @@ public static class Search
         if (depth == 0)
         {
             pvLine.Clear();
-            return Evaluators.GetByMaterial(board, turn);
-            //return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+            if(gamePhase != "Opening") return Evaluators.GetByMaterial(board, turn);
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
         }
         var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
         if (allPossibleMoves == null || allPossibleMoves.Count == 0)
@@ -144,8 +159,8 @@ public static class Search
         if (depth == 0)
         {
             pvLine.Clear();
-            return Evaluators.GetByMaterial(board, turn);
-            //return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+            if (gamePhase != "Opening") return Evaluators.GetByMaterial(board, turn);
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
         }
         var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
         if (allPossibleMoves == null || allPossibleMoves.Count == 0)
