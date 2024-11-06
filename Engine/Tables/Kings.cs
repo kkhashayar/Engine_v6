@@ -1,5 +1,7 @@
 ﻿using Engine.Core;
 using Engine.Enums;
+using System.Reflection.Metadata;
+using Engine.PieceMotions;
 
 namespace Engine.Tables
 {
@@ -40,7 +42,7 @@ namespace Engine.Tables
         public static decimal GetSquareWeight(int[] board, int square, bool isWhite)
         {
             var endGameType = Globals.GetEndGameType(board);
-            var kingAttackSquares = MoveGenerator.GetKingAttacks(board, isWhite ? 0 : 1);
+            //var kingAttackSquares = MoveGenerator.GetKingAttacks(board, isWhite ? 0 : 1);
             GetGamePhaseForKing(board);
 
             decimal[] kingTable = (isWhite ? Globals.GameStateForWhiteKing : Globals.GameStateForBlackKing) == GamePhase.EndGame
