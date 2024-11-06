@@ -13,8 +13,6 @@
             0.05m,  0.10m,  0.10m, -0.25m, -0.25m,  0.10m,  0.10m, 0.05m,
             0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m, 0.00m
         };
-
-
         public static decimal GetSquareWeight(int square, bool isWhite)
         {
             if (!isWhite)
@@ -25,3 +23,6 @@
         }
     }
 }
+
+
+// TODO: pawn square weights should be little bit higher than Knight
