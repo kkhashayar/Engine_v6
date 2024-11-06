@@ -20,7 +20,7 @@ public static class Piece
     }
     public static bool IsWhite(int pieceValue)
     {
-        if (pieceValue == 1 || pieceValue == 3 || pieceValue == 4 || pieceValue == 5 || pieceValue == 9 || pieceValue == 1)
+        if (pieceValue == 1 || pieceValue == 3 || pieceValue == 4 || pieceValue == 5 || pieceValue == 9 || pieceValue == 99)
             return true;
         return false;
     }

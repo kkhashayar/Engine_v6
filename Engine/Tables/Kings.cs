@@ -7,37 +7,45 @@ namespace Engine.Tables
 {
     public static class Kings
     {
-        public static readonly int[] KingTableEndgame = new int[64]
+        public static readonly decimal[] KingTableEndgame = new decimal[64]
         {
-            -3, -2, -2, -2, -2, -2, -2, -3,
-            -2, -1, -1, -1, -1, -1, -1, -2,
-            -2, -1,  0,  0,  0,  0, -1, -2,
-            -2, -1,  0,  1,  1,  0, -1, -2,
-            -2, -1,  0,  1,  1,  0, -1, -2,
-            -2, -1,  0,  0,  0,  0, -1, -2,
-            -2, -1, -1, -1, -1, -1, -1, -2,
-            -3, -2, -2, -2, -2, -2, -2, -3
+            -0.03m, -0.02m, -0.02m, -0.02m, -0.02m, -0.02m, -0.02m, -0.03m,
+            -0.02m, -0.01m, -0.01m, -0.01m, -0.01m, -0.01m, -0.01m, -0.02m,
+            -0.02m, -0.01m,  0.00m,  0.00m,  0.00m,  0.00m, -0.01m, -0.02m,
+            -0.02m, -0.01m,  0.00m,  0.01m,  0.01m,  0.00m, -0.01m, -0.02m,
+            -0.02m, -0.01m,  0.00m,  0.01m,  0.01m,  0.00m, -0.01m, -0.02m,
+            -0.02m, -0.01m,  0.00m,  0.00m,  0.00m,  0.00m, -0.01m, -0.02m,
+            -0.02m, -0.01m, -0.01m, -0.01m, -0.01m, -0.01m, -0.01m, -0.02m,
+            -0.03m, -0.02m, -0.02m, -0.02m, -0.02m, -0.02m, -0.02m, -0.03m
         };
 
-        public static readonly int[] KingTableMiddleGame = new int[64]
+        public static readonly decimal[] KingTableMiddleGame = new decimal[64]
         {
-             0,  0, -4, -4, -4, -4,  0,  0,
-             0,  0, -3, -3, -3, -3,  0,  0,
-             0,  0, -2, -2, -2, -2,  0,  0,
-             0,  0, -1, -1, -1, -1,  0,  0,
-             1,  1,  0,  0,  0,  0,  1,  1,
-             2,  2,  1,  1,  1,  1,  2,  2,
-             2,  3,  2,  1,  1,  2,  3,  2,
-             2,  2,  8,  0,  0,  1,  8,  2
+             0.00m,  0.00m, -0.04m, -0.04m, -0.04m, -0.04m,  0.00m,  0.00m,
+             0.00m,  0.00m, -0.03m, -0.03m, -0.03m, -0.03m,  0.00m,  0.00m,
+             0.00m,  0.00m, -0.02m, -0.02m, -0.02m, -0.02m,  0.00m,  0.00m,
+             0.00m,  0.00m, -0.01m, -0.01m, -0.01m, -0.01m,  0.00m,  0.00m,
+             0.01m,  0.01m,  0.00m,  0.00m,  0.00m,  0.00m,  0.01m,  0.01m,
+             0.02m,  0.02m,  0.01m,  0.01m,  0.01m,  0.01m,  0.02m,  0.02m,
+             0.02m,  0.03m,  0.02m,  0.01m,  0.01m,  0.02m,  0.03m,  0.02m,
+             0.02m,  0.02m,  0.08m,  0.00m,  0.00m,  0.01m,  0.08m,  0.02m
         };
 
-        public static int GetSquareWeight(int[] board, int square, bool isWhite)
+
+
+        public static decimal GetEndGameWeight(int Square, bool isWhite)
+        {
+            return KingTableEndgame[Square];    
+        }
+
+
+        public static decimal GetSquareWeight(int[] board, int square, bool isWhite)
         {
             var endGameType = Globals.GetEndGameType(board);
             //var kingAttackSquares = MoveGenerator.GetKingAttacks(board, isWhite ? 0 : 1);
             GetGamePhaseForKing(board);
 
-            int[] kingTable = (isWhite ? Globals.GameStateForWhiteKing : Globals.GameStateForBlackKing) == GamePhase.EndGame
+            decimal[] kingTable = (isWhite ? Globals.GameStateForWhiteKing : Globals.GameStateForBlackKing) == GamePhase.EndGame
                 ? KingTableEndgame
                 : KingTableMiddleGame;
 

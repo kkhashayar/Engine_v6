@@ -2,25 +2,27 @@
 {
     public static class Pawns
     {
-        public static readonly int[] PawnTable = new int[64]
+        public static readonly decimal[] PawnTable = new decimal[64]
         {
-            0,  0,  0,  0,  0,  0,  0,  0,
-            50, 50, 50, 50, 50, 50, 50, 50,
-            10, 10, 20, 30, 30, 20, 10, 10,
-            5,  5,  10, 27, 27, 10, 5, 5,
-            0,  0,  0,  25, 25, 0, 0, 0,
-            5, -5, -10, 0, 0, -10, -5, 5,
-            5, 10, 10, -25, -25, 10, 10, 5,
-            0,  0,  0,  0,  0,  0,  0,  0
+            0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,
+            0.50m,  0.50m,  0.50m,  0.50m,  0.50m,  0.50m,  0.50m,  0.50m,
+            0.10m,  0.10m,  0.20m,  0.30m,  0.30m,  0.20m,  0.10m,  0.10m,
+            0.05m,  0.05m,  0.10m,  0.27m,  0.27m,  0.10m,  0.05m,  0.05m,
+            0.00m,  0.00m,  0.00m,  0.25m,  0.25m,  0.00m,  0.00m,  0.00m,
+            0.05m, -0.05m, -0.10m, 0.00m,  0.00m, -0.10m, -0.05m, 0.05m,
+            0.05m,  0.10m,  0.10m, -0.25m, -0.25m,  0.10m,  0.10m, 0.05m,
+            0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m,  0.00m, 0.00m
         };
-
-        public static int GetSquareWeight(int square, bool isWhite)
+        public static decimal GetSquareWeight(int square, bool isWhite)
         {
             if (!isWhite)
             {
-                square = 63 - square; 
+                square = 63 - square;
             }
             return PawnTable[square];
         }
     }
 }
+
+
+// TODO: pawn square weights should be little bit higher than Knight

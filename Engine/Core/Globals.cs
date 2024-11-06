@@ -48,7 +48,7 @@ public sealed class Globals
 
     // Thinking and depth!
     public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 20;
+    public static int MaxDepth = 6; 
 
     public static List<int> OnBoardPieces = new List<int>();
 
@@ -429,7 +429,7 @@ public sealed class Globals
     }
 
 
-    // In use with UCI protocol
+    // Only in use with UCI protocol
     public static string ConvertMoveToString(MoveObject move)
     {
         int startSquare = move.StartSquare;
@@ -514,25 +514,7 @@ public sealed class Globals
 
         return fenBuilder.ToString();
     }
-    public static GamePhase GetGamePhase()
-    {
-        if (NumberOfWhitePieces + NumberOfBlackPieces <= 10)
-        {
-            ThinkingTime = 15;
-            return GamePhase.EndGame;
-        }
-        else if (NumberOfWhitePieces + NumberOfBlackPieces >= 18 && NumberOfWhitePieces + NumberOfBlackPieces <= 30)
-        {
-            ThinkingTime = 60;
-            return GamePhase.MiddleGame;
-        }
-
-        else
-        {
-            ThinkingTime = 2;
-            return GamePhase.Opening;
-        }
-    }
+    
 
     public static EndGames GetEndGameType(int[] board)
     {

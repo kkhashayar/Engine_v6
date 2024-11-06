@@ -9,24 +9,33 @@ string? fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
 // test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
-// test fen: 8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
-// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1     Kkr
+
+
+// test fen:  8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
+// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
+// test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
+// Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+string fen = "";
+
 
 Globals globals = Globals.FenReader(fen);
 
-////////////////////   PERFT And stockfish verification
-//int perftDepth = 2;
+//////////////////   PERFT And stockfish verification
+// Still some mistakes in positions with pawns! 
+//int perftDepth = 5;
 //RunPerft(fen, globals, perftDepth);
-////////////////////   PERFT And stockfish verification
+//////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
-Globals.GetGamePhase();
 
-TimeSpan maxTime = TimeSpan.FromSeconds(searchDepth * searchDepth);
+
+TimeSpan maxTime = TimeSpan.FromSeconds(10);
+
 Run();
 
 void Run()
 {
+    Console.Clear(); 
     Console.WriteLine();
     if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
     else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
@@ -40,10 +49,11 @@ void Run()
     while (running)
     {
         MoveObject move = new MoveObject();
-        if (Globals.Turn == 0)
-        {
-            move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
-            MoveHandler.MakeMove(globals.ChessBoard, move);
+
+
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+        
+        MoveHandler.MakeMove(globals.ChessBoard, move);
 
             if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate) running = false;
 
@@ -63,7 +73,12 @@ void Run()
 
         if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
-        foreach (var historyMove in Globals.moveHistory)
+
+
+       
+        Console.WriteLine();
+
+        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             Console.Write(Globals.MoveToString(historyMove));
         }
@@ -177,11 +192,11 @@ void Run()
         Console.ReadKey();
     }
 
-    void VerifyWithStockfish(string fen, int depth)
-    {
-        string stockfishPath = "\"D:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
-        StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
-        stockfish.StartStockfish();
+void VerifyWithStockfish(string fen, int depth)
+{
+    string stockfishPath = "\"D:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
+    StockfishIntegration stockfish = new StockfishIntegration(stockfishPath);
+    stockfish.StartStockfish();
 
         // Send FEN to Stockfish
         stockfish.SendCommand($"position fen {fen}");
@@ -200,26 +215,26 @@ void Run()
     }
 
 
-    void RunPerft(string fen, Globals globals, int perftDepth)
+void RunPerft(string fen, Globals globals, int perftDepth)
+{
+    
+    Console.ForegroundColor = ConsoleColor.Black;
+    Console.WriteLine("******* Engine 6 *******  \n");
+    Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
+    Console.WriteLine($"{fen} \n");
+    Perft.Calculate(globals.ChessBoard, perftDepth, Globals.Turn);
+    Console.WriteLine();
+    Console.Beep(2000, 50);
+    Console.WriteLine("Press 'V' to verify with Stockfish or 'I' \n");
+    Console.WriteLine("Press 'I' to increase depth and test again \n");
+    Console.WriteLine("Enter to return to Boards \n");
+    char input = Console.ReadKey().KeyChar;
+    if (input == 'v' || input == 'V')
     {
-
-        Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine("******* Engine 6 *******  \n");
-        Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
-        Console.WriteLine($"{fen} \n");
-        Perft.Calculate(globals.ChessBoard, perftDepth, Globals.Turn);
-        Console.WriteLine();
-        Console.Beep(2000, 50);
-        Console.WriteLine("Press 'V' to verify with Stockfish or 'I' \n");
-        Console.WriteLine("Press 'I' to increase depth and test again \n");
-        Console.WriteLine("Enter to return to Boards \n");
-        char input = Console.ReadKey().KeyChar;
-        if (input == 'v' || input == 'V')
-        {
-            VerifyWithStockfish(fen, perftDepth);
-            Console.WriteLine("Press any key to continue\n");
-            Console.ReadKey();
-            RunPerft(fen, globals, perftDepth);
+        VerifyWithStockfish(fen, perftDepth);
+        Console.WriteLine("Press any key to continue\n");
+        Console.ReadKey();
+        RunPerft(fen, globals, perftDepth);
 
         }
         else if (input == 'i' || input == 'I')
@@ -234,13 +249,151 @@ void Run()
     ///////////////////////////////////////////////////////////////////////////  UCI   /////////////////////////////////////////////////////////////////////////// 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //Globals globals = Globals.FenReader("");
-    void StartUCIMode()
+StartUCIMode(); 
+void StartUCIMode()
+{
+    while (true)
     {
-        while (true)
+        string input = Console.ReadLine();
+        Console.WriteLine($"Received command: {input}");
+
+        if (input == "uci")
         {
-            string input = Console.ReadLine();
-            Console.WriteLine($"Received command: {input}");
+            Console.WriteLine("id name KChess.v7");
+            Console.WriteLine("id author Khashayar Nariman");
+            Console.WriteLine("uci ok");
+        }
+        else if (input == "isready")
+        {
+            Console.WriteLine("readyok");
+        }
+        else if (input.StartsWith("position"))
+        {
+            HandlePositionCommand(input);
+        }
+        else if (input.StartsWith("go"))
+        {
+            HandleGoCommand(input);
+        }
+        else if (input == "quit")
+        {
+            break;
         }
     }
+}
 
+void HandlePositionCommand(string input)
+{
+    // Determine if the input is for a starting position or a specific FEN
+    if (input.StartsWith("position startpos"))
+    {
+        globals = Globals.FenReader("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
+    else if (input.StartsWith("position fen"))
+    {
+        string fen = input.Substring(13);
+        globals = Globals.FenReader(fen);
+    }
+
+    // Check for moves after the position setup
+    string[] parts = input.Split(' ');
+    int moveIndex = Array.IndexOf(parts, "moves");
+    if (moveIndex != -1)
+    {
+        for (int i = moveIndex + 1; i < parts.Length; i++)
+        {
+            MoveObject move = StringToMove(parts[i]);
+            MoveHandler.MakeMove(globals.ChessBoard, move);
+            Globals.Turn ^= 1;  // Switch turns with each move made
+            Console.WriteLine($"Made move: {parts[i]}");
+        }
+    }
+}
+
+
+void HandleGoCommand(string input)
+{
+    Console.WriteLine("Received go command");
+
+    int maxDepth = 1;
+    TimeSpan maxTime = TimeSpan.FromSeconds(15);
+
+    try
+    {
+        Console.WriteLine("In Handling command method");
+        MoveObject bestMove = default;
+
+        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
+
+        string bestMoveString = Globals.ConvertMoveToString(bestMove);
+        Console.WriteLine($"bestmove {bestMoveString}");
+
+        MoveHandler.MakeMove(globals.ChessBoard, bestMove);
+        Globals.Turn ^= 1;  // Switch turns after making a move
+        Globals.CurrentFEN = Globals.BoardToFen(globals.ChessBoard, Globals.Turn);
+        Console.WriteLine("Move calculation completed");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during move calculation: {ex.Message}");
+    }
+}
+
+
+
+MoveObject StringToMove(string moveString)
+{
+    int startSquare = ConvertToBoardIndex(moveString.Substring(0, 2));
+    int endSquare = ConvertToBoardIndex(moveString.Substring(2, 2));
+
+    return new MoveObject
+    {
+        StartSquare = startSquare,
+        EndSquare = endSquare,
+        pieceType = globals.ChessBoard[startSquare],
+        IsCapture = globals.ChessBoard[endSquare] != Piece.None
+
+    };
+}
+
+int ConvertToBoardIndex(string position)
+{
+    int file = position[0] - 'a';
+    int rank = 8 - int.Parse(position[1].ToString()); // Convert rank to 0-based index from top
+    return rank * 8 + file;
+}
+
+
+// In order to test the UCI mode, comment out the Run() method and call StartUCIMode() instead
+//StartUCIMode();
+// --------------------------- End of UCI Section ---------------------------
+
+
+// List of UCI commands
+/*
+ 
+uci                 // Initializes the engine and it responds with its options and sends 'uciok' when ready.
+debug [on/off]      // Turns debug mode on or off.
+isready             // Checks if the engine is ready, to which it should respond with 'readyok'.
+setoption name [optionname] value [value] // Sets an engine option.
+register name [name] code [code]          // Registers the engine if required.
+ucinewgame          // Indicates that a new game is starting.
+position [startpos | fen fenstring] moves [move1] ... [moveN] // Sets up the board position.
+go                  // Starts the engine calculation. Subcommands include:
+  ponder            // Engine thinks in the background.
+  searchmoves move1 ... moveN // Restrict search to these moves.
+  wtime [time]      // Time remaining for white in milliseconds.
+  btime [time]      // Time remaining for black in milliseconds.
+  winc [time]       // Increment per move for white in milliseconds.
+  binc [time]       // Increment per move for black in milliseconds.
+  movestogo [num]   // Number of moves to the next time control.
+  depth [x]         // Search x plies only.
+  nodes [n]         // Search n nodes only.
+  mate [m]          // Search for a mate in m moves.
+  movetime [ms]     // Think exactly ms milliseconds.
+  infinite          // Search until the 'stop' command.
+stop                // Stops the engine's calculation.
+ponderhit           // Used when the opponent makes the expected move.
+quit                // Shuts down the engine.
+
+ */

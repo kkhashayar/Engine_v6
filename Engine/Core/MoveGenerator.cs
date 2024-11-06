@@ -31,12 +31,87 @@ public static class MoveGenerator
         {
             foreach (var move in pseudoMoves)
             {
-                if (IsMoveLegal(move, chessBoard, turn) is not null) moves.Add(move);
+                int blackKingPosition = Globals.GetBlackKingSquare(chessBoard);
+                for (int i = 0; i < whitePseudoMoves.Count; i++)
+                {
+                    var move = whitePseudoMoves[i];
+                    if (IsMoveLegal(move, chessBoard, turn))
+                    //if (IsMoveLegalByBitboard(move, chessBoard, turn))
+                    {
+
+                        if (chessBoard[move.EndSquare] != 0)
+                        {
+                            move.IsCapture = true;
+
+                        }
+                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+
+                        if (move.pieceType == whitePawn)
+                        {
+                            var leftKillSquare = move.EndSquare - 7;
+                            var rightKillSquare = move.EndSquare - 9;
+                            if (Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
+                            {
+                                move.IsCapture = true;
+                            }
+
+                            if (Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
+                            {
+                                move.IsCapture = true;
+                            }
+
+                        }
+                        moves.Add(move);
+                    }
+                }
+            }
+            else
+            {
+                int whiteKingPosition = Globals.GetWhiteKingSquare(chessBoard);
+                for (int i = 0; i < blackPseudoMoves.Count; i++)
+                {
+                    var move = blackPseudoMoves[i];
+                    if (IsMoveLegal(move, chessBoard, turn))
+                    {
+
+                        if (chessBoard[move.EndSquare] != 0)
+                        {
+                            move.IsCapture = true;
+                        }
+                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+
+                        if (move.pieceType == blackPawn)
+                        {
+                            var leftKillSquare = move.EndSquare + 7;
+                            var rightKillSquare = move.EndSquare + 9;
+                            if (Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
+                            {
+                                move.IsCapture = true;
+                            }
+
+                            if (Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
+                            {
+                                move.IsCapture = true;
+                            }
+
+                        }
+
+                        moves.Add(move);
+                    }
+                }
             }
         }
         else
         {
-            moves = pseudoMoves;
+            // If not filtering, just return all moves for the current turn
+            if (turn == 0)
+            {
+                moves = whitePseudoMoves;
+            }
+            else
+            {
+                moves = blackPseudoMoves;
+            }
         }
         return moves;
     }
@@ -54,77 +129,83 @@ public static class MoveGenerator
             // Generate moves for white pieces
             if (turn == 0)
             {
-                if (piece == whiteKing)
+                switch (piece)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == whiteKnight)
-                {
-                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == whiteRook)
-                {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == whiteBishop)
-                {
-                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == whiteQueen)
-                {
-                    pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == whitePawn)
-                {
-                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                    case 99:
+                        //pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 3:
+                        //pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 5:
+                        //pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 4:
+                        //pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 9:
+                        //pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+
+                        break;
+
+                    case 1:
+                        pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                        // pseudoMoves.AddRange(Pawns.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
                 }
             }
             
             
             else if (turn == 1)
             {
-                if (piece == blackKing)
+                switch (piece)
                 {
-                    pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == blackKnight)
-                {
-                    pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == blackRook)
-                {
-                    pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == blackBishop)
-                {
-                    pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == blackQueen)
-                {
-                    pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
-                }
-                else if (piece == blackPawn)
-                {
-                    pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                    case 109:
+                        //pseudoMoves.AddRange(Kings.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 13:
+                        //pseudoMoves.AddRange(Knights.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 15:
+                        //pseudoMoves.AddRange(Rooks.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 14:
+                        //pseudoMoves.AddRange(Bishops.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 19:
+                        //pseudoMoves.AddRange(Queens.GenerateMovesForSquare(square, turn, chessBoard));
+                        pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                        break;
+
+                    case 11:
+                        pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
+                        // pseudoMoves.AddRange(Pawns.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+
+                        break;
                 }
             }
         }
 
-        // Check for checkmate or stalemate
-        if (pseudoMoves.Count == 0)
-        {
-            if (Globals.CheckWhite || Globals.CheckBlack)
-            {
-                if (turn == 0)
-                    Globals.CheckmateWhite = true;
-                else
-                    Globals.CheckmateBlack = true;
-            }
-            else
-            {
-                Globals.Stalemate = true;
-            }
-        }
+
+        return pseudoMoves;
+    }
 
         return pseudoMoves;
     }
@@ -145,13 +226,10 @@ public static class MoveGenerator
         List<MoveObject> enemyKingMoves = Kings.GenerateMovesForSquare(enemyKingSquare, opponentTurn, shadowBoard);
         HashSet<int> enemyKingAttackSquares = enemyKingMoves.Select(m => m.EndSquare).ToHashSet();
 
-        // Check if the move is a king move
-        if (move.pieceType == MoveGenerator.whiteKing || move.pieceType == MoveGenerator.blackKing)
-        {
-            // Moving into the same square attacked by enemy king is illegal
-            // If it's a king move, remove the squares attacked by the enemy king
-            if (enemyKingAttackSquares.Contains(move.EndSquare))   return null; 
-            
+            if (blackResponseMoves.Any(bMove => bMove.EndSquare == whiteKingSquare)) return false;
+
+
+            return true;
         }
         /* prevent overlapping kings */
 
@@ -178,86 +256,85 @@ public static class MoveGenerator
             move.CapturedPiece = shadowBoard[move.EndSquare];
         }
 
-        // Check if move puts the enemy king in check! 
-        if (move.pieceType != MoveGenerator.whiteKing && move.pieceType != MoveGenerator.blackKing && move.EndSquare == enemyKingSquare)
+    private static bool IsMoveCheck(MoveObject move, int[] board, int turn)
+    {
+        int[] shadowBoard = (int[])board.Clone();
+
+        ApplyMove(shadowBoard, move);
+        MoveHandler.RestoreStateFromSnapshot();
+
+        int opponentKingPosition = -1;
+
+        if (turn == 0) opponentKingPosition = Globals.GetBlackKingSquare(board);
+        else if (turn == 1) opponentKingPosition = Globals.GetWhiteKingSquare(board);
+
+
+
+        if (move.EndSquare == opponentKingPosition)
         {
             move.IsCheck = true;
-        }
-        MoveHandler.RestoreStateFromSnapshot(); 
-        
-        return move;
-    }
-
-
-
-    private static HashSet<int> GenerateVerticalAndHorizontalAttacks(int[] board, int opponentTurn)
-    {
-        HashSet<int> attackSquares = new HashSet<int>();
-
-        for (int square = 0; square < 64; square++)
-        {
-            int piece = board[square];
-            if ((opponentTurn == 0 && (piece == MoveGenerator.whiteRook || piece == MoveGenerator.whiteQueen)) ||
-                (opponentTurn == 1 && (piece == MoveGenerator.blackRook || piece == MoveGenerator.blackQueen)))
-            {
-                attackSquares.UnionWith(GenerateRookAttackLines(square, board));
-            }
+            return true;
         }
 
-        return attackSquares;
-    }
+        var pieceMoving = move.pieceType;
+
+
+        if (turn == 0) opponentKingPosition = Globals.GetBlackKingSquare(shadowBoard);
+        else if (turn == 1) opponentKingPosition = Globals.GetWhiteKingSquare(shadowBoard);
 
     private static HashSet<int> GenerateDiagonalAttacks(int[] board, int opponentTurn)
     {
         HashSet<int> attackSquares = new HashSet<int>();
 
-        for (int square = 0; square < 64; square++)
+        if (attacks.Contains(opponentKingPosition))
         {
-            int piece = board[square];
-            if ((opponentTurn == 0 && (piece == MoveGenerator.whiteBishop || piece == MoveGenerator.whiteQueen)) ||
-                (opponentTurn == 1 && (piece == MoveGenerator.blackBishop || piece == MoveGenerator.blackQueen)))
-            {
-                attackSquares.UnionWith(GenerateBishopAttackLines(square, board));
-            }
+            move.IsCheck = true;
+            return true;
         }
 
-        return attackSquares;
+
+        return false;
     }
 
     private static HashSet<int> GenerateRookAttackLines(int startSquare, int[] board)
     {
         HashSet<int> attackSquares = new HashSet<int>();
 
-        int[] directions = { -8, 8, -1, 1 }; // Up, down, left, right
-        foreach (int direction in directions)
+        if (piece == whiteQueen)
         {
-            int currentSquare = startSquare + direction;
-            while (Globals.IsValidSquare(currentSquare) && IsSameRankOrFile(startSquare, currentSquare, direction))
-            {
-                attackSquares.Add(currentSquare);
-                if (board[currentSquare] != 0) break; // Stop if we hit a piece
-                currentSquare += direction;
-            }
+            attacks = Queens.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == whiteRook)
+        {
+            attacks = Rooks.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == whiteBishop)
+        {
+            attacks = Bishops.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == whiteKnight)
+        {
+            attacks = Knights.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
         }
 
-        return attackSquares;
+        else if (piece == blackQueen)
+        {
+            attacks = Queens.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == blackRook)
+        {
+            attacks = Rooks.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == blackBishop)
+        {
+            attacks = Bishops.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        else if (piece == blackKnight)
+        {
+            attacks = Knights.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+        }
+        return attacks;
     }
-
-    private static HashSet<int> GenerateBishopAttackLines(int startSquare, int[] board)
-    {
-        HashSet<int> attackSquares = new HashSet<int>();
-
-        int[] directions = { -9, -7, 7, 9 }; // Diagonals
-        foreach (int direction in directions)
-        {
-            int currentSquare = startSquare + direction;
-            while (Globals.IsValidSquare(currentSquare) && IsSameDiagonal(startSquare, currentSquare))
-            {
-                attackSquares.Add(currentSquare);
-                if (board[currentSquare] != 0) break; // Stop if we hit a piece
-                currentSquare += direction;
-            }
-        }
 
         return attackSquares;
     }
@@ -298,13 +375,418 @@ public static class MoveGenerator
 
     private static bool IsSameDiagonal(int startSquare, int currentSquare)
     {
-        int startRank = startSquare / 8;
-        int startFile = startSquare % 8;
-        int currentRank = currentSquare / 8;
-        int currentFile = currentSquare % 8;
-
-        return Math.Abs(startRank - currentRank) == Math.Abs(startFile - currentFile);
+        int[] shadowBoard = (int[])board.Clone();
+        MoveHandler.RegisterStaticStates();
+        MoveHandler.MakeMove(shadowBoard, move);
+        return shadowBoard;
     }
 
+    public static bool IsMoveLegalByBitboard(MoveObject move, int[] board, int turn)
+    {
+        // Create a copy of the board to simulate the move
+        int[] newBoard = (int[])board.Clone();
+
+        // Apply the move to the copied board and update Globals accordingly
+        ApplyMoveToBoard(newBoard, move, turn);
+
+        // Create a new bitboard from the updated board
+        ulong newBitboard = CreateBitboard(newBoard);
+
+        if (turn == 0) // White's turn
+        {
+            if (move.LongCastle)
+            {
+                ulong blackAttacks = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
+                ulong castleSquares = (1UL << 58) | (1UL << 59); // c1 and d1
+                if ((blackAttacks & castleSquares) != 0) return false;
+            }
+            else if (move.ShortCastle)
+            {
+                ulong blackAttacks = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
+                ulong castleSquares = (1UL << 61) | (1UL << 62); // f1 and g1
+                if ((blackAttacks & castleSquares) != 0) return false;
+            }
+
+            // Get the position of the white king after the move
+            int whiteKingSquare = GetKingSquareFromBitboard(newBitboard, true, newBoard);
+            if (whiteKingSquare == -1) return false; // King not found
+
+            ulong blackAttacksAfterMove = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
+
+            // If the king is attacked after the move, it is illegal
+            if ((blackAttacksAfterMove & (1UL << whiteKingSquare)) != 0) return false;
+
+            return true;
+        }
+
+        // Black's turn
+        if (move.LongCastle)
+        {
+            ulong whiteAttacks = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
+            ulong castleSquares = (1UL << 2) | (1UL << 3); // c8 and d8
+            if ((whiteAttacks & castleSquares) != 0) return false;
+        }
+        else if (move.ShortCastle)
+        {
+            ulong whiteAttacks = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
+            ulong castleSquares = (1UL << 5) | (1UL << 6); // f8 and g8
+            if ((whiteAttacks & castleSquares) != 0) return false;
+        }
+
+        // Get the position of the black king after the move
+        int blackKingSquare = GetKingSquareFromBitboard(newBitboard, false, newBoard);
+        if (blackKingSquare == -1) return false; // King not found
+
+        ulong whiteAttacksAfterMove = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
+
+        // If the king is attacked after the move, it is illegal
+        if ((whiteAttacksAfterMove & (1UL << blackKingSquare)) != 0) return false;
+
+        return true;
+    }
+    private static void ApplyMoveToBoard(int[] board, MoveObject move, int turn)
+    {
+        // Move the piece
+        board[move.EndSquare] = board[move.StartSquare];
+        board[move.StartSquare] = 0;
+
+        // Handle captures
+        if (move.IsCapture && !move.IsEnPassant)
+        {
+            board[move.EndSquare] = board[move.StartSquare];
+        }
+        else if (move.IsEnPassant)
+        {
+            if (turn == 0) // White captures en passant
+            {
+                board[move.EndSquare + 8] = 0; // Remove the black pawn
+            }
+            else // Black captures en passant
+            {
+                board[move.EndSquare - 8] = 0; // Remove the white pawn
+            }
+        }
+
+        // Handle promotions
+        if (move.IsPromotion)
+        {
+            board[move.EndSquare] = move.PromotionPiece;
+        }
+
+        // Handle castling: move the rook as well
+        if (move.ShortCastle)
+        {
+            if (turn == 0) // White short castle
+            {
+                board[61] = board[63]; // Move rook from h1 to f1
+                board[63] = 0;
+            }
+            else // Black short castle
+            {
+                board[5] = board[7]; // Move rook from h8 to f8
+                board[7] = 0;
+            }
+        }
+        else if (move.LongCastle)
+        {
+            if (turn == 0) // White long castle
+            {
+                board[58] = board[56]; // Move rook from a1 to d1
+                board[56] = 0;
+            }
+            else // Black long castle
+            {
+                board[2] = board[0]; // Move rook from a8 to d8
+                board[0] = 0;
+            }
+        }
+
+        // Update castling rights
+        UpdateCastlingRights(board, move, turn);
+
+        // Update en passant square
+        UpdateEnPassantSquare(board, move, turn);
+    }
+
+    private static void UpdateCastlingRights(int[] board, MoveObject move, int turn)
+    {
+        // If a king moves, lose all castling rights for that side
+        if (move.pieceType == MoveGenerator.whiteKing)
+        {
+            Globals.WhiteShortCastle = false;
+            Globals.WhiteLongCastle = false;
+        }
+        else if (move.pieceType == MoveGenerator.blackKing)
+        {
+            Globals.BlackShortCastle = false;
+            Globals.BlackLongCastle = false;
+        }
+
+        // If a rook moves or is captured, lose the corresponding castling right
+        if (move.StartSquare == 63 || move.EndSquare == 63) // White kingside rook
+        {
+            Globals.WhiteShortCastle = false;
+        }
+        if (move.StartSquare == 56 || move.EndSquare == 56) // White queenside rook
+        {
+            Globals.WhiteLongCastle = false;
+        }
+        if (move.StartSquare == 7 || move.EndSquare == 7) // Black kingside rook
+        {
+            Globals.BlackShortCastle = false;
+        }
+        if (move.StartSquare == 0 || move.EndSquare == 0) // Black queenside rook
+        {
+            Globals.BlackLongCastle = false;
+        }
+
+        // If a rook is captured, ensure the castling rights are updated
+        if (move.IsCapture)
+        {
+            if (move.EndSquare == 63) // Captured white kingside rook
+            {
+                Globals.WhiteShortCastle = false;
+            }
+            if (move.EndSquare == 56) // Captured white queenside rook
+            {
+                Globals.WhiteLongCastle = false;
+            }
+            if (move.EndSquare == 7) // Captured black kingside rook
+            {
+                Globals.BlackShortCastle = false;
+            }
+            if (move.EndSquare == 0) // Captured black queenside rook
+            {
+                Globals.BlackLongCastle = false;
+            }
+        }
+    }
+
+    private static void UpdateEnPassantSquare(int[] board, MoveObject move, int turn)
+    {
+        // Reset en passant square by default
+        Globals.LastEndSquare = -1;
+
+        // If a pawn moves two squares forward, set the en passant square
+        if (move.pieceType == MoveGenerator.whitePawn && move.StartSquare - move.EndSquare == 16)
+        {
+            Globals.LastEndSquare = move.StartSquare - 8;
+        }
+        else if (move.pieceType == MoveGenerator.blackPawn && move.EndSquare - move.StartSquare == 16)
+        {
+            Globals.LastEndSquare = move.StartSquare + 8;
+        }
+    }
+
+
+    // Helper method: Create a bitboard representation from the board array
+    private static ulong CreateBitboard(int[] board)
+    {
+        ulong bitboard = 0UL;
+
+        for (int square = 0; square < 64; square++)
+        {
+            if (board[square] != 0)
+            {
+                bitboard |= (1UL << square);
+            }
+        }
+
+        return bitboard;
+    }
+
+    // Helper method: Generate all potential attacks for a given turn using bitboards
+    private static ulong GenerateAttacksByBitboard(ulong bitboard, int turn, int[] board)
+    {
+        ulong attacks = 0UL;
+
+        for (int square = 0; square < 64; square++)
+        {
+            if (((bitboard >> square) & 1UL) == 1) // If there's a piece at this square
+            {
+                int piece = board[square]; // Use board instead of separate call
+                if ((turn == 0 && piece >= MoveGenerator.blackKing) || (turn == 1 && piece < MoveGenerator.blackKing))
+                {
+                    // Directly implement attack generation based on the piece type
+                    switch (piece)
+                    {
+                        case 99: // White King
+                        case 109: // Black King
+                            attacks |= GenerateKingAttacks(square);
+                            break;
+
+                        case 9: // White Queen
+                        case 19: // Black Queen
+                            attacks |= GenerateQueenAttacks(square, bitboard);
+                            break;
+
+                        case 5: // White Rook
+                        case 15: // Black Rook
+                            attacks |= GenerateRookAttacks(square, bitboard);
+                            break;
+
+                        case 4: // White Bishop
+                        case 14: // Black Bishop
+                            attacks |= GenerateBishopAttacks(square, bitboard);
+                            break;
+
+                        case 3: // White Knight
+                        case 13: // Black Knight
+                            attacks |= GenerateKnightAttacks(square);
+                            break;
+
+                        case 1: // White Pawn
+                        case 11: // Black Pawn
+                            attacks |= GeneratePawnAttacks(square, turn);
+                            break;
+                    }
+                }
+            }
+        }
+
+        return attacks;
+    }
+
+    // Helper method: Simulate the move on the bitboard to test legality
+    private static ulong ApplyMoveByBitboard(ulong bitboard, MoveObject move)
+    {
+        ulong newBitboard = bitboard;
+        newBitboard &= ~(1UL << move.StartSquare); // Clear the starting square
+        newBitboard |= (1UL << move.EndSquare); // Set the end square
+
+        return newBitboard;
+    }
+
+    // Helper method: Get the position of a king from the bitboard
+    private static int GetKingSquareFromBitboard(ulong bitboard, bool isWhite, int[] board)
+    {
+        int piece = isWhite ? MoveGenerator.whiteKing : MoveGenerator.blackKing;
+
+        for (int square = 0; square < 64; square++)
+        {
+            if (((bitboard >> square) & 1UL) == 1 && board[square] == piece)
+            {
+                return square;
+            }
+        }
+
+        return -1; // King not found (shouldn't happen in a valid game state)
+    }
+
+    // Generate attacks for specific pieces directly within the switch-case
+
+    private static ulong GenerateKingAttacks(int square)
+    {
+        ulong attacks = 0UL;
+        int[] directions = { 9, 8, 7, 1, -9, -7, -8, -1 };
+
+        foreach (int direction in directions)
+        {
+            int targetSquare = square + direction;
+            if (Globals.IsValidSquare(targetSquare) && IsWithinOneStep(square, targetSquare))
+            {
+                attacks |= (1UL << targetSquare);
+            }
+        }
+
+        return attacks;
+    }
+
+    private static bool IsWithinOneStep(int originalSquare, int targetSquare)
+    {
+        int originalRank = originalSquare / 8;
+        int originalFile = originalSquare % 8;
+        int targetRank = targetSquare / 8;
+        int targetFile = targetSquare % 8;
+
+        return Math.Abs(targetRank - originalRank) <= 1 && Math.Abs(targetFile - originalFile) <= 1;
+    }
+
+
+    private static ulong GenerateQueenAttacks(int square, ulong bitboard)
+    {
+        return GenerateRookAttacks(square, bitboard) | GenerateBishopAttacks(square, bitboard);
+    }
+
+    private static ulong GenerateRookAttacks(int square, ulong bitboard)
+    {
+        ulong attacks = 0UL;
+        int[] directions = { 8, -8, 1, -1 }; // Vertical and horizontal directions
+
+        foreach (int direction in directions)
+        {
+            int currentSquare = square + direction;
+            while (Globals.IsValidSquare(currentSquare))
+            {
+                attacks |= (1UL << currentSquare);
+                if ((bitboard & (1UL << currentSquare)) != 0) break; // Stop if there's a piece
+                currentSquare += direction;
+            }
+        }
+
+        return attacks;
+    }
+
+    private static ulong GenerateBishopAttacks(int square, ulong bitboard)
+    {
+        ulong attacks = 0UL;
+        int[] directions = { 9, 7, -7, -9 }; // Diagonal directions
+
+        foreach (int direction in directions)
+        {
+            int currentSquare = square + direction;
+            while (Globals.IsValidSquare(currentSquare))
+            {
+                attacks |= (1UL << currentSquare);
+                if ((bitboard & (1UL << currentSquare)) != 0) break; // Stop if there's a piece
+                currentSquare += direction;
+            }
+        }
+
+        return attacks;
+    }
+
+    private static ulong GenerateKnightAttacks(int square)
+    {
+        ulong attacks = 0UL;
+        (int, int)[] knightMoves = { (2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1) };
+        int originalRow = square / 8;
+        int originalCol = square % 8;
+
+        foreach (var (rowChange, colChange) in knightMoves)
+        {
+            int newRow = originalRow + rowChange;
+            int newCol = originalCol + colChange;
+
+            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8)
+            {
+                int targetSquare = newRow * 8 + newCol;
+                if (Globals.IsValidSquare(targetSquare))
+                {
+                    attacks |= (1UL << targetSquare);
+                }
+            }
+        }
+
+        return attacks;
+    }
+
+    private static ulong GeneratePawnAttacks(int square, int turn)
+    {
+        ulong attacks = 0UL;
+        int direction = (turn == 0) ? -8 : 8;
+        int[] captureDirections = (turn == 0) ? new int[] { -9, -7 } : new int[] { 7, 9 };
+
+        foreach (int captureDirection in captureDirections)
+        {
+            int targetSquare = square + captureDirection;
+            if (Globals.IsValidSquare(targetSquare))
+            {
+                attacks |= (1UL << targetSquare);
+            }
+        }
+
+        return attacks;
+    }
 
 }

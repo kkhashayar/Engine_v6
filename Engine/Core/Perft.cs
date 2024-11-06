@@ -25,7 +25,7 @@ public static class Perft
         if (depth == 0) return 1;
 
         ulong nodes = 0;
-        List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn);
+        List<MoveObject> moves = MoveGenerator.GenerateAllMoves(board, turn, true);
 
         if (moves.Count == 0 && (Globals.CheckBlack || Globals.CheckWhite))
         {

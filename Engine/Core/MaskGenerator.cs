@@ -1,7 +1,6 @@
 ﻿using Engine.Core;
 
 namespace Engine;
-
 public static class MaskGenerator
 {
     public static List<List<int>>? KingMasks;
