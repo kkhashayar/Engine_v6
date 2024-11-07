@@ -45,7 +45,7 @@ public static class Perft
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 1000, move);
+            //ShowDebugBoard(board, 100, move);
             ////////////////////////////////////   DEBUG BOARD 
             ///
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
