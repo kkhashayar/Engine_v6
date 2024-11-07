@@ -1,4 +1,4 @@
-﻿using Engine.Core;
+using Engine.Core;
 using Engine.Enums;
 using Engine.Tables;
 
