@@ -46,7 +46,7 @@ public sealed class Globals
     public static GamePhase GameStateForWhiteRook { get; set; } 
     public static GamePhase GameStateForBlackRook { get; set; }
     public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 6; 
+    public static int MaxDepth = 10; 
 
     public static List<int> OnBoardPieces = new List<int>();
 
@@ -399,36 +399,27 @@ public sealed class Globals
     // Only in use with old cli version
     public static string MoveToString(MoveObject move)
     {
-        // Early return if move is null
         if (move == null) return "";
 
-        string promotion = string.Empty;
-        string castle = string.Empty;
-        string check = string.Empty;
+        // Handle castling
+        if (move.ShortCastle) return "O-O";
+        if (move.LongCastle) return "O-O-O";
 
-        // Check if the move includes a promotion and append the appropriate string
-        if (move.IsPromotion)
-        {
-            promotion = $"({Piece.GetPieceName(move.PromotionPiece)})";
-        }
+        // Determine capture symbol
+        string capture = move.IsCapture ? "x" : "-";
 
-        // Check if the move is a castling move and set the appropriate string
-        if (move.ShortCastle)
-        {
-            return "O-O";
-        }
-        else if (move.LongCastle)
-        {
-            return "O-O-O";
-        }
-        if (move.IsCheck) check = "+";
-        // Building the basic move string
-        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}-{GetSquareCoordinate(move.EndSquare)}{promotion}{check} ";
+        // Handle promotion
+        string promotion = move.IsPromotion ? Piece.GetPieceName(move.PromotionPiece).ToLower() : "";
 
-        
+        // Handle check
+        string check = move.IsCheck ? "+" : "";
+
+        // Build the move string
+        string moveString = $"{Piece.GetPieceName(move.pieceType)}{GetSquareCoordinate(move.StartSquare)}{capture}{GetSquareCoordinate(move.EndSquare)}{promotion}{check}";
 
         return moveString;
     }
+
 
 
     // Only in use with UCI protocol

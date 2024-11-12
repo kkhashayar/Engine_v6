@@ -11,6 +11,11 @@ public static class Search
     static string  gamePhase = "";
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
+
+        //decimal alpha = -999999;
+        //decimal beta = 999999;
+        //decimal alpha = decimal.MinValue;
+        //decimal beta = decimal.MaxValue;
         whitePieces = board.Where(p => Piece.IsWhite(p)).Count();
         blackPieces = board.Where(p => Piece.IsBlack(p)).Count();
         totalPiecesOnTheBoard = whitePieces + blackPieces;
@@ -20,10 +25,6 @@ public static class Search
         else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10) gamePhase = "Middle";
         else gamePhase = "End";
 
-
-
-        decimal alpha = -999999;
-        decimal beta = 999999;
 
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -53,7 +54,15 @@ public static class Search
 
         for (int currentDepth = 2; currentDepth <= maxDepth; currentDepth+=2)
         {
-            
+
+            MoveObject currentBestMove = default;
+
+            decimal alpha = decimal.MinValue;
+            decimal beta = decimal.MaxValue;
+
+            //decimal alpha = -999999;
+            //decimal beta = 999999;
+
             foreach (var move in allPossibleMoves)
             {
                 if (stopwatch.Elapsed >= maxtime)
@@ -69,6 +78,15 @@ public static class Search
                 List<MoveObject> line = new List<MoveObject>();
                 decimal score = (turn == 0) ? AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, ref line) : AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, ref line);
                 MoveHandler.RestoreStateFromSnapshot();
+
+                if(score > 9999999 || score < -9999999)
+                {
+                    alpha = score;
+                    bestMove = move;
+                    principalVariation = new List<MoveObject> { move };
+                    principalVariation.AddRange(line);
+                    return bestMove;
+                }
 
                 //decimal score = 0;
                 if (turn == 0 && score > alpha)
@@ -98,8 +116,6 @@ public static class Search
 
     public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn, ref List<MoveObject> pvLine)
     {
-
-
         if (depth == 0)
         {
             pvLine.Clear();

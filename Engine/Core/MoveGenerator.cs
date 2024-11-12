@@ -42,7 +42,7 @@ public static class MoveGenerator
                 {
                     var move = whitePseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
-                    //if (IsMoveLegalByBitboard(move, chessBoard, turn))
+                    // if (IsMoveLegalByBitboard(move, chessBoard, turn))
                     {
 
                         if (chessBoard[move.EndSquare] != 0)
@@ -617,10 +617,10 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
-            if (((bitboard >> square) & 1UL) == 1) // If there's a piece at this square
+            if (((bitboard >> square) & 1UL) != 0) // If there's a piece at this square
             {
-                int piece = board[square]; // Use board instead of separate call
-                if ((turn == 0 && piece >= MoveGenerator.blackKing) || (turn == 1 && piece < MoveGenerator.blackKing))
+                int piece = board[square];
+                if (piece != MoveGenerator.None && ((turn == 0 && piece >= MoveGenerator.blackKing) || (turn == 1 && piece < MoveGenerator.blackKing)))
                 {
                     // Directly implement attack generation based on the piece type
                     switch (piece)
@@ -679,13 +679,13 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
-            if (((bitboard >> square) & 1UL) == 1 && board[square] == piece)
+            if (((bitboard >> square) & 1UL) != 0 && board[square] == piece)
             {
                 return square;
             }
         }
 
-        return -1; // King not found (shouldn't happen in a valid game state)
+        return -1; // King not found
     }
 
     // Generate attacks for specific pieces directly within the switch-case

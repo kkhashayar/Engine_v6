@@ -2,6 +2,11 @@
 using Engine.Core;
 using Engine.External_Resources;
 
+
+
+
+
+#region Entry loop
 // comment
 // test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
 // test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
@@ -15,21 +20,21 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "8/8/3k4/8/4R3/3K4/8/8 w - - 0 1";
+string fen = "";
 
 
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 2;
+//int perftDepth = 9;
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(10);
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 
 Run();
 
@@ -94,8 +99,9 @@ void Run()
     Console.Beep(500, 150);
     Console.ReadKey();
 }
+#endregion
 
-
+#region Board Printing and data boards
 void printBoardWhiteDown(int[] board)
 {
     Console.ResetColor();
@@ -152,9 +158,6 @@ void printBoardBlackDown(int[] board)
     //showBoardValuesBlack(board);
     //Console.ReadKey();
 }
-
-
-//Data  boards 
 void showBoardValuesWhite(int[] board)
 {
     Console.WriteLine();
@@ -192,6 +195,9 @@ void showBoardValuesBlack(int[] board)
     Console.ReadKey();
 }
 
+#endregion
+
+#region Perft and Stockfish Verification
 void VerifyWithStockfish(string fen, int depth)
 {
     string stockfishPath = "\"D:\\DATA\\stockfish_15.1_win_x64_avx2\\stockfish-windows-2022-x86-64-avx2.exe\"";
@@ -244,7 +250,9 @@ void RunPerft(string fen, Globals globals, int perftDepth)
         Console.Beep(1500, 50);
     }
 }
+#endregion
 
+#region UCI
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////  UCI   /////////////////////////////////////////////////////////////////////////// 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,3 +405,5 @@ ponderhit           // Used when the opponent makes the expected move.
 quit                // Shuts down the engine.
 
  */
+
+#endregion
