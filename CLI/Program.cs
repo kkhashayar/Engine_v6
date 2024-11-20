@@ -16,7 +16,7 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
+string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
 
 
 
@@ -31,36 +31,36 @@ Globals globals = Globals.FenReader(fen);
 int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(60);
+TimeSpan maxTime = TimeSpan.FromSeconds(30);
 
 Run();
 
 void Run()
 {
-    Console.Clear(); 
+    Console.Clear();
     Console.WriteLine();
     if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
     else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
-    
+
     Console.WriteLine();
     Console.WriteLine();
 
     bool running = true;
     Globals.TotalTime.Restart();
-    
+
     while (running)
     {
-         
+
         MoveObject move = new MoveObject();
 
 
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
-        
+
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
-        
 
-        Globals.moveHistory.Add(move);  
+
+        Globals.moveHistory.Add(move);
 
         Globals.Turn ^= 1;
         Console.Clear();
@@ -71,7 +71,7 @@ void Run()
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
 
 
-       
+
         Console.WriteLine();
 
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
@@ -220,7 +220,7 @@ void VerifyWithStockfish(string fen, int depth)
 
 void RunPerft(string fen, Globals globals, int perftDepth)
 {
-    
+
     Console.ForegroundColor = ConsoleColor.Black;
     Console.WriteLine("******* Engine 6 *******  \n");
     Console.WriteLine($"Perft test in depth: {perftDepth} on: \n");
@@ -254,21 +254,26 @@ void RunPerft(string fen, Globals globals, int perftDepth)
 ///////////////////////////////////////////////////////////////////////////  UCI   /////////////////////////////////////////////////////////////////////////// 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-StartUCIMode(); 
+StartUCIMode();
 void StartUCIMode()
 {
-    while (true)
+    bool uciModeActive = true;
+
+    while (uciModeActive)
     {
         string input = Console.ReadLine();
-        Console.WriteLine($"Received command: {input}");
+        if (input == null)
+        {
+            continue; // Ignore null inputs
+        }
 
-        if (input == "uci")
+        if (input.StartsWith("uci"))
         {
             Console.WriteLine("id name KChess.v7");
             Console.WriteLine("id author Khashayar Nariman");
-            Console.WriteLine("uci ok");
+            Console.WriteLine("uciok");
         }
-        else if (input == "isready")
+        else if (input.StartsWith("isready"))
         {
             Console.WriteLine("readyok");
         }
@@ -280,63 +285,136 @@ void StartUCIMode()
         {
             HandleGoCommand(input);
         }
-        else if (input == "quit")
+        else if (input.StartsWith("stop"))
         {
-            break;
+            Console.WriteLine($"bestmove {Globals.ConvertMoveToString(Globals.LastMoveMade)}");
+        }
+        else if (input.StartsWith("quit"))
+        {
+            uciModeActive = false;
         }
     }
 }
 
+//void HandleGoCommand(string input)
+//{
+//    int maxDepth = Globals.MaxDepth;
+//    TimeSpan maxTime = TimeSpan.FromSeconds(10);
+
+//    if (input.Contains("depth"))
+//    {
+//        var parts = input.Split(' ');
+//        for (int i = 0; i < parts.Length; i++)
+//        {
+//            if (parts[i] == "depth" && i + 1 < parts.Length && int.TryParse(parts[i + 1], out int depth))
+//            {
+//                maxDepth = depth;
+//                break;
+//            }
+//        }
+//    }
+
+//    try
+//    {
+//        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
+//        string bestMoveString = Globals.ConvertMoveToString(bestMove);
+//        Console.WriteLine($"bestmove {bestMoveString}");
+//        Globals.LastMoveMade = bestMove;
+
+//        MoveHandler.MakeMove(globals.ChessBoard, bestMove);
+//        Globals.Turn ^= 1;  // Switch turns after making a move
+//        Globals.CurrentFEN = Globals.BoardToFen(globals.ChessBoard, Globals.Turn);
+//    }
+//    catch (Exception ex)
+//    {
+//        Console.WriteLine($"Error during move calculation: {ex.Message}");
+//    }
+//}
+
+//void HandlePositionCommand(string input)
+//{
+//    if (input.StartsWith("position startpos"))
+//    {
+//        globals = Globals.FenReader("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+//    }
+//    else if (input.StartsWith("position fen"))
+//    {
+//        string fen = input.Substring(13);
+//        globals = Globals.FenReader(fen);
+//    }
+
+//    string[] parts = input.Split(' ');
+//    int moveIndex = Array.IndexOf(parts, "moves");
+//    if (moveIndex != -1)
+//    {
+//        for (int i = moveIndex + 1; i < parts.Length; i++)
+//        {
+//            MoveObject move = Globals.ConvertStringToMoveObject(parts[i]);
+//            MoveHandler.MakeMove(globals.ChessBoard, move);
+//            Globals.Turn ^= 1; // Switch turns
+//        }
+//    }
+//}
 void HandlePositionCommand(string input)
 {
-    // Determine if the input is for a starting position or a specific FEN
     if (input.StartsWith("position startpos"))
     {
         globals = Globals.FenReader("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        Globals.Turn = 0; // White to move initially
     }
     else if (input.StartsWith("position fen"))
     {
         string fen = input.Substring(13);
         globals = Globals.FenReader(fen);
+        // FEN reader should correctly initialize the turn based on the FEN string
     }
 
-    // Check for moves after the position setup
     string[] parts = input.Split(' ');
     int moveIndex = Array.IndexOf(parts, "moves");
     if (moveIndex != -1)
     {
         for (int i = moveIndex + 1; i < parts.Length; i++)
         {
-            MoveObject move = StringToMove(parts[i]);
+            MoveObject move = Globals.ConvertStringToMoveObject(parts[i]);
             MoveHandler.MakeMove(globals.ChessBoard, move);
-            Globals.Turn ^= 1;  // Switch turns with each move made
-            Console.WriteLine($"Made move: {parts[i]}");
+            //Globals.Turn ^= 1; // Switch turns after each move
         }
     }
 }
 
-
 void HandleGoCommand(string input)
 {
-    Console.WriteLine("Received go command");
+    // Set up time controls, etc., from the "go" command here
+    // For simplicity, we use max depth and max time as fixed
+    int maxDepth = Globals.MaxDepth;
+    TimeSpan maxTime = TimeSpan.FromSeconds(10);
 
-    int maxDepth = 1;
-    TimeSpan maxTime = TimeSpan.FromSeconds(15);
+    if (input.Contains("depth"))
+    {
+        var parts = input.Split(' ');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (parts[i] == "depth" && i + 1 < parts.Length && int.TryParse(parts[i + 1], out int depth))
+            {
+                maxDepth = depth;
+                break;
+            }
+        }
+    }
 
     try
     {
-        Console.WriteLine("In Handling command method");
-        MoveObject bestMove = default;
-
-        bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
-
+        // Determine which side is to move based on Globals.Turn
+        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
-        Console.WriteLine($"bestmove {bestMoveString}");
 
+        Console.WriteLine($"bestmove {bestMoveString}");
+        Globals.LastMoveMade = bestMove;
+
+        // Apply the move on the board
         MoveHandler.MakeMove(globals.ChessBoard, bestMove);
         Globals.Turn ^= 1;  // Switch turns after making a move
         Globals.CurrentFEN = Globals.BoardToFen(globals.ChessBoard, Globals.Turn);
-        Console.WriteLine("Move calculation completed");
     }
     catch (Exception ex)
     {
@@ -344,63 +422,209 @@ void HandleGoCommand(string input)
     }
 }
 
-
-
-MoveObject StringToMove(string moveString)
-{
-    int startSquare = ConvertToBoardIndex(moveString.Substring(0, 2));
-    int endSquare = ConvertToBoardIndex(moveString.Substring(2, 2));
-
-    return new MoveObject
-    {
-        StartSquare = startSquare,
-        EndSquare = endSquare,
-        pieceType = globals.ChessBoard[startSquare],
-        IsCapture = globals.ChessBoard[endSquare] != Piece.None
-
-    };
-}
-
-int ConvertToBoardIndex(string position)
-{
-    int file = position[0] - 'a';
-    int rank = 8 - int.Parse(position[1].ToString()); // Convert rank to 0-based index from top
-    return rank * 8 + file;
-}
-
-
-// In order to test the UCI mode, comment out the Run() method and call StartUCIMode() instead
-//StartUCIMode();
-// --------------------------- End of UCI Section ---------------------------
-
-
-// List of UCI commands
-/*
- 
-uci                 // Initializes the engine and it responds with its options and sends 'uciok' when ready.
-debug [on/off]      // Turns debug mode on or off.
-isready             // Checks if the engine is ready, to which it should respond with 'readyok'.
-setoption name [optionname] value [value] // Sets an engine option.
-register name [name] code [code]          // Registers the engine if required.
-ucinewgame          // Indicates that a new game is starting.
-position [startpos | fen fenstring] moves [move1] ... [moveN] // Sets up the board position.
-go                  // Starts the engine calculation. Subcommands include:
-  ponder            // Engine thinks in the background.
-  searchmoves move1 ... moveN // Restrict search to these moves.
-  wtime [time]      // Time remaining for white in milliseconds.
-  btime [time]      // Time remaining for black in milliseconds.
-  winc [time]       // Increment per move for white in milliseconds.
-  binc [time]       // Increment per move for black in milliseconds.
-  movestogo [num]   // Number of moves to the next time control.
-  depth [x]         // Search x plies only.
-  nodes [n]         // Search n nodes only.
-  mate [m]          // Search for a mate in m moves.
-  movetime [ms]     // Think exactly ms milliseconds.
-  infinite          // Search until the 'stop' command.
-stop                // Stops the engine's calculation.
-ponderhit           // Used when the opponent makes the expected move.
-quit                // Shuts down the engine.
-
- */
-
 #endregion
+
+
+//using Engine.Core;
+//using Engine;
+//using Engine.External_Resources;
+//using System;
+
+//#region Entry loop
+//// comment
+//// test fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1            mate in 3
+//// test fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0       mate in 3
+
+//// test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
+//// test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
+//// test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
+
+
+//// test fen:  8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
+//// test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
+//// test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
+//// Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+//string fen = "";
+
+//Globals globals = Globals.FenReader(fen);
+
+////////////////////   PERFT And stockfish verification
+//// Still some mistakes in positions with pawns! 
+////int perftDepth = 9;
+////RunPerft(fen, globals, perftDepth);
+////////////////////   PERFT And stockfish verification
+
+//int searchDepth = Globals.MaxDepth;
+
+//TimeSpan maxTime = TimeSpan.FromSeconds(10);
+
+//UserVsEngine();
+
+//void UserVsEngine()
+//{
+//    Console.Clear();
+//    Console.WriteLine();
+//    if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+//    else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+//    Console.WriteLine();
+//    Console.WriteLine();
+
+//    bool running = true;
+//    Globals.TotalTime.Restart();
+
+//    while (running)
+//    {
+//        MoveObject userMove = new MoveObject();
+//        bool validUserMove = false;
+
+//        while (!validUserMove)
+//        {
+//            Console.WriteLine("Enter your move (e.g., e2e4): ");
+//            string userMoveInput = Console.ReadLine();
+
+//            try
+//            {
+//                userMove = StringToMove(userMoveInput);
+//                MoveHandler.MakeMove(globals.ChessBoard, userMove);
+//                validUserMove = true;
+//                Globals.moveHistory.Add(userMove);
+//                Globals.Turn ^= 1; // Switch turns after user's move
+//            }
+//            catch (Exception ex)
+//            {
+//                Console.WriteLine($"Invalid move. Please try again. Error: {ex.Message}");
+//            }
+//        }
+
+//        Console.Clear();
+//        Console.WriteLine();
+//        if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+//        else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+//        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
+//        {
+//            running = false;
+//            Globals.TotalTime.Stop();
+//            break;
+//        }
+
+//        Console.WriteLine("Engine is thinking...");
+//        MoveObject engineMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+//        MoveHandler.MakeMove(globals.ChessBoard, engineMove);
+
+//        Globals.moveHistory.Add(engineMove);
+//        Globals.Turn ^= 1;
+//        Console.Clear();
+//        Console.WriteLine();
+
+//        if (Globals.InitialTurn == 0) printBoardWhiteDown(globals.ChessBoard);
+//        else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
+
+//        if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
+//        {
+//            running = false;
+//            Globals.TotalTime.Stop();
+//            break;
+//        }
+//    }
+
+//    Console.WriteLine();
+//    Console.WriteLine($"Position: {fen} \n");
+//    Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
+
+//    Console.WriteLine();
+//    foreach (var move in Globals.moveHistory)
+//    {
+//        Console.Write(Globals.MoveToString(move) + " ");
+//    }
+//    Console.Beep(500, 150);
+//    Console.Beep(500, 150);
+//    Console.ReadKey();
+//}
+
+//MoveObject StringToMove(string moveString)
+//{
+//    if (moveString.Length != 4)
+//    {
+//        throw new ArgumentException("Move must be exactly 4 characters long, e.g., e2e4.");
+//    }
+
+//    int startSquare = ConvertToBoardIndex(moveString.Substring(0, 2));
+//    int endSquare = ConvertToBoardIndex(moveString.Substring(2, 2));
+
+//    return new MoveObject
+//    {
+//        StartSquare = startSquare,
+//        EndSquare = endSquare,
+//        pieceType = globals.ChessBoard[startSquare],
+//        IsCapture = globals.ChessBoard[endSquare] != Piece.None
+//    };
+//}
+
+//int ConvertToBoardIndex(string position)
+//{
+//    int file = position[0] - 'a';
+//    int rank = 8 - int.Parse(position[1].ToString()); // Convert rank to 0-based index from top
+//    return rank * 8 + file;
+//}
+
+//#region Board Printing and data boards
+//void printBoardWhiteDown(int[] board)
+//{
+//    Console.ResetColor();
+//    Console.ForegroundColor = ConsoleColor.Black;
+//    Console.OutputEncoding = System.Text.Encoding.Unicode;
+//    string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
+//    var ranks = new int[] { 8, 7, 6, 5, 4, 3, 2, 1 };
+//    for (int rank = 0; rank < 8; rank++)
+//    {
+//        Console.Write($"{ranks[rank]}  ");  // Print rank number on the left of the board
+//        foreach (var file in fileNames.Select((value, index) => new { value, index }))
+//        {
+//            int index = rank * 8 + file.index;  // Calculate the index for the current position using file index
+//            char pieceChar = Globals.GetUnicodeCharacter(board[index]);
+//            Console.Write(pieceChar + " ");
+//        }
+//        Console.WriteLine();
+//    }
+
+//    Console.Write("  ");  // Align file names with the board
+//    foreach (var fileName in fileNames)
+//    {
+//        Console.Write(fileName + " ");  // Print file name
+//    }
+//    Console.WriteLine();
+//    //showBoardValuesWhite(board);
+//}
+
+//void printBoardBlackDown(int[] board)
+//{
+//    Console.ResetColor();
+//    Console.ForegroundColor = ConsoleColor.Black;
+//    Console.OutputEncoding = System.Text.Encoding.Unicode;
+//    string[] fileNames = { "H", "G", "F", "E", "D", "C", "B", "A" };
+
+//    for (int rank = 7; rank >= 0; rank--)
+//    {
+//        Console.Write((8 - rank) + " ");
+//        foreach (var file in fileNames.Select((value, index) => new { value, index }))
+//        {
+//            int index = rank * 8 + (7 - file.index);
+//            char pieceChar = Globals.GetUnicodeCharacter(board[index]);
+//            Console.Write(pieceChar + " "); // Print the piece
+//        }
+//        Console.WriteLine();
+//    }
+
+//    Console.Write("  "); // Align file names with the board
+//    foreach (var fileName in fileNames)
+//    {
+//        Console.Write(fileName + " "); // Print file names
+//    }
+//    //Console.WriteLine();
+//    //showBoardValuesBlack(board);
+//    //Console.ReadKey();
+//}
+//#endregion
+//#endregion
