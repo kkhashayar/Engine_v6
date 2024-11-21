@@ -16,7 +16,7 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
+string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
 
 
 
@@ -31,7 +31,7 @@ Globals globals = Globals.FenReader(fen);
 int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+TimeSpan maxTime = TimeSpan.FromSeconds(60);
 
 Run();
 
@@ -58,7 +58,7 @@ void Run()
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
-
+        Console.Beep(1000, 100);
 
         Globals.moveHistory.Add(move);
 
@@ -70,7 +70,7 @@ void Run()
 
         else if (Globals.InitialTurn == 1) printBoardBlackDown(globals.ChessBoard);
 
-
+        
 
         Console.WriteLine();
 
