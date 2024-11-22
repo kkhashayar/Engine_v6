@@ -5,16 +5,41 @@ namespace Engine;
 public static class Search
 {
     private static ulong zobristHash;
-
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
         MoveObject bestMove = default;
         List<MoveObject> principalVariation = new();
 
-        ///////////////////////////////////////////////////////////////////////////////////// Starting Zobrist Hash
+        // Determine game phase and set appropriate allocated time
+        int whitePieces = board.Where(p => Piece.IsWhite(p)).Count();
+        int blackPieces = board.Where(p => Piece.IsBlack(p)).Count();
+        int totalPiecesOnTheBoard = whitePieces + blackPieces;
+
+        TimeSpan allocatedTime;
+
+        if (totalPiecesOnTheBoard == 32)
+        {
+            // Opening phase
+            allocatedTime = TimeSpan.FromSeconds(8);
+        }
+        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10)
+        {
+            // Middle game phase
+            allocatedTime = TimeSpan.FromSeconds(30);
+        }
+        else
+        {
+            // Endgame phase
+            allocatedTime = TimeSpan.FromSeconds(5);
+        }
+
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        // Adjust search depth if it's not the initial turn
+        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 1;
+
+        // Start Zobrist Hash
         zobristHash = Zobrist.CalculateHash(board, turn);
 
         var allPossibleMoves = MoveGenerator
@@ -32,19 +57,16 @@ public static class Search
             return bestMove;
         }
 
-        // Iterative deepening with timing control - New Changes Start Here
-        TimeSpan allocatedTime = maxtime;
-        for (int currentDepth = 2; currentDepth <= maxDepth; currentDepth += 2)
+        // Iterative deepening with timing control
+        for (int currentDepth = 2; currentDepth <= adjustedMaxDepth; currentDepth += 2)
         {
             if (stopwatch.Elapsed >= allocatedTime)
             {
                 break; // Stop if we've run out of time
             }
 
-           
-
-            decimal alpha = -999999;
-            decimal beta = 999999;
+            int alpha = -999999;
+            int beta = 999999;
 
             MoveObject currentBestMove = default;
             List<MoveObject> currentPV = new();
@@ -64,7 +86,7 @@ public static class Search
                 MoveHandler.MakeMove(shadowBoard, move);
 
                 List<MoveObject> line = new();
-                decimal score = (turn == 0)
+                int score = (turn == 0)
                     ? AlphaBetaMin(currentDepth - 1, alpha, beta, shadowBoard, 1, ref line)
                     : AlphaBetaMax(currentDepth - 1, alpha, beta, shadowBoard, 0, ref line);
 
@@ -72,7 +94,8 @@ public static class Search
 
                 // Revert Zobrist hash after undoing move
                 zobristHash = Zobrist.UpdateHash(zobristHash, shadowBoard, move, turn);
-                if(score >= 999999 || score <= -999999)
+
+                if (score >= 999999 || score <= -999999)
                 {
                     currentBestMove = move;
                     currentPV = new List<MoveObject> { move };
@@ -102,23 +125,25 @@ public static class Search
                 principalVariation = currentPV; // Update the PV
             }
 
-            // Reduce allocated time as we go deeper to avoid time overrun
-            allocatedTime = maxtime - stopwatch.Elapsed;
+            allocatedTime -= stopwatch.Elapsed / 2;
 
             Console.WriteLine($"Depth {currentDepth / 2} score {(turn == 0 ? alpha : beta)}");
             Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         }
-        // New Changes End Here
 
         return bestMove;
     }
 
-    public static decimal AlphaBetaMax(int depth, decimal alpha, decimal beta, int[] board, int turn, ref List<MoveObject> pvLine)
+
+
+    public static int AlphaBetaMax(int depth, int alpha, int beta, int[] board, int turn, ref List<MoveObject> pvLine)
     {
         if (depth == 0)
         {
+            
             pvLine.Clear();
-            return Evaluators.GetByMaterial(board, turn);
+            //return Evaluators.GetByMaterial(board, turn);
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 4);
         }
         var allPossibleMoves = MoveGenerator
             .GenerateAllMoves(board, turn, true)
@@ -128,7 +153,7 @@ public static class Search
         if (allPossibleMoves == null || allPossibleMoves.Count == 0)
         {
             pvLine.Clear();
-            return decimal.MinValue;
+            return -999999;
         }
 
         List<MoveObject> bestLine = new List<MoveObject>();
@@ -150,7 +175,7 @@ public static class Search
             int[] boardCopy = (int[])board.Clone();
 
             List<MoveObject> line = new List<MoveObject>();
-            decimal score = AlphaBetaMin(depth - 1, alpha, beta, boardCopy, turn ^ 1, ref line);
+            int score = AlphaBetaMin(depth - 1, alpha, beta, boardCopy, turn ^ 1, ref line);
 
             MoveHandler.RestoreStateFromSnapshot();
             MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
@@ -176,12 +201,13 @@ public static class Search
         return alpha;
     }
 
-    public static decimal AlphaBetaMin(int depth, decimal alpha, decimal beta, int[] board, int turn, ref List<MoveObject> pvLine)
+    public static int AlphaBetaMin(int depth, int alpha, int beta, int[] board, int turn, ref List<MoveObject> pvLine)
     {
         if (depth == 0)
         {
             pvLine.Clear();
-            return Evaluators.GetByMaterial(board, turn);
+            //return Evaluators.GetByMaterial(board, turn);
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 4); 
         }
         var allPossibleMoves = MoveGenerator
             .GenerateAllMoves(board, turn, true)
@@ -191,7 +217,7 @@ public static class Search
         if (allPossibleMoves == null || allPossibleMoves.Count == 0)
         {
             pvLine.Clear();
-            return decimal.MaxValue;
+            return 999999;
         }
 
         List<MoveObject> bestLine = new List<MoveObject>();
@@ -213,7 +239,7 @@ public static class Search
             int[] boardCopy = (int[])board.Clone();
 
             List<MoveObject> line = new List<MoveObject>();
-            decimal score = AlphaBetaMax(depth - 1, alpha, beta, boardCopy, turn ^ 1, ref line);
+            int score = AlphaBetaMax(depth - 1, alpha, beta, boardCopy, turn ^ 1, ref line);
 
             MoveHandler.RestoreStateFromSnapshot();
             MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
@@ -239,9 +265,9 @@ public static class Search
         return beta;
     }
 
-    public static decimal Quiescence(int[] board, decimal alpha, decimal beta, int turn, ref List<MoveObject> pvLine, int depth)
+    public static int Quiescence(int[] board, int alpha, int beta, int turn, ref List<MoveObject> pvLine, int depth)
     {
-        decimal standPat = Evaluators.GetByMaterial(board, turn);
+        int standPat = Evaluators.GetByMaterial(board, turn);
 
         if (depth == 0)
         {
@@ -273,9 +299,8 @@ public static class Search
         }
 
         var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true)
-            .Where(mo => mo.IsCapture || mo.IsCheck)
-            .OrderByDescending(mo => mo.IsCheck)
-            .ThenByDescending(mo => mo.IsCapture).ToList();
+            .Where(mo => mo.IsCapture || mo.IsCheck).ToList();
+
         if (allPossibleMoves == null || allPossibleMoves.Count == 0)
         {
             pvLine.Clear();
@@ -298,7 +323,7 @@ public static class Search
             MoveHandler.MakeMove(board, move);
 
             List<MoveObject> line = new List<MoveObject>();
-            decimal score = Quiescence(board, alpha, beta, turn ^ 1, ref line, depth - 1);
+            int score = Quiescence(board, alpha, beta, turn ^ 1, ref line, depth - 1);
 
             MoveHandler.RestoreStateFromSnapshot();
             MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);

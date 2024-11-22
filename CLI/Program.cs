@@ -31,10 +31,10 @@ Globals globals = Globals.FenReader(fen);
 int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(60);
+TimeSpan maxTime = TimeSpan.FromSeconds(1);
 
 Run();
-
+Console.Clear();
 void Run()
 {
     Console.Clear();
