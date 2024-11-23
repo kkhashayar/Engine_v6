@@ -5,34 +5,11 @@ namespace Engine;
 public static class Search
 {
     private static ulong zobristHash;
+   
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
-        
         MoveObject bestMove = default;
         List<MoveObject> principalVariation = new();
-
-        // Determine game phase and set appropriate allocated time
-        int whitePieces = board.Where(p => Piece.IsWhite(p)).Count();
-        int blackPieces = board.Where(p => Piece.IsBlack(p)).Count();
-        int totalPiecesOnTheBoard = whitePieces + blackPieces;
-
-        TimeSpan allocatedTime;
-
-        if (totalPiecesOnTheBoard == 32)
-        {
-            // Opening phase
-            allocatedTime = TimeSpan.FromSeconds(8);
-        }
-        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10)
-        {
-            // Middle game phase
-            allocatedTime = TimeSpan.FromSeconds(60);
-        }
-        else
-        {
-            // Endgame phase
-            allocatedTime = TimeSpan.FromSeconds(5);
-        }
 
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -61,10 +38,11 @@ public static class Search
         // Iterative deepening with timing control
         for (int currentDepth = 2; currentDepth <= adjustedMaxDepth; currentDepth += 2)
         {
-            if (stopwatch.Elapsed >= allocatedTime)
+            if (stopwatch.Elapsed >= maxtime)
             {
                 break; // Stop if we've run out of time
             }
+
             int alpha = -999999;
             int beta = 999999;
             MoveObject currentBestMove = default;
@@ -72,9 +50,9 @@ public static class Search
 
             foreach (var move in allPossibleMoves)
             {
-                if (stopwatch.Elapsed >= allocatedTime)
+                if (stopwatch.Elapsed >= maxtime)
                 {
-                    return bestMove;
+                    return bestMove; // Return the best move found so far if time runs out
                 }
 
                 // Update Zobrist hash for the move
@@ -94,7 +72,7 @@ public static class Search
                 // Revert Zobrist hash after undoing move
                 zobristHash = Zobrist.UpdateHash(zobristHash, shadowBoard, move, turn);
 
-                if (score >= 1000000 || score <= -1000000)
+                if (score >= 999999 || score <= -999999)
                 {
                     currentBestMove = move;
                     currentPV = new List<MoveObject> { move };
@@ -124,8 +102,6 @@ public static class Search
                 principalVariation = currentPV; // Update the PV
             }
 
-            allocatedTime -= stopwatch.Elapsed;
-
             Console.WriteLine($"Depth {currentDepth / 2} score {(turn == 0 ? alpha : beta)}");
             Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         }
@@ -142,7 +118,7 @@ public static class Search
             
             pvLine.Clear();
             //return Evaluators.GetByMaterial(board, turn);
-            return Quiescence(board, alpha, beta, turn, ref pvLine, 4);
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
         }
         var allPossibleMoves = MoveGenerator
             .GenerateAllMoves(board, turn, true)
@@ -206,7 +182,7 @@ public static class Search
         {
             pvLine.Clear();
             //return Evaluators.GetByMaterial(board, turn);
-            return Quiescence(board, alpha, beta, turn, ref pvLine, 4); 
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 2); 
         }
         var allPossibleMoves = MoveGenerator
             .GenerateAllMoves(board, turn, true)

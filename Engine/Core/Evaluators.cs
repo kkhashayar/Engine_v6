@@ -32,7 +32,7 @@ internal static class Evaluators
                     break;
                 case 3:
                     score += 3;
-                    //if(gamePhase == "Opening") score += Knights.GetSquareWeight(i, true);    
+                    if(gamePhase == "Opening") score += Knights.GetSquareWeight(i, true);    
                     break;
                 case 4:
                     score += 3;
@@ -47,6 +47,7 @@ internal static class Evaluators
                 case 99:
                     score += 999999;
                     if (gamePhase == "End") score += Kings.GetEndGameWeight(i, true);
+                    else if(gamePhase == "Openning" || gamePhase == "Middle") score += Kings.GetMiddleGameWeight(i, true);
                     break;
                 case 11:
                     score -= 1;
@@ -54,7 +55,7 @@ internal static class Evaluators
                     break;
                 case 13:
                     score -= 3;
-                    //if(gamePhase == "Opening") score -= Knights.GetSquareWeight(i, false);  
+                    if(gamePhase == "Opening") score -= Knights.GetSquareWeight(i, false);  
                     break;
                 case 14:
                     score -= 3;
@@ -69,6 +70,7 @@ internal static class Evaluators
                 case 109:
                     score -= 999999;
                     if (gamePhase == "End") score -= Kings.GetEndGameWeight(i, false);
+                    else if (gamePhase == "Openning" || gamePhase == "Middle") score -= Kings.GetMiddleGameWeight(i, true);
                     break;
                 default:
                     break;

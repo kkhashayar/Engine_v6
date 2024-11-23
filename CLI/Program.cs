@@ -16,7 +16,7 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
+string fen = "8/8/8/3k4/8/2BB1K2/8/8 w - - 0 1";
 
 
 
@@ -24,14 +24,14 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 9;
+//int perftDepth = 4;
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(1);
+TimeSpan maxTime = TimeSpan.FromSeconds(20);
 
 Run();
 Console.Clear();
@@ -58,7 +58,7 @@ void Run()
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
-        Console.Beep(1000, 100);
+        Console.Beep(800, 70);
 
         Globals.moveHistory.Add(move);
 
@@ -80,7 +80,7 @@ void Run()
             Globals.TotalTime.Stop();
             break;
         }
-        Console.Beep(1000, 100);
+        
     }
 
     Console.WriteLine();
