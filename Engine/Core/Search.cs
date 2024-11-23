@@ -7,6 +7,7 @@ public static class Search
     private static ulong zobristHash;
     public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
     {
+        
         MoveObject bestMove = default;
         List<MoveObject> principalVariation = new();
 
@@ -25,7 +26,7 @@ public static class Search
         else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10)
         {
             // Middle game phase
-            allocatedTime = TimeSpan.FromSeconds(30);
+            allocatedTime = TimeSpan.FromSeconds(60);
         }
         else
         {
@@ -37,7 +38,7 @@ public static class Search
         stopwatch.Start();
 
         // Adjust search depth if it's not the initial turn
-        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 1;
+        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 3;
 
         // Start Zobrist Hash
         zobristHash = Zobrist.CalculateHash(board, turn);
@@ -64,10 +65,8 @@ public static class Search
             {
                 break; // Stop if we've run out of time
             }
-
             int alpha = -999999;
             int beta = 999999;
-
             MoveObject currentBestMove = default;
             List<MoveObject> currentPV = new();
 
@@ -95,7 +94,7 @@ public static class Search
                 // Revert Zobrist hash after undoing move
                 zobristHash = Zobrist.UpdateHash(zobristHash, shadowBoard, move, turn);
 
-                if (score >= 999999 || score <= -999999)
+                if (score >= 1000000 || score <= -1000000)
                 {
                     currentBestMove = move;
                     currentPV = new List<MoveObject> { move };
@@ -125,7 +124,7 @@ public static class Search
                 principalVariation = currentPV; // Update the PV
             }
 
-            allocatedTime -= stopwatch.Elapsed / 2;
+            allocatedTime -= stopwatch.Elapsed;
 
             Console.WriteLine($"Depth {currentDepth / 2} score {(turn == 0 ? alpha : beta)}");
             Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));

@@ -42,7 +42,7 @@ public static class MoveGenerator
                 {
                     var move = whitePseudoMoves[i];
                     if (IsMoveLegal(move, chessBoard, turn))
-                    // if (IsMoveLegalByBitboard(move, chessBoard, turn))
+                    //if (IsMoveLegalByBitboard(move, chessBoard, turn))
                     {
 
                         if (chessBoard[move.EndSquare] != 0)
@@ -396,7 +396,7 @@ public static class MoveGenerator
         return shadowBoard;
     }
 
-    public static bool IsMoveLegalByBitboard(MoveObject move, int[] board, int turn)
+    private static bool IsMoveLegalByBitboard(MoveObject move, int[] board, int turn)
     {
         // Create a copy of the board to simulate the move
         int[] newBoard = (int[])board.Clone();
@@ -407,58 +407,27 @@ public static class MoveGenerator
         // Create a new bitboard from the updated board
         ulong newBitboard = CreateBitboard(newBoard);
 
-        if (turn == 0) // White's turn
+        // King position check
+        int kingSquare = GetKingSquareFromBitboard(newBitboard, turn == 0, newBoard);
+        if (kingSquare == -1)
         {
-            if (move.LongCastle)
-            {
-                ulong blackAttacks = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
-                ulong castleSquares = (1UL << 58) | (1UL << 59); // c1 and d1
-                if ((blackAttacks & castleSquares) != 0) return false;
-            }
-            else if (move.ShortCastle)
-            {
-                ulong blackAttacks = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
-                ulong castleSquares = (1UL << 61) | (1UL << 62); // f1 and g1
-                if ((blackAttacks & castleSquares) != 0) return false;
-            }
-
-            // Get the position of the white king after the move
-            int whiteKingSquare = GetKingSquareFromBitboard(newBitboard, true, newBoard);
-            if (whiteKingSquare == -1) return false; // King not found
-
-            ulong blackAttacksAfterMove = GenerateAttacksByBitboard(newBitboard, 1, newBoard);
-
-            // If the king is attacked after the move, it is illegal
-            if ((blackAttacksAfterMove & (1UL << whiteKingSquare)) != 0) return false;
-
-            return true;
+            Console.WriteLine("Error: Could not find king after move. Invalid move state.");
+            return false; // King not found means the move left king in an illegal state.
         }
 
-        // Black's turn
-        if (move.LongCastle)
+        // Generate opponent attacks to verify if the king is attacked
+        ulong opponentAttacks = GenerateAttacksByBitboard(newBitboard, turn == 0 ? 1 : 0, newBoard);
+
+        // If the king's square is under attack, move is illegal
+        if ((opponentAttacks & (1UL << kingSquare)) != 0)
         {
-            ulong whiteAttacks = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
-            ulong castleSquares = (1UL << 2) | (1UL << 3); // c8 and d8
-            if ((whiteAttacks & castleSquares) != 0) return false;
-        }
-        else if (move.ShortCastle)
-        {
-            ulong whiteAttacks = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
-            ulong castleSquares = (1UL << 5) | (1UL << 6); // f8 and g8
-            if ((whiteAttacks & castleSquares) != 0) return false;
+            Console.WriteLine("Move left the king in check. Marking as illegal.");
+            return false;
         }
 
-        // Get the position of the black king after the move
-        int blackKingSquare = GetKingSquareFromBitboard(newBitboard, false, newBoard);
-        if (blackKingSquare == -1) return false; // King not found
-
-        ulong whiteAttacksAfterMove = GenerateAttacksByBitboard(newBitboard, 0, newBoard);
-
-        // If the king is attacked after the move, it is illegal
-        if ((whiteAttacksAfterMove & (1UL << blackKingSquare)) != 0) return false;
-
-        return true;
+        return true; // If none of the checks failed, the move is legal.
     }
+
     private static void ApplyMoveToBoard(int[] board, MoveObject move, int turn)
     {
         // Move the piece
@@ -622,6 +591,7 @@ public static class MoveGenerator
                 int piece = board[square];
                 if (piece != MoveGenerator.None && ((turn == 0 && piece >= MoveGenerator.blackKing) || (turn == 1 && piece < MoveGenerator.blackKing)))
                 {
+                    Console.WriteLine($"Generating attacks for piece: {piece} at square: {square}");
                     // Directly implement attack generation based on the piece type
                     switch (piece)
                     {
@@ -659,8 +629,10 @@ public static class MoveGenerator
             }
         }
 
+        Console.WriteLine($"Total attacks generated for turn {turn}: {Convert.ToString((long)attacks, 2).PadLeft(64, '0')}");
         return attacks;
     }
+
 
     // Helper method: Simulate the move on the bitboard to test legality
     private static ulong ApplyMoveByBitboard(ulong bitboard, MoveObject move)
