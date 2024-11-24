@@ -1,9 +1,7 @@
 ﻿using Engine.Core;
-using Engine.Enums;
 using Engine.Tables;
 
 namespace Engine;
-
 internal static class Evaluators
 {
     public static int GetByMaterial(int[] chessBoard, int turn)
@@ -14,8 +12,8 @@ internal static class Evaluators
 
         var gamePhase = "";
         if (totalPiecesOnTheBoard == 32) gamePhase = "Opening";
-        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10) gamePhase = "Middle";
-        else gamePhase = "End";
+        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10) gamePhase = "MiddleGame";
+        else gamePhase = "EndGame";
 
         int whiteMoveCount = MoveGenerator.GenerateAllMoves(chessBoard, 0, true).Count;
         int blackMoveCount = MoveGenerator.GenerateAllMoves(chessBoard, 1, true).Count;
@@ -32,7 +30,7 @@ internal static class Evaluators
                     break;
                 case 3:
                     score += 3;
-                    if(gamePhase == "Opening") score += Knights.GetSquareWeight(i, true);    
+                    if (gamePhase == "Opening") score += Knights.GetSquareWeight(i, true);
                     break;
                 case 4:
                     score += 3;
@@ -46,8 +44,8 @@ internal static class Evaluators
                     break;
                 case 99:
                     score += 999999;
-                    if (gamePhase == "End") score += Kings.GetEndGameWeight(i, true);
-                    else if(gamePhase == "Openning" || gamePhase == "Middle") score += Kings.GetMiddleGameWeight(i, true);
+                    if (gamePhase == "EndGame") score += Kings.GetEndGameWeight(i, true);
+                    else if (gamePhase == "Openning" || gamePhase == "MiddleGame") score += Kings.GetMiddleGameWeight(i, true);
                     break;
                 case 11:
                     score -= 1;
@@ -55,7 +53,7 @@ internal static class Evaluators
                     break;
                 case 13:
                     score -= 3;
-                    if(gamePhase == "Opening") score -= Knights.GetSquareWeight(i, false);  
+                    if (gamePhase == "Opening") score -= Knights.GetSquareWeight(i, false);
                     break;
                 case 14:
                     score -= 3;
@@ -69,28 +67,30 @@ internal static class Evaluators
                     break;
                 case 109:
                     score -= 999999;
-                    if (gamePhase == "End") score -= Kings.GetEndGameWeight(i, false);
-                    else if (gamePhase == "Openning" || gamePhase == "Middle") score -= Kings.GetMiddleGameWeight(i, true);
+                    if (gamePhase == "EndGame") score -= Kings.GetEndGameWeight(i, false);
+                    else if (gamePhase == "Openning" || gamePhase == "MiddleGame") score -= Kings.GetMiddleGameWeight(i, true);
                     break;
                 default:
                     break;
             }
         }
-        if (turn == 0)
-        {
-            if (!IsPositionDraw(turn, whitePieces, blackPieces))
+        //if (gamePhase == "Oppening" || gamePhase == "EndGame")
+        //{
+            if (turn == 0)
+            {
+
                 score += blackMoveCount switch
                 {
-                    0 => 300,
-                    1 => 290,
-                    2 => 280,
-                    3 => 270,
-                    4 => 260,
-                    5 => 250,
-                    6 => 240,
-                    7 => 230,
-                    8 => 220,
-                    9 => 210,
+                    0 => 400,
+                    1 => 400,
+                    2 => 400,
+                    3 => 400,
+                    4 => 400,
+                    5 => 400,
+                    6 => 400,
+                    7 => 400,
+                    8 => 400,
+                    9 => 400,
                     11 => 170,
                     13 => 150,
                     15 => 130,
@@ -106,22 +106,21 @@ internal static class Evaluators
                     35 => 20,
                     _ => 0
                 };
-        }
-        else
-        {
-            if (!IsPositionDraw(turn, whitePieces, blackPieces))
+            }
+            else
+            {
                 score -= whiteMoveCount switch
                 {
-                    0 => 300,
-                    1 => 290,
-                    2 => 280,
-                    3 => 270,
-                    4 => 260,
-                    5 => 250,
-                    6 => 240,
-                    7 => 230,
-                    8 => 220,
-                    9 => 210,
+                    0 => 400,
+                    1 => 400,
+                    2 => 400,
+                    3 => 400,
+                    4 => 400,
+                    5 => 400,
+                    6 => 400,
+                    7 => 400,
+                    8 => 400,
+                    9 => 400,
                     11 => 170,
                     13 => 150,
                     15 => 130,
@@ -137,7 +136,8 @@ internal static class Evaluators
                     35 => 20,
                     _ => 0
                 };
-        }
+            }
+        //}
 
         return score;
     }
