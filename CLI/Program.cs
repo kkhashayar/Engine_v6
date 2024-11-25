@@ -29,10 +29,6 @@ Globals globals = Globals.FenReader(fen);
 
 int searchDepth = Globals.MaxDepth;
 
-
-
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
-
 Run();
 Console.Clear();
 void Run()
@@ -54,7 +50,7 @@ void Run()
         MoveObject move = new MoveObject();
 
 
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
@@ -343,7 +339,7 @@ void HandleGoCommand(string input)
     try
     {
         // Determine which side is to move based on Globals.Turn
-        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
+        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth);
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
 
         Console.WriteLine($"bestmove {bestMoveString}");

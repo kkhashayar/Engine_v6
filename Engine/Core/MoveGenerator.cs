@@ -24,14 +24,34 @@ public static class MoveGenerator
 
     static Globals globals = new Globals();
     static Result result = new Result();
+    
     //////////////////////////////////////   ENGINE CORE LOOP 
 
-    public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
+    public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
-        result.LegalMoves = new List<MoveObject>();
-        result.PseudoWhiteMoves = new List<MoveObject>();
-        result.PseudoBlackMoves = new List<MoveObject>();
-        List<MoveObject> moves = new List<MoveObject>();
+        int whitePieces = chessBoard.Where(p => Piece.IsWhite(p)).Count();
+        int blackPieces = chessBoard.Where(p => Piece.IsBlack(p)).Count();
+        int totalPiecesOnTheBoard = whitePieces + blackPieces;
+
+        if (totalPiecesOnTheBoard == 32)
+        {
+            result.GamePhase = Enums.GamePhase.Opening;
+            result.CalculationTime = 5;
+        }
+        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10)
+        {
+            result.GamePhase = Enums.GamePhase.MiddleGame;
+            result.CalculationTime = 30;
+        }
+
+        else 
+        {
+            result.GamePhase = Enums.GamePhase.EndGame;
+            result.CalculationTime = 10;
+        } 
+
+        result.Moves = new List<MoveObject>();  
+        //SList<MoveObject> moves = new List<MoveObject>();
 
         List<MoveObject> whitePseudoMoves = GeneratePseudoLegalMoves(chessBoard, 0); // 0 for white
         List<MoveObject> blackPseudoMoves = GeneratePseudoLegalMoves(chessBoard, 1); // 1 for black
@@ -70,7 +90,7 @@ public static class MoveGenerator
                             }
 
                         }
-                        moves.Add(move);
+                        result.Moves.Add(move);
                     }
                 }
             }
@@ -105,7 +125,7 @@ public static class MoveGenerator
 
                         }
 
-                        moves.Add(move);
+                        result.Moves.Add(move);
                     }
                 }
             }
@@ -115,14 +135,14 @@ public static class MoveGenerator
             // If not filtering, just return all moves for the current turn
             if (turn == 0)
             {
-                moves = whitePseudoMoves;
+                result.Moves = whitePseudoMoves;
             }
             else
             {
-                moves = blackPseudoMoves;
+                result.Moves = blackPseudoMoves;
             }
         }
-        return moves;
+        return result;
     }
 
     private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int turn)

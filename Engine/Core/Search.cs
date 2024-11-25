@@ -2,122 +2,52 @@
 using System.Diagnostics;
 namespace Engine;
 
-    public static class Search
+public static class Search
+{
+    public static MoveObject GetBestMove(int[] board, int turn, int maxDepth)
     {
-        public static MoveObject GetBestMove(int[] board, int turn, int maxDepth, TimeSpan maxtime)
+
+        MoveObject bestMove = default;
+        List<MoveObject> principalVariation = new();
+
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        // Adjust search depth if it's not the initial turn
+        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 1;
+
+        var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
+        TimeSpan maxtime = TimeSpan.FromSeconds(moveGenResult.CalculationTime);
+        if (moveGenResult.Moves.Count == 1) return moveGenResult.Moves[0]; // Only one legal move
+        if (moveGenResult.Moves.Count == 0)
         {
-            MoveObject bestMove = default;
-            List<MoveObject> principalVariation = new();
-
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            // Adjust search depth if it's not the initial turn
-            int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 1;
-
-            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
-
-            if (allPossibleMoves.Count == 1) return allPossibleMoves[0]; // Only one legal move
-            if (allPossibleMoves.Count == 0)
-            {
-                // Handle checkmate or stalemate
-                if (turn == 0) Globals.CheckmateWhite = true;
-                else if (turn == 1) Globals.CheckmateBlack = true;
-                else Globals.Stalemate = true;
-                return bestMove;
-            }
-
-            // Iterative deepening with timing control
-            for (int currentDepth = 2; currentDepth <= adjustedMaxDepth; currentDepth += 2)
-            {
-                if (stopwatch.Elapsed >= maxtime)
-                {
-                    break; // Stop if we've run out of time
-                }
-
-                int alpha = -999999;
-                int beta = 999999;
-                MoveObject currentBestMove = default;
-                List<MoveObject> currentPV = new();
-
-                foreach (var move in allPossibleMoves)
-                {
-                    if (stopwatch.Elapsed >= maxtime)
-                    {
-                        return bestMove; // Return the best move found so far if time runs out
-                    }
-
-                    MoveHandler.RegisterStaticStates();
-
-                    // Save necessary information to undo the move
-                    var pieceMoving = move.pieceType;
-                    var targetSquare = board[move.EndSquare];
-                    var promotedTo = move.PromotionPiece;
-
-                    MoveHandler.MakeMove(board, move);
-                                    
-                    List<MoveObject> line = new();
-                    int score = -Negamax(currentDepth - 1, -beta, -alpha, board, turn ^ 1, ref line);
-
-                    // Restore any static state
-                    MoveHandler.RestoreStateFromSnapshot();
-
-                    // Undo the move using your method
-                    MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
-                    if (score >= 999999 || score <= -999999)
-                    {
-                        currentBestMove = move;
-                        principalVariation = new List<MoveObject> { move };
-                        principalVariation.AddRange(line);
-                        return currentBestMove;
-                    }
-
-                    if (score > alpha)
-                    {
-                        alpha = score;
-                        currentBestMove = move;
-                        currentPV = new List<MoveObject> { move };
-                        currentPV.AddRange(line);
-                    }
-                }
-
-                if (currentBestMove != default)
-                {
-                    bestMove = currentBestMove; // Update the best move
-                    principalVariation = currentPV; // Update the PV
-                }
-
-                Console.WriteLine($"Depth {currentDepth / 2} score {alpha}");
-                Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
-            }
-
+            // Handle checkmate or stalemate
+            if (turn == 0) Globals.CheckmateWhite = true;
+            else if (turn == 1) Globals.CheckmateBlack = true;
+            else Globals.Stalemate = true;
             return bestMove;
         }
 
-        public static int Negamax(int depth, int alpha, int beta, int[] board, int turn, ref List<MoveObject> pvLine)
+        // Iterative deepening with timing control
+        for (int currentDepth = 2; currentDepth <= adjustedMaxDepth; currentDepth += 2)
         {
-            if (depth == 0)
+            if (stopwatch.Elapsed >= maxtime)
             {
-                pvLine.Clear();
-                return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+                break; // Stop if we've run out of time
             }
 
-        
-        var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true);
+            int alpha = -999999;
+            int beta = 999999;
+            MoveObject currentBestMove = default;
+            List<MoveObject> currentPV = new();
 
-            if (allPossibleMoves == null || allPossibleMoves.Count == 0)
+            foreach (var move in moveGenResult.Moves)
             {
-                pvLine.Clear();
-                return -999999 + depth;
-            }
+                if (stopwatch.Elapsed >= maxtime)
+                {
+                    return bestMove; // Return the best move found so far if time runs out
+                }
 
-            List<MoveObject> bestLine = new List<MoveObject>();
-            MoveObject bestMove = default;
-            int originalAlpha = alpha;
-
-            foreach (var move in allPossibleMoves)
-            {
                 MoveHandler.RegisterStaticStates();
 
                 // Save necessary information to undo the move
@@ -125,12 +55,10 @@ namespace Engine;
                 var targetSquare = board[move.EndSquare];
                 var promotedTo = move.PromotionPiece;
 
-                // Make the move on the board
                 MoveHandler.MakeMove(board, move);
 
-                List<MoveObject> line = new List<MoveObject>();
-
-                int score = -Negamax(depth - 1, -beta, -alpha, board, turn ^ 1, ref line);
+                List<MoveObject> line = new();
+                int score = -Negamax(currentDepth - 1, -beta, -alpha, board, turn ^ 1, ref line);
 
                 // Restore any static state
                 MoveHandler.RestoreStateFromSnapshot();
@@ -138,83 +66,158 @@ namespace Engine;
                 // Undo the move using your method
                 MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
 
-            
-
-                if (score >= beta)
+                if (score >= 999999 || score <= -999999)
                 {
-                    pvLine = new List<MoveObject> { move };
-                    pvLine.AddRange(line);
-                    return beta;
+                    currentBestMove = move;
+                    principalVariation = new List<MoveObject> { move };
+                    principalVariation.AddRange(line);
+                    return currentBestMove;
                 }
+
                 if (score > alpha)
                 {
                     alpha = score;
-                    bestMove = move;
-                    bestLine = new List<MoveObject> { move };
-                    bestLine.AddRange(line);
+                    currentBestMove = move;
+                    currentPV = new List<MoveObject> { move };
+                    currentPV.AddRange(line);
                 }
             }
-            pvLine = bestLine;
-            return alpha;
-        }
 
-        public static int Quiescence(int[] board, int alpha, int beta, int turn, ref List<MoveObject> pvLine, int depth)
-        {
-            int standPat = Evaluators.GetByMaterial(board, turn);
-
-            if (depth == 0)
+            if (currentBestMove != default)
             {
-                pvLine.Clear();
-                return standPat;
+                bestMove = currentBestMove; // Update the best move
+                principalVariation = currentPV; // Update the PV
             }
 
-            if (standPat >= beta)
+            Console.WriteLine($"Depth {currentDepth / 2} score {alpha}");
+            Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
+        }
+
+        return bestMove;
+    }
+
+    public static int Negamax(int depth, int alpha, int beta, int[] board, int turn, ref List<MoveObject> pvLine)
+    {
+        if (depth == 0)
+        {
+            pvLine.Clear();
+            return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+        }
+
+
+        var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
+
+        if (moveGenResult.Moves == null || moveGenResult.Moves.Count == 0)
+        {
+            pvLine.Clear();
+            return -999999 + depth;
+        }
+
+        List<MoveObject> bestLine = new List<MoveObject>();
+        MoveObject bestMove = default;
+        int originalAlpha = alpha;
+
+        foreach (var move in moveGenResult.Moves)
+        {
+            MoveHandler.RegisterStaticStates();
+
+            // Save necessary information to undo the move
+            var pieceMoving = move.pieceType;
+            var targetSquare = board[move.EndSquare];
+            var promotedTo = move.PromotionPiece;
+
+            // Make the move on the board
+            MoveHandler.MakeMove(board, move);
+
+            List<MoveObject> line = new List<MoveObject>();
+
+            int score = -Negamax(depth - 1, -beta, -alpha, board, turn ^ 1, ref line);
+
+            // Restore any static state
+            MoveHandler.RestoreStateFromSnapshot();
+
+            // Undo the move using your method
+            MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
+
+
+
+            if (score >= beta)
+            {
+                pvLine = new List<MoveObject> { move };
+                pvLine.AddRange(line);
+                return beta;
+            }
+            if (score > alpha)
+            {
+                alpha = score;
+                bestMove = move;
+                bestLine = new List<MoveObject> { move };
+                bestLine.AddRange(line);
+            }
+        }
+        pvLine = bestLine;
+        return alpha;
+    }
+
+    public static int Quiescence(int[] board, int alpha, int beta, int turn, ref List<MoveObject> pvLine, int depth)
+    {
+        var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
+        int standPat = Evaluators.GetByMaterial(board, turn, moveGenResult.WhiteMovesCount, moveGenResult.BlackMovesCount, moveGenResult.GamePhase);
+
+        if (depth == 0)
+        {
+            pvLine.Clear();
+            return standPat;
+        }
+
+        if (standPat >= beta)
+        {
+            return beta;
+        }
+        if (standPat > alpha)
+        {
+            alpha = standPat;
+        }
+
+        
+        var captures = moveGenResult.Moves.Where(m => m.IsCapture).ToList();
+
+        if (captures == null || captures.Count == 0)
+        {
+            pvLine.Clear();
+            return standPat;
+        }
+
+        List<MoveObject> bestLine = new List<MoveObject>();
+
+        foreach (var move in captures)
+        {
+            MoveHandler.RegisterStaticStates();
+
+            var pieceMoving = move.pieceType;
+            var targetSquare = board[move.EndSquare];
+            var promotedTo = move.PromotionPiece;
+            MoveHandler.MakeMove(board, move);
+
+            List<MoveObject> line = new List<MoveObject>();
+            int score = -Quiescence(board, -beta, -alpha, turn ^ 1, ref line, depth - 1);
+
+            MoveHandler.RestoreStateFromSnapshot();
+            MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
+
+            if (score >= beta)
             {
                 return beta;
             }
-            if (standPat > alpha)
+            if (score > alpha)
             {
-                alpha = standPat;
+                alpha = score;
+                bestLine = new List<MoveObject> { move };
+                bestLine.AddRange(line);
             }
-
-            var allPossibleMoves = MoveGenerator.GenerateAllMoves(board, turn, true).Where(mo => mo.IsCapture).ToList();
-
-            if (allPossibleMoves == null || allPossibleMoves.Count == 0)
-            {
-                pvLine.Clear();
-                return standPat;
-            }
-
-            List<MoveObject> bestLine = new List<MoveObject>();
-
-            foreach (var move in allPossibleMoves)
-            {
-                MoveHandler.RegisterStaticStates();
-
-                var pieceMoving = move.pieceType;
-                var targetSquare = board[move.EndSquare];
-                var promotedTo = move.PromotionPiece;
-                MoveHandler.MakeMove(board, move);
-
-                List<MoveObject> line = new List<MoveObject>();
-                int score = -Quiescence(board, -beta, -alpha, turn ^ 1, ref line, depth - 1);
-
-                MoveHandler.RestoreStateFromSnapshot();
-                MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
-                if (score >= beta)
-                {
-                    return beta;
-                }
-                if (score > alpha)
-                {
-                    alpha = score;
-                    bestLine = new List<MoveObject> { move };
-                    bestLine.AddRange(line);
-                }
-            }
-
-            pvLine = bestLine;
-            return alpha;
         }
+
+        pvLine = bestLine;
+        return alpha;
     }
+}
