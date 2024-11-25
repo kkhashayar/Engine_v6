@@ -14,7 +14,7 @@ public static class Search
         stopwatch.Start();
 
         // Adjust search depth if it's not the initial turn
-        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + 1;
+        int adjustedMaxDepth = Globals.InitialTurn == turn ? maxDepth : maxDepth + Globals.DepthBalancer;
 
         var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
         TimeSpan maxtime = TimeSpan.FromSeconds(moveGenResult.CalculationTime);

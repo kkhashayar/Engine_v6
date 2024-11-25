@@ -25,7 +25,7 @@ internal static class Rooks
                     {
                         moves.Add(new MoveObject
                         {
-                            pieceType = MoveGenerator.whiteRook,
+                            pieceType = 5,
                             StartSquare = square,
                             EndSquare = targetSquare
                         });
@@ -47,7 +47,7 @@ internal static class Rooks
                     {
                         moves.Add(new MoveObject
                         {
-                            pieceType = MoveGenerator.blackRook,
+                            pieceType = 5,
                             StartSquare = square,
                             EndSquare = targetSquare
                         });
@@ -103,7 +103,7 @@ internal static class Rooks
 
             moves.Add(new MoveObject
             {
-                pieceType = (turn == 0) ? MoveGenerator.whiteRook : MoveGenerator.blackRook,
+                pieceType = (turn == 0) ? 5 : 15,
                 StartSquare = square,
                 EndSquare = targetSquare
             });
