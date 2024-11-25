@@ -92,8 +92,8 @@ public static class Search
                 principalVariation = currentPV; // Update the PV
             }
             Console.WriteLine();
-            Console.WriteLine($"Depth {currentDepth / 2} score {alpha} PV: {string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
-            
+            Console.WriteLine($"Depth {currentDepth / 2} score {alpha} Time: {stopwatch.Elapsed.TotalSeconds} PV: {string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
+
 
         }
 
@@ -106,14 +106,9 @@ public static class Search
         if (depth == 0)
         {
             pvLine.Clear();
-            return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
-            //return Evaluators.GetByMaterial(board, turn, moveGenResult.WhiteMovesCount,
-        //                                               moveGenResult.BlackMovesCount,
-          //                                             moveGenResult.GamePhase);
+            if(Globals.QuQuiescenceSwitch is true)   return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+            return Evaluators.GetByMaterial(board, turn, moveGenResult.WhiteMovesCount,moveGenResult.BlackMovesCount,moveGenResult.GamePhase);
         }
-
-
-        
 
         if (moveGenResult.Moves == null || moveGenResult.Moves.Count == 0)
         {
@@ -129,7 +124,7 @@ public static class Search
         {
             MoveHandler.RegisterStaticStates();
 
-            // Save necessary information to undo the move
+         
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
             var promotedTo = move.PromotionPiece;
@@ -146,7 +141,6 @@ public static class Search
 
             // Undo the move using your method
             MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
-
 
 
             if (score >= beta)
