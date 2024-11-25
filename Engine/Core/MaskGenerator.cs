@@ -116,7 +116,5 @@ public static class MaskGenerator
             }
         }
     }
-
-    
 }
 
