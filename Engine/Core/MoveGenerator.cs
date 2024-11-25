@@ -47,7 +47,7 @@ public static class MoveGenerator
         else 
         {
             result.GamePhase = Enums.GamePhase.EndGame;
-            result.CalculationTime = 10;
+            result.CalculationTime = 5;
         } 
 
         result.Moves = new List<MoveObject>();  

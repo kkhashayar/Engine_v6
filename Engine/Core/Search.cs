@@ -18,6 +18,9 @@ public static class Search
 
         var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
         TimeSpan maxtime = TimeSpan.FromSeconds(moveGenResult.CalculationTime);
+
+        Console.WriteLine(moveGenResult.GamePhase);
+
         if (moveGenResult.Moves.Count == 1) return moveGenResult.Moves[0]; // Only one legal move
         if (moveGenResult.Moves.Count == 0)
         {
