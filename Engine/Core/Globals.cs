@@ -37,12 +37,17 @@ public sealed class Globals
     public static int InitialTurn { get; set; }
     public static bool InitialDepthAdjusted { get; set; } = false;
     public static string CurrentFEN { get; set; }
+    
+    //////////// SEARCH SETTINGS ////////////
+    public static int OpeningTime { get; set; } = 0;
+    public static int MiddleGameTime { get; set; } = 0;
+    public static int EndGameTime { get; set; } = 0;
+    public static int MaxDepth = 0;
+    public static bool QuQuiescenceSwitch { get; set; }
+    public static int QuiescenceDepth { get; set; }
+    public static int DepthBalancer { get; set; }
+    //////////// END OF SEARCH SETTINGS /////
 
-    public static Stopwatch TotalTime = new Stopwatch();
-
-    public static GamePhase GamePhase { get; set; }
-    public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 14; 
 
     public int[] ChessBoard =
     {

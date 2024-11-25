@@ -91,9 +91,10 @@ public static class Search
                 bestMove = currentBestMove; // Update the best move
                 principalVariation = currentPV; // Update the PV
             }
+            Console.WriteLine();
+            Console.WriteLine($"Depth {currentDepth / 2} score {alpha} PV: {string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
+            
 
-            Console.WriteLine($"Depth {currentDepth / 2} score {alpha}");
-            Console.WriteLine("PV: " + string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m))));
         }
 
         return bestMove;
@@ -101,14 +102,18 @@ public static class Search
 
     public static int Negamax(int depth, int alpha, int beta, int[] board, int turn, ref List<MoveObject> pvLine)
     {
+        var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
         if (depth == 0)
         {
             pvLine.Clear();
             return Quiescence(board, alpha, beta, turn, ref pvLine, 2);
+            //return Evaluators.GetByMaterial(board, turn, moveGenResult.WhiteMovesCount,
+        //                                               moveGenResult.BlackMovesCount,
+          //                                             moveGenResult.GamePhase);
         }
 
 
-        var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
+        
 
         if (moveGenResult.Moves == null || moveGenResult.Moves.Count == 0)
         {

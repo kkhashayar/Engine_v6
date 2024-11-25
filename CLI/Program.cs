@@ -10,13 +10,14 @@ using Engine.External_Resources;
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
 // test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
+// test fen: rn3r2/pbppq1p1/1p2pN2/8/3P1kN1/3B4/PPP3PP/R3K2R w KQ - 0 15 --> last 2 moves of above position
 
 
 // test fen:  8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1";
+string fen = "rn3r2/pbppq1p1/1p2pN2/8/3P1kN1/3B4/PPP3PP/R3K2R w KQ - 0 15";
 
 Globals globals = Globals.FenReader(fen);
 
@@ -27,7 +28,16 @@ Globals globals = Globals.FenReader(fen);
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
-int searchDepth = Globals.MaxDepth;
+
+
+///////// SETTINGS
+Globals.OpeningTime = 5;
+Globals.MiddleGameTime = 30;
+Globals.EndGameTime = 8;
+Globals.MaxDepth = 10;
+Globals.QuQuiescenceSwitch = true;
+Globals.QuiescenceDepth = 2;
+Globals.DepthBalancer = 1;
 
 Run();
 Console.Clear();
@@ -42,7 +52,7 @@ void Run()
     Console.WriteLine();
 
     bool running = true;
-    Globals.TotalTime.Restart();
+    
 
     while (running)
     {
@@ -50,7 +60,7 @@ void Run()
         MoveObject move = new MoveObject();
 
 
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, Globals.MaxDepth);
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
@@ -73,7 +83,7 @@ void Run()
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             running = false;
-            Globals.TotalTime.Stop();
+            
             break;
         }
         
@@ -81,7 +91,7 @@ void Run()
 
     Console.WriteLine();
     Console.WriteLine($"Position: {fen} \n");
-    Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
+    //Console.WriteLine("Solved on: " + (Globals.Maxti.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
 
     Console.WriteLine();
     foreach (var move in Globals.moveHistory)

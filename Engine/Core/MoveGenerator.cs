@@ -36,18 +36,18 @@ public static class MoveGenerator
         if (totalPiecesOnTheBoard == 32)
         {
             result.GamePhase = Enums.GamePhase.Opening;
-            result.CalculationTime = 5;
+            result.CalculationTime = Globals.OpeningTime;
         }
         else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10)
         {
             result.GamePhase = Enums.GamePhase.MiddleGame;
-            result.CalculationTime = 30;
+            result.CalculationTime = Globals.MiddleGameTime;
         }
 
         else 
         {
             result.GamePhase = Enums.GamePhase.EndGame;
-            result.CalculationTime = 5;
+            result.CalculationTime = Globals.EndGameTime;
         } 
 
         result.Moves = new List<MoveObject>();  
