@@ -23,11 +23,14 @@ public static class MoveGenerator
 
 
     static Globals globals = new Globals();
-
+    static Result result = new Result();
     //////////////////////////////////////   ENGINE CORE LOOP 
 
     public static List<MoveObject> GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
+        result.LegalMoves = new List<MoveObject>();
+        result.PseudoWhiteMoves = new List<MoveObject>();
+        result.PseudoBlackMoves = new List<MoveObject>();
         List<MoveObject> moves = new List<MoveObject>();
 
         List<MoveObject> whitePseudoMoves = GeneratePseudoLegalMoves(chessBoard, 0); // 0 for white
