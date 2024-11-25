@@ -41,14 +41,8 @@ public sealed class Globals
     public static Stopwatch TotalTime = new Stopwatch();
 
     public static GamePhase GamePhase { get; set; }
-    public static GamePhase GameStateForWhiteKing { get; set; }
-    public static GamePhase GameStateForBlackKing { get; set; }
-    public static GamePhase GameStateForWhiteRook { get; set; } 
-    public static GamePhase GameStateForBlackRook { get; set; }
     public static int ThinkingTime { get; set; } = 0;
     public static int MaxDepth = 14; 
-
-    public static List<int> OnBoardPieces = new List<int>();
 
     public int[] ChessBoard =
     {
@@ -422,7 +416,7 @@ public sealed class Globals
 
 
 
-    // Only in use with UCI protocol
+    // Only in use with UCI 
     public static string ConvertMoveToString(MoveObject move)
     {
         int startSquare = move.StartSquare;
@@ -465,8 +459,6 @@ public sealed class Globals
             Score = 0
         };
     }
-
-
     public static string BoardToFen(int[] board, int turn)
     {
         StringBuilder fenBuilder = new StringBuilder();
@@ -515,12 +507,6 @@ public sealed class Globals
         return EndGames.None;
     }
 
-    public static void GetOnBoardPieces(int[]board)
-    {
-        OnBoardPieces.Clear(); 
-        OnBoardPieces = board.Where(x => x > 0).ToList();
-       
-    }
     public static bool IsSingleRookOnBoard(int[] board)
     {
         int rookCount = 0;
@@ -545,7 +531,7 @@ public sealed class Globals
         return rookCount == 1;
     }
 
-    // Usefull for king based end games.
+    // King based end games.
     public static int ManhattanDistance(MoveObject move, int otherKingPosition)
     {
         int endFile = move.EndSquare % 8;

@@ -18,9 +18,8 @@ using Engine.External_Resources;
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
 
-
-
 Globals globals = Globals.FenReader(fen);
+
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
@@ -29,6 +28,7 @@ Globals globals = Globals.FenReader(fen);
 //////////////////   PERFT And stockfish verification
 
 int searchDepth = Globals.MaxDepth;
+
 
 
 TimeSpan maxTime = TimeSpan.FromSeconds(30);
@@ -151,9 +151,7 @@ void printBoardBlackDown(int[] board)
     {
         Console.Write(fileName + " "); // Print file names
     }
-    //Console.WriteLine();
-    //showBoardValuesBlack(board);
-    //Console.ReadKey();
+    
 }
 void showBoardValuesWhite(int[] board)
 {
@@ -269,7 +267,7 @@ void StartUCIMode()
 
         if (input.StartsWith("uci"))
         {
-            Console.WriteLine("id name KChess.v7");
+            Console.WriteLine("id name KChess.v6");
             Console.WriteLine("id author Khashayar Nariman");
             Console.WriteLine("uciok");
         }
