@@ -21,12 +21,10 @@ public static class MoveGenerator
     public static readonly int None = Piece.None;
 
 
-
     static Globals globals = new();
     static Result result = new Result();
     
     //////////////////////////////////////   ENGINE CORE LOOP 
-
     public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
         int whitePieces = chessBoard.Where(p => Piece.IsWhite(p)).Count();
@@ -43,7 +41,6 @@ public static class MoveGenerator
             result.GamePhase = Enums.GamePhase.MiddleGame;
             result.CalculationTime = Globals.MiddleGameTime;
         }
-
         else 
         {
             result.GamePhase = Enums.GamePhase.EndGame;
@@ -51,7 +48,6 @@ public static class MoveGenerator
         } 
 
         result.Moves = new List<MoveObject>();  
-
 
         List<MoveObject> whitePseudoMoves = GeneratePseudoLegalMoves(chessBoard, 0); // 0 for white
         List<MoveObject> blackPseudoMoves = GeneratePseudoLegalMoves(chessBoard, 1); // 1 for black
@@ -165,7 +161,6 @@ public static class MoveGenerator
                     case 9:  pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  
                         break;
                     case 1:  pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
-                        // pseudoMoves.AddRange(Pawns.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
                         break;
                 }
             }
@@ -185,7 +180,6 @@ public static class MoveGenerator
                         break;
                     case 11:
                         pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
-                       
                         break;
                 }
             }
