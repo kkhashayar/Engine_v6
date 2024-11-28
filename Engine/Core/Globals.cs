@@ -527,7 +527,7 @@ public sealed class Globals
                     return false;
                 }
             }
-            else if (piece != 0 && piece != MoveGenerator.whiteKing && piece != MoveGenerator.blackKing)
+            else if (piece != 0 && piece != 1 && piece != MoveGenerator.blackKing)
             {
                 return false;
             }

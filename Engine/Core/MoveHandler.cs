@@ -34,7 +34,7 @@ public static class MoveHandler
                 }
                 /////////////////////////////////// Castling   
 
-                if (move.pieceType == MoveGenerator.whiteKing && move.LongCastle)
+                if (move.pieceType == 1 && move.LongCastle)
                 {
                     board[56] = 0; board[59] = MoveGenerator.whiteRook;
                     Globals.WhiteLongCastle = false;
@@ -42,7 +42,7 @@ public static class MoveHandler
                     Globals.WhiteQueenRookMoved = true;
                 }
 
-                if (move.pieceType == MoveGenerator.whiteKing && move.ShortCastle)
+                if (move.pieceType == 1 && move.ShortCastle)
                 {
                     board[63] = 0; board[61] = MoveGenerator.whiteRook;
                     Globals.WhiteLongCastle = false;
@@ -105,7 +105,7 @@ public static class MoveHandler
             board[move.StartSquare] = move.pieceType;
         }
 
-        if (move.pieceType == MoveGenerator.whiteKing)
+        if (move.pieceType == 1)
         {
             if (move.ShortCastle)
             {
