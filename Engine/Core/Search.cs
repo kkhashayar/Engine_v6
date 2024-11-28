@@ -92,7 +92,7 @@ public static class Search
                 principalVariation = currentPV; // Update the PV
             }
             Console.WriteLine();
-            Console.WriteLine($"Depth {currentDepth / 2} score {alpha} Time: {stopwatch.Elapsed.TotalSeconds} PV: {string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
+            Console.WriteLine($"Depth:{currentDepth} score:{alpha} Time:{stopwatch.Elapsed.TotalSeconds} PV:{string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
 
 
         }

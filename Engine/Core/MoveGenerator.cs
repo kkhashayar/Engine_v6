@@ -5,22 +5,6 @@ namespace Engine;
 
 public static class MoveGenerator
 {
-    public static readonly int whiteKing = Piece.King;
-    public static readonly int whiteQueen = Piece.Queen;
-    public static readonly int whiteRook = Piece.Rook;
-    public static readonly int whiteKnight = Piece.Knight;
-    public static readonly int whiteBishop = Piece.Bishop;
-    public static readonly int whitePawn = Piece.Pawn;
-
-    public static readonly int blackKing = Piece.King + Piece.BlackPieceOffset;
-    public static readonly int blackQueen = Piece.Queen + Piece.BlackPieceOffset;
-    public static readonly int blackRook = Piece.Rook + Piece.BlackPieceOffset;
-    public static readonly int blackKnight = Piece.Knight + Piece.BlackPieceOffset;
-    public static readonly int blackBishop = Piece.Bishop + Piece.BlackPieceOffset;
-    public static readonly int blackPawn = Piece.Pawn + Piece.BlackPieceOffset;
-    public static readonly int None = Piece.None;
-
-
     static Globals globals = new();
     static Result result = new Result();
     
@@ -71,7 +55,7 @@ public static class MoveGenerator
                         }
                         move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
-                        if (move.pieceType == whitePawn)
+                        if (move.pieceType == 1)
                         {
                             var leftKillSquare = move.EndSquare - 7;
                             var rightKillSquare = move.EndSquare - 9;
@@ -105,7 +89,7 @@ public static class MoveGenerator
                         }
                         move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
-                        if (move.pieceType == blackPawn)
+                        if (move.pieceType == 11)
                         {
                             var leftKillSquare = move.EndSquare + 7;
                             var rightKillSquare = move.EndSquare + 9;
@@ -285,6 +269,8 @@ public static class MoveGenerator
         }
         return false;
     }
+  
+
     private static List<int> GetAllAttacksForPiece(MoveObject move, int[] board, int turn)
     {
         int piece = move.pieceType;
@@ -292,41 +278,35 @@ public static class MoveGenerator
 
         List<int> attacks = new List<int>();
 
-        if (piece == whiteQueen)
+        switch (piece)
         {
-            attacks = Queens.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == whiteRook)
-        {
-            attacks = Rooks.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == whiteBishop)
-        {
-            attacks = Bishops.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == whiteKnight)
-        {
-            attacks = Knights.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
+            case 9:
+            case 19:
+                attacks = Queens.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
+                break;
+
+            case 5:
+            case 15:
+                attacks = Rooks.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
+                break;
+
+            case 4:
+            case 14:
+                attacks = Bishops.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
+                break;
+
+            case 3:
+            case 13:
+                attacks = Knights.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
+                break;
+
+            default:
+                break;
         }
 
-        else if (piece == blackQueen)
-        {
-            attacks = Queens.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == blackRook)
-        {
-            attacks = Rooks.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == blackBishop)
-        {
-            attacks = Bishops.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
-        else if (piece == blackKnight)
-        {
-            attacks = Knights.GenerateMovesForSquare(square, turn, board).Select(move => move.EndSquare).ToList();
-        }
         return attacks;
     }
+
 
 
     // TODO: General check

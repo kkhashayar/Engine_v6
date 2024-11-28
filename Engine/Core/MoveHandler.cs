@@ -16,19 +16,19 @@ public static class MoveHandler
             if (Globals.Turn == 0)
             {
                 /////////////////////////////////// Pawn Promotion  
-                if (move.pieceType == MoveGenerator.whitePawn && move.IsPromotion)
+                if (move.pieceType == 1 && move.IsPromotion)
                 {
                     var piece = move.PromotionPiece;
                     board[move.EndSquare] = piece;
                 }
 
-                if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
+                if (move.pieceType == 5 && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
                 {
                     Globals.WhiteKingRookMoved = true;
                 }
 
                 // ROOK ON LONG CASLTE 
-                if (move.pieceType == MoveGenerator.whiteRook && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+                if (move.pieceType == 5 && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
                 {
                     Globals.WhiteQueenRookMoved = true;
                 }
@@ -36,7 +36,7 @@ public static class MoveHandler
 
                 if (move.pieceType == 1 && move.LongCastle)
                 {
-                    board[56] = 0; board[59] = MoveGenerator.whiteRook;
+                    board[56] = 0; board[59] = 5;
                     Globals.WhiteLongCastle = false;
                     Globals.WhiteShortCastle = false;
                     Globals.WhiteQueenRookMoved = true;
@@ -44,7 +44,7 @@ public static class MoveHandler
 
                 if (move.pieceType == 1 && move.ShortCastle)
                 {
-                    board[63] = 0; board[61] = MoveGenerator.whiteRook;
+                    board[63] = 0; board[61] = 5;
                     Globals.WhiteLongCastle = false;
                     Globals.WhiteShortCastle = false;
                     Globals.WhiteKingRookMoved = true;
@@ -55,35 +55,35 @@ public static class MoveHandler
             {
 
                 /////////////////////////////////// Pawn Promotion
-                if (move.pieceType == MoveGenerator.blackPawn && move.IsPromotion)
+                if (move.pieceType == 11 && move.IsPromotion)
                 {
                     var piece = move.PromotionPiece;
                     board[move.EndSquare] = piece;
                 }
 
-                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+                if (move.pieceType == 15 && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
                 {
                     Globals.BlackQueenRookMoved = true;
                 }
 
 
-                if (move.pieceType == MoveGenerator.blackRook && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
+                if (move.pieceType == 15 && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
                 {
                     Globals.BlackKingRookMoved = true;
                 }
 
 
-                if (move.pieceType == MoveGenerator.blackKing && move.LongCastle)
+                if (move.pieceType == 109 && move.LongCastle)
                 {
-                    board[0] = 0; board[3] = MoveGenerator.blackRook;
+                    board[0] = 0; board[3] = 15;
                     Globals.BlackLongCastle = false;
                     Globals.BlackShortCastle = false;
                     Globals.BlackQueenRookMoved = true;
 
                 }
-                if (move.pieceType == MoveGenerator.blackKing && move.ShortCastle)
+                if (move.pieceType == 109 && move.ShortCastle)
                 {
-                    board[7] = 0; board[5] = MoveGenerator.blackRook;
+                    board[7] = 0; board[5] = 15;
                     Globals.BlackShortCastle = false;
                     Globals.BlackLongCastle = false;
                     Globals.BlackKingRookMoved = true;
@@ -99,7 +99,7 @@ public static class MoveHandler
         board[move.StartSquare] = pieceMoving;
         board[move.EndSquare] = targetSquare;
 
-        if ((move.pieceType == MoveGenerator.whitePawn || move.pieceType == MoveGenerator.blackPawn) && move.IsPromotion is true)
+        if ((move.pieceType == 1 || move.pieceType == 11) && move.IsPromotion is true)
         {
             board[move.EndSquare] = 0;
             board[move.StartSquare] = move.pieceType;
@@ -110,26 +110,26 @@ public static class MoveHandler
             if (move.ShortCastle)
             {
                 board[61] = 0;
-                board[63] = MoveGenerator.whiteRook;
+                board[63] = 5;
 
             }
 
             if (move.LongCastle)
             {
                 board[59] = 0;
-                board[56] = MoveGenerator.whiteRook;
+                board[56] = 5;
 
             }
 
         }
 
 
-        if (move.pieceType == MoveGenerator.blackKing)
+        if (move.pieceType == 109)
         {
             if (move.LongCastle)
             {
                 board[3] = 0;
-                board[0] = MoveGenerator.blackRook;
+                board[0] = 15;
 
 
             }
@@ -137,7 +137,7 @@ public static class MoveHandler
             if (move.ShortCastle)
             {
                 board[5] = 0;
-                board[7] = MoveGenerator.blackRook;
+                board[7] = 15;
 
             }
         }

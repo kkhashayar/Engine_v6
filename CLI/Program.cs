@@ -17,15 +17,15 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
+string fen = "rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0";
 
 Globals globals = Globals.FenReader(fen);
 
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-int perftDepth = 4;
-RunPerft(fen, globals, perftDepth);
+//int perftDepth = 4;
+//RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 

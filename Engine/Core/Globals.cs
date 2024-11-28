@@ -518,7 +518,7 @@ public sealed class Globals
 
         foreach (int piece in board)
         {
-            if (piece == MoveGenerator.whiteRook || piece == MoveGenerator.blackRook)
+            if (piece == 5 || piece == 15)
             {
                 rookCount++;
 
@@ -527,7 +527,7 @@ public sealed class Globals
                     return false;
                 }
             }
-            else if (piece != 0 && piece != 1 && piece != MoveGenerator.blackKing)
+            else if (piece != 0 && piece != 1 && piece != 109)
             {
                 return false;
             }
