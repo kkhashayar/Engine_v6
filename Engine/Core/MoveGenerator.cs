@@ -6,7 +6,7 @@ namespace Engine;
 public static class MoveGenerator
 {
     static Globals globals = new();
-    static Result result = new Result();
+    static Result result = new();
     
     //////////////////////////////////////   ENGINE CORE LOOP 
     public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
@@ -171,21 +171,6 @@ public static class MoveGenerator
         return pseudoMoves;
     }
 
-
-    public static List<MoveObject> GetKingAttacks(int[] board, int turn)
-    {
-        List<MoveObject> kingMoves = new List<MoveObject>();
-        int KingPosition = turn == 0 ? Globals.GetWhiteKingSquare(board) : Globals.GetBlackKingSquare(board);
-
-        var rowKingMoves = (Kings.GenerateMovesForSquare(KingPosition, turn, board));
-        foreach (var move in rowKingMoves)
-        {
-            if (IsMoveLegal(move, board, turn)) { kingMoves.Add(move); }
-        }
-        return kingMoves;
-    }
-
-    // version 2 
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
