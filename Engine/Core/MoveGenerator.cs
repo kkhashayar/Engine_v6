@@ -148,6 +148,8 @@ public static class MoveGenerator
                         break;
                 }
             }
+            // Generate moves for black pieces
+
             else if (turn == 1)
             {
                 switch (piece)
