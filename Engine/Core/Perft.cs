@@ -7,19 +7,7 @@ namespace Engine;
 public static class Perft
 {
     public static int count = 0;
-    //public static ulong Calculate(int[] board, int depth, int turn)
-    //{
-    //    Stopwatch stopwatch = new Stopwatch();
-    //    stopwatch.Start();
-
-    //    ulong nodes = CalculateNodes(board, depth, turn, depth);
-
-    //    stopwatch.Stop();
-
-    //    Console.WriteLine($"Depth: {depth}, Nodes: {nodes}, Time: {stopwatch.Elapsed.TotalSeconds} seconds");
-    //    return nodes;
-    //}
-
+   
     public static ulong Calculate(int[] board, int depth, int turn)
     {
         Stopwatch stopwatch = new Stopwatch();

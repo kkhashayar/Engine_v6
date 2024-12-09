@@ -1,4 +1,5 @@
 ﻿using Engine.Core;
+using Engine.Enums;
 using Engine.PieceMotions;
 
 namespace Engine;
@@ -44,8 +45,12 @@ public static class MoveGenerator
                 for (int i = 0; i < whitePseudoMoves.Count; i++)
                 {
                     var move = whitePseudoMoves[i];
+                    // Legacy version 
                     if (IsMoveLegal(move, chessBoard, turn))
-                    //if (IsMoveLegalByBitboard(move, chessBoard, turn))
+                    
+
+                    // Bitboard integration version
+                    //if (IsLegalBitboardVer(chessBoard, move, turn))
                     {
 
                         if (chessBoard[move.EndSquare] != 0)
@@ -119,8 +124,10 @@ public static class MoveGenerator
         return result;
     }
 
+
     private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int turn)
     {
+        
         List<MoveObject> pseudoMoves = new List<MoveObject>();
 
         for (int square = 0; square < 64; square++)
@@ -256,7 +263,114 @@ public static class MoveGenerator
         }
         return false;
     }
-  
+
+
+    internal static bool IsLegalBitboardVer(int[] chessBoard, MoveObject move, int turn)
+    {
+        ulong wPawns = 0, wKnights = 0, wBishops = 0, wRooks = 0, wQueens = 0, wKing = 0;
+        ulong bPawns = 0, bKnights = 0, bBishops = 0, bRooks = 0, bQueens = 0, bKing = 0;
+
+        ulong allWhitePieces = 0, allBlackPieces = 0, allpieces = 0;
+
+        // Creates Bitboard version of the given chess board. 
+        for (int square = 0; square < 64; square++)
+        {
+            int piece = chessBoard[square];
+            if (piece != 0) continue;
+
+            if (Piece.IsWhite(piece))
+            {
+                switch (piece)
+                {
+                    case 1: wPawns |= 1UL << square; break;
+                    case 3: wKnights |= 1UL << square; break;
+                    case 4: wBishops |= 1UL << square; break;
+                    case 5: wRooks |= 1UL << square; break;
+                    case 9: wQueens |= 1UL << square; break;
+                    case 99: wKing |= 1UL << square; break;
+                }
+            }
+            else if (Piece.IsBlack(piece))
+            {
+                switch (piece)
+                {
+                    case 11: bPawns |= 1UL << square; break;
+                    case 13: bKnights |= 1UL << square; break;
+                    case 14: bBishops |= 1UL << square; break;
+                    case 15: bRooks |= 1UL << square; break;
+                    case 19: bQueens |= 1UL << square; break;
+                    case 109: bKing |= 1UL << square; break;
+                }
+            }
+        }
+
+        // current state of position"", white, and black pieces
+        allWhitePieces = wPawns | wKnights | wBishops | wRooks | wQueens | wKing;
+        allBlackPieces = bPawns | bKnights | bBishops | bRooks | bQueens | bKing;
+        allpieces = allWhitePieces | allBlackPieces;
+
+        // Make the move on the bitboards
+        ulong pieceBitboard = 0;
+        if (Piece.IsWhite(move.pieceType))
+        {
+            switch (move.pieceType)
+            {
+                case 1: pieceBitboard = wPawns; break;
+                case 3: pieceBitboard = wKnights; break;
+                case 4: pieceBitboard = wBishops; break;
+                case 5: pieceBitboard = wRooks; break;
+                case 9: pieceBitboard = wQueens; break;
+                case 99: pieceBitboard = wKing; break;
+            }
+        }
+        else if (Piece.IsBlack(move.pieceType))
+        {
+            switch (move.pieceType)
+            {
+                case 11: pieceBitboard = bPawns; break;
+                case 13: pieceBitboard = bKnights; break;
+                case 14: pieceBitboard = bBishops; break;
+                case 15: pieceBitboard = bRooks; break;
+                case 19: pieceBitboard = bQueens; break;
+                case 109: pieceBitboard = bKing; break;
+            }
+        }
+        // Clear start square
+        pieceBitboard &= ~(1UL << move.StartSquare);
+        // Set end square
+        pieceBitboard |= 1UL << move.EndSquare;
+
+        //update all pieces
+        allpieces &= ~(1UL << move.StartSquare);
+        allpieces |= 1UL << move.EndSquare;
+
+
+        // Check if move leaves the king in check
+        ulong kingPosition = (turn == 0)? wKing : bKing;
+        bool check = IsKingInCheck(kingPosition, allpieces, allWhitePieces, allBlackPieces, turn, move, chessBoard); 
+        // if not, return true
+        if(!check) return true; 
+        //or -->
+        return false;
+    }
+
+    private static bool IsKingInCheck(ulong kingPosition, ulong allPieces, ulong whitePieces, ulong blackPieces,
+                                  int turn, MoveObject move, int[] chessBoard)
+    {
+        // Get all attack squares in int format
+        var allAttacks = GetAllAttacksForPiece(move, chessBoard, turn);
+
+        // Convert the attack squares to ulong format
+        ulong attackBitboard = 0;
+        foreach (var square in allAttacks)
+        {
+            attackBitboard |= 1UL << square; // Set the corresponding bit
+        }
+
+        // Check if the king's position overlaps with attackBitboard
+        return (kingPosition & attackBitboard) != 0;
+    }
+
 
     private static List<int> GetAllAttacksForPiece(MoveObject move, int[] board, int turn)
     {
