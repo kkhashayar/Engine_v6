@@ -37,18 +37,17 @@ public sealed class Globals
     public static int InitialTurn { get; set; }
     public static bool InitialDepthAdjusted { get; set; } = false;
     public static string CurrentFEN { get; set; }
+    
+    //////////// SEARCH SETTINGS ////////////
+    public static int OpeningTime { get; set; } = 0;
+    public static int MiddleGameTime { get; set; } = 0;
+    public static int EndGameTime { get; set; } = 0;
+    public static int MaxDepth = 0;
+    public static bool QuQuiescenceSwitch { get; set; }
+    public static int QuiescenceDepth { get; set; }
+    public static int DepthBalancer { get; set; }
+    //////////// END OF SEARCH SETTINGS /////
 
-    public static Stopwatch TotalTime = new Stopwatch();
-
-    public static GamePhase GamePhase { get; set; }
-    public static GamePhase GameStateForWhiteKing { get; set; }
-    public static GamePhase GameStateForBlackKing { get; set; }
-    public static GamePhase GameStateForWhiteRook { get; set; } 
-    public static GamePhase GameStateForBlackRook { get; set; }
-    public static int ThinkingTime { get; set; } = 0;
-    public static int MaxDepth = 14; 
-
-    public static List<int> OnBoardPieces = new List<int>();
 
     public int[] ChessBoard =
     {
@@ -422,7 +421,7 @@ public sealed class Globals
 
 
 
-    // Only in use with UCI protocol
+    // Only in use with UCI 
     public static string ConvertMoveToString(MoveObject move)
     {
         int startSquare = move.StartSquare;
@@ -465,8 +464,6 @@ public sealed class Globals
             Score = 0
         };
     }
-
-
     public static string BoardToFen(int[] board, int turn)
     {
         StringBuilder fenBuilder = new StringBuilder();
@@ -515,19 +512,13 @@ public sealed class Globals
         return EndGames.None;
     }
 
-    public static void GetOnBoardPieces(int[]board)
-    {
-        OnBoardPieces.Clear(); 
-        OnBoardPieces = board.Where(x => x > 0).ToList();
-       
-    }
     public static bool IsSingleRookOnBoard(int[] board)
     {
         int rookCount = 0;
 
         foreach (int piece in board)
         {
-            if (piece == MoveGenerator.whiteRook || piece == MoveGenerator.blackRook)
+            if (piece == 5 || piece == 15)
             {
                 rookCount++;
 
@@ -536,7 +527,7 @@ public sealed class Globals
                     return false;
                 }
             }
-            else if (piece != 0 && piece != MoveGenerator.whiteKing && piece != MoveGenerator.blackKing)
+            else if (piece != 0 && piece != 1 && piece != 109)
             {
                 return false;
             }
@@ -545,7 +536,7 @@ public sealed class Globals
         return rookCount == 1;
     }
 
-    // Usefull for king based end games.
+    // King based end games.
     public static int ManhattanDistance(MoveObject move, int otherKingPosition)
     {
         int endFile = move.EndSquare % 8;

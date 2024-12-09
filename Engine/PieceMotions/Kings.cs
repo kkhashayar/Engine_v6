@@ -22,7 +22,7 @@ internal static class Kings
                 {
                     moves.Add(new MoveObject
                     {
-                        pieceType = MoveGenerator.whiteKing,
+                        pieceType = 99,
                         StartSquare = square,
                         EndSquare = targetSquare
                     });
@@ -30,12 +30,12 @@ internal static class Kings
             }
 
             //////////// Short CASTLE //////////// 
-            if (board[60] == MoveGenerator.whiteKing && Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0
-                && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
+            if (board[60] == 99 && Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0
+                && board[63] == 5 && Globals.WhiteKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.whiteKing,
+                    pieceType = 99,
                     StartSquare = 60,
                     EndSquare = 62,
                     ShortCastle = true
@@ -43,12 +43,12 @@ internal static class Kings
             }
 
             //////////// LONG CASTLE //////////// 
-            if (board[60] == MoveGenerator.whiteKing && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
-                && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
+            if (board[60] == 99 && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
+                && board[56] == 5 && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.whiteKing,
+                    pieceType = 99,
                     StartSquare = 60,
                     EndSquare = 58,
                     LongCastle = true
@@ -68,31 +68,31 @@ internal static class Kings
                 {
                     moves.Add(new MoveObject
                     {
-                        pieceType = MoveGenerator.blackKing,
+                        pieceType = 109,
                         StartSquare = square,
                         EndSquare = targetSquare
                     });
                 }
             }
 
-            if (board[4] == MoveGenerator.blackKing && Globals.BlackShortCastle && board[5] == 0 && board[6] == 0
-                && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
+            if (board[4] == 109 && Globals.BlackShortCastle && board[5] == 0 && board[6] == 0
+                && board[7] == 15 && Globals.BlackKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.blackKing,
+                    pieceType = 109,
                     StartSquare = 4,
                     EndSquare = 6,
                     ShortCastle = true
                 });
             }
 
-            if (board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
-                && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
+            if (board[4] == 109 && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
+                && board[0] == 15 && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.blackKing,
+                    pieceType = 109,
                     StartSquare = 4,
                     EndSquare = 2,
                     LongCastle = true
@@ -125,7 +125,7 @@ internal static class Kings
 
             moves.Add(new MoveObject
             {
-                pieceType = turn == 0 ? MoveGenerator.whiteKing : MoveGenerator.blackKing,
+                pieceType = turn == 0 ? 99 : 109,
                 StartSquare = square,
                 EndSquare = targetSquare
             });
@@ -135,12 +135,12 @@ internal static class Kings
         if (turn == 0) // White's turn
         {
             // Short castle
-            if (board[60] == MoveGenerator.whiteKing && Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0
-                && board[63] == MoveGenerator.whiteRook && Globals.WhiteKingRookMoved is false)
+            if (board[60] == 99 && Globals.WhiteShortCastle && board[61] == 0 && board[62] == 0
+                && board[63] == 5 && Globals.WhiteKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.whiteKing,
+                    pieceType = 99,
                     StartSquare = 60,
                     EndSquare = 62,
                     ShortCastle = true
@@ -148,12 +148,12 @@ internal static class Kings
             }
 
             // Long castle
-            if (board[60] == MoveGenerator.whiteKing && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
-                && board[56] == MoveGenerator.whiteRook && Globals.WhiteQueenRookMoved is false)
+            if (board[60] == 99 && Globals.WhiteLongCastle && board[59] == 0 && board[58] == 0
+                && board[56] == 5 && Globals.WhiteQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.whiteKing,
+                    pieceType = 99,
                     StartSquare = 60,
                     EndSquare = 58,
                     LongCastle = true
@@ -163,12 +163,12 @@ internal static class Kings
         else if (turn == 1) // Black's turn
         {
             // Short castle
-            if (board[4] == MoveGenerator.blackKing && Globals.BlackShortCastle && board[5] == 0 && board[6] == 0
-                && board[7] == MoveGenerator.blackRook && Globals.BlackKingRookMoved is false)
+            if (board[4] == 109 && Globals.BlackShortCastle && board[5] == 0 && board[6] == 0
+                && board[7] == 15 && Globals.BlackKingRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.blackKing,
+                    pieceType = 109,
                     StartSquare = 4,
                     EndSquare = 6,
                     ShortCastle = true
@@ -176,12 +176,12 @@ internal static class Kings
             }
 
             // Long castle
-            if (board[4] == MoveGenerator.blackKing && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
-                && board[0] == MoveGenerator.blackRook && Globals.BlackQueenRookMoved is false)
+            if (board[4] == 109 && Globals.BlackLongCastle && board[3] == 0 && board[2] == 0
+                && board[0] == 15 && Globals.BlackQueenRookMoved is false)
             {
                 moves.Add(new MoveObject
                 {
-                    pieceType = MoveGenerator.blackKing,
+                    pieceType = 109,
                     StartSquare = 4,
                     EndSquare = 2,
                     LongCastle = true

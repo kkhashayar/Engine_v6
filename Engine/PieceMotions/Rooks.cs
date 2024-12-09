@@ -1,5 +1,4 @@
 ﻿
-using System.Net.Quic;
 using System.Numerics;
 using Engine.Core;
 
@@ -7,58 +6,6 @@ namespace Engine.PieceMotions;
 
 internal static class Rooks
 {
-    public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
-    {
-        List<int> targetSquares = GetMasksForSquare(square);
-
-        List<MoveObject> moves = new();
-
-        if (turn == 0)
-        {
-            foreach (int targetSquare in targetSquares)
-            {
-                var targetsquareColor = Piece.GetColor(board[targetSquare]);
-                if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
-                {
-                    if (targetsquareColor == "White") continue;
-                    else
-                    {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.whiteRook,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
-                }
-            }
-            return moves;
-        }
-        else if (turn == 1)
-        {
-            foreach (int targetSquare in targetSquares)
-            {
-                var targetsquareColor = Piece.GetColor(board[targetSquare]);
-                if (Globals.IsCrossSliderPathClear(square, targetSquare, board))
-                {
-                    if (targetsquareColor == "Black") continue;
-
-                    else
-                    {
-                        moves.Add(new MoveObject
-                        {
-                            pieceType = MoveGenerator.blackRook,
-                            StartSquare = square,
-                            EndSquare = targetSquare
-                        });
-                    }
-                }
-            }
-        }
-
-        return moves;
-    }
-
     public static List<int> GetMasksForSquare(int square)
     {
         List<int> squares = new();
@@ -103,7 +50,7 @@ internal static class Rooks
 
             moves.Add(new MoveObject
             {
-                pieceType = (turn == 0) ? MoveGenerator.whiteRook : MoveGenerator.blackRook,
+                pieceType = (turn == 0) ? 5 : 15,
                 StartSquare = square,
                 EndSquare = targetSquare
             });

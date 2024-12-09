@@ -10,6 +10,7 @@ using Engine.External_Resources;
 // test fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0      mate in 4
 // test fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0 mate in 4
 // test fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11  mate in 7
+// test fen: rn3r2/pbppq1p1/1p2pN2/8/3P1kN1/3B4/PPP3PP/R3K2R w KQ - 0 15 --> last 2 moves of above position
 
 
 // test fen:  8/8/3k4/8/4R3/3K4/8/8 w - - 0 1     KkR
@@ -18,20 +19,25 @@ using Engine.External_Resources;
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
 
-
-
 Globals globals = Globals.FenReader(fen);
+
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 9;
+//int perftDepth = 2;
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
-int searchDepth = Globals.MaxDepth;
 
 
-TimeSpan maxTime = TimeSpan.FromSeconds(30);
+///////// SETTINGS
+Globals.OpeningTime = 5;
+Globals.MiddleGameTime = 30;
+Globals.EndGameTime = 12;
+Globals.MaxDepth = 20;
+Globals.QuQuiescenceSwitch = true;
+Globals.QuiescenceDepth = 2;
+Globals.DepthBalancer = 0;
 
 Run();
 Console.Clear();
@@ -46,7 +52,7 @@ void Run()
     Console.WriteLine();
 
     bool running = true;
-    Globals.TotalTime.Restart();
+    
 
     while (running)
     {
@@ -54,11 +60,11 @@ void Run()
         MoveObject move = new MoveObject();
 
 
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, searchDepth, maxTime);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, Globals.MaxDepth);
 
         MoveHandler.MakeMove(globals.ChessBoard, move);
 
-        Console.Beep(1000, 100);
+        Console.Beep(800, 70);
 
         Globals.moveHistory.Add(move);
 
@@ -77,15 +83,15 @@ void Run()
         if (Globals.CheckmateWhite || Globals.CheckmateBlack || Globals.Stalemate)
         {
             running = false;
-            Globals.TotalTime.Stop();
+            
             break;
         }
-        Console.Beep(1000, 100);
+        
     }
 
     Console.WriteLine();
     Console.WriteLine($"Position: {fen} \n");
-    Console.WriteLine("Solved on: " + (Globals.TotalTime.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
+    //Console.WriteLine("Solved on: " + (Globals.Maxti.ElapsedMilliseconds / 1000.0).ToString() + " seconds");
 
     Console.WriteLine();
     foreach (var move in Globals.moveHistory)
@@ -151,9 +157,7 @@ void printBoardBlackDown(int[] board)
     {
         Console.Write(fileName + " "); // Print file names
     }
-    //Console.WriteLine();
-    //showBoardValuesBlack(board);
-    //Console.ReadKey();
+    
 }
 void showBoardValuesWhite(int[] board)
 {
@@ -269,7 +273,7 @@ void StartUCIMode()
 
         if (input.StartsWith("uci"))
         {
-            Console.WriteLine("id name KChess.v7");
+            Console.WriteLine("id name KChess.v6");
             Console.WriteLine("id author Khashayar Nariman");
             Console.WriteLine("uciok");
         }
@@ -345,7 +349,7 @@ void HandleGoCommand(string input)
     try
     {
         // Determine which side is to move based on Globals.Turn
-        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth, maxTime);
+        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth);
         string bestMoveString = Globals.ConvertMoveToString(bestMove);
 
         Console.WriteLine($"bestmove {bestMoveString}");

@@ -3,22 +3,11 @@ using Engine.Enums;
 using Engine.Tables;
 
 namespace Engine;
-
 internal static class Evaluators
 {
-    public static int GetByMaterial(int[] chessBoard, int turn)
+    public static int GetByMaterial(int[] chessBoard, int turn, int whiteMoveCount, int blackMoveCount, GamePhase gamePhase)
     {
-        int whitePieces = chessBoard.Where(p => Piece.IsWhite(p)).Count();
-        int blackPieces = chessBoard.Where(p => Piece.IsBlack(p)).Count();
-        int totalPiecesOnTheBoard = whitePieces + blackPieces;
-
-        var gamePhase = "";
-        if (totalPiecesOnTheBoard == 32) gamePhase = "Opening";
-        else if (totalPiecesOnTheBoard < 32 && totalPiecesOnTheBoard > 10) gamePhase = "Middle";
-        else gamePhase = "End";
-
-        int whiteMoveCount = MoveGenerator.GenerateAllMoves(chessBoard, 0, true).Count;
-        int blackMoveCount = MoveGenerator.GenerateAllMoves(chessBoard, 1, true).Count;
+        
         int score = 0;
         for (int i = 0; i < 64; i++)
         {
@@ -28,15 +17,15 @@ internal static class Evaluators
             {
                 case 1:
                     score += 1;
-                    if (gamePhase == "Opening") score += Pawns.GetSquareWeight(i, true);
+                    if (gamePhase == GamePhase.Opening) score += Pawns.GetSquareWeight(i, true);
                     break;
                 case 3:
                     score += 3;
-                    //if(gamePhase == "Opening") score += Knights.GetSquareWeight(i, true);    
+                    if (gamePhase == GamePhase.Opening) score += Knights.GetSquareWeight(i, true);
                     break;
                 case 4:
                     score += 3;
-                    if (gamePhase == "Opening") score += Bishops.GetSquareWeight(i, true);
+                    if (gamePhase == GamePhase.Opening) score += Bishops.GetSquareWeight(i, true);
                     break;
                 case 5:
                     score += 5;
@@ -46,19 +35,20 @@ internal static class Evaluators
                     break;
                 case 99:
                     score += 999999;
-                    if (gamePhase == "End") score += Kings.GetEndGameWeight(i, true);
+                    if (gamePhase == GamePhase.EndGame) score += Kings.GetEndGameWeight(i, true);
+                    else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score += Kings.GetMiddleGameWeight(i, true);
                     break;
                 case 11:
                     score -= 1;
-                    if (gamePhase == "Opening") score -= Pawns.GetSquareWeight(i, false);
+                    if (gamePhase == GamePhase.Opening) score -= Pawns.GetSquareWeight(i, false);
                     break;
                 case 13:
                     score -= 3;
-                    //if(gamePhase == "Opening") score -= Knights.GetSquareWeight(i, false);  
+                    if (gamePhase == GamePhase.Opening) score -= Knights.GetSquareWeight(i, false);
                     break;
                 case 14:
                     score -= 3;
-                    if (gamePhase == "Opening") score -= Bishops.GetSquareWeight(i, false);
+                    if (gamePhase == GamePhase.Opening) score -= Bishops.GetSquareWeight(i, false);
                     break;
                 case 15:
                     score -= 5;
@@ -68,27 +58,30 @@ internal static class Evaluators
                     break;
                 case 109:
                     score -= 999999;
-                    if (gamePhase == "End") score -= Kings.GetEndGameWeight(i, false);
+                    if (gamePhase == GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false);
+                    else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score -= Kings.GetMiddleGameWeight(i, true);
                     break;
                 default:
                     break;
             }
         }
-        if (turn == 0)
-        {
-            if (!IsPositionDraw(turn, whitePieces, blackPieces))
+        //if (gamePhase == "Oppening" || gamePhase == "EndGame")
+        //{
+            if (turn == 0)
+            {
+
                 score += blackMoveCount switch
                 {
-                    0 => 300,
-                    1 => 290,
-                    2 => 280,
-                    3 => 270,
-                    4 => 260,
-                    5 => 250,
-                    6 => 240,
-                    7 => 230,
-                    8 => 220,
-                    9 => 210,
+                    0 => 400,
+                    1 => 400,
+                    2 => 400,
+                    3 => 400,
+                    4 => 400,
+                    5 => 400,
+                    6 => 400,
+                    7 => 400,
+                    8 => 400,
+                    9 => 400,
                     11 => 170,
                     13 => 150,
                     15 => 130,
@@ -104,22 +97,21 @@ internal static class Evaluators
                     35 => 20,
                     _ => 0
                 };
-        }
-        else
-        {
-            if (!IsPositionDraw(turn, whitePieces, blackPieces))
+            }
+            else
+            {
                 score -= whiteMoveCount switch
                 {
-                    0 => 300,
-                    1 => 290,
-                    2 => 280,
-                    3 => 270,
-                    4 => 260,
-                    5 => 250,
-                    6 => 240,
-                    7 => 230,
-                    8 => 220,
-                    9 => 210,
+                    0 => 400,
+                    1 => 400,
+                    2 => 400,
+                    3 => 400,
+                    4 => 400,
+                    5 => 400,
+                    6 => 400,
+                    7 => 400,
+                    8 => 400,
+                    9 => 400,
                     11 => 170,
                     13 => 150,
                     15 => 130,
@@ -135,7 +127,8 @@ internal static class Evaluators
                     35 => 20,
                     _ => 0
                 };
-        }
+            }
+        //}
 
         return score;
     }
