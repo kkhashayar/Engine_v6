@@ -24,8 +24,8 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 2;
-//RunPerft(fen, globals, perftDepth);
+int perftDepth = 2;
+RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 
