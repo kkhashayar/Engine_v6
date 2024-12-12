@@ -58,7 +58,7 @@ public static class Search
                 var targetSquare = board[move.EndSquare];
                 var promotedTo = move.PromotionPiece;
 
-                MoveHandler.MakeMove(board, move);
+                MoveHandler.MakeMove(board, move, turn);
 
                 List<MoveObject> line = new();
                 int score = -Negamax(currentDepth - 1, -beta, -alpha, board, turn ^ 1, ref line);
@@ -130,7 +130,7 @@ public static class Search
             var promotedTo = move.PromotionPiece;
 
             // Make the move on the board
-            MoveHandler.MakeMove(board, move);
+            MoveHandler.MakeMove(board, move, turn);
 
             List<MoveObject> line = new List<MoveObject>();
 
@@ -199,7 +199,7 @@ public static class Search
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
             var promotedTo = move.PromotionPiece;
-            MoveHandler.MakeMove(board, move);
+            MoveHandler.MakeMove(board, move, turn);
 
             List<MoveObject> line = new List<MoveObject>();
             int score = -Quiescence(board, -beta, -alpha, turn ^ 1, ref line, depth - 1);

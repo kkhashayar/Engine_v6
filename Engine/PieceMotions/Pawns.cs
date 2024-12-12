@@ -10,7 +10,7 @@ internal static class Pawns
         List<MoveObject> moves = new List<MoveObject>();
         int direction = turn == 0 ? -8 : 8; // White moves up, Black moves down
         int startRank = turn == 0 ? 6 : 1; // Starting ranks for White and Black
-        int promotionRank = turn == 0 ? 0 : 7; // Promotion ranks for White and Black
+        int promotionRank = turn == 0 ? 0 : 8; // Promotion ranks for White and Black
 
         // Forward movement
         int forwardSquare = square + direction;
@@ -85,7 +85,7 @@ internal static class Pawns
 
     private static void AddPawnMove(int startSquare, int endSquare, int promotionRank, List<MoveObject> moves, int turn)
     {
-        if (endSquare / 8 == promotionRank)
+        if (endSquare / 8 == 0 || endSquare / 8 == 7)
         {
             if (turn == 0)
             {

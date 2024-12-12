@@ -235,7 +235,7 @@ public static class MoveGenerator
     {
         int[] shadowBoard = (int[])board.Clone();
 
-        ApplyMove(shadowBoard, move);
+        ApplyMove(shadowBoard, move, turn);
         MoveHandler.RestoreStateFromSnapshot();
 
         int opponentKingPosition = -1;
@@ -435,11 +435,11 @@ public static class MoveGenerator
             board[move.StartSquare] = 0;
         }
     }
-    private static int[] ApplyMove(int[] board, MoveObject move)
+    private static int[] ApplyMove(int[] board, MoveObject move, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
         MoveHandler.RegisterStaticStates();
-        MoveHandler.MakeMove(shadowBoard, move);
+        MoveHandler.MakeMove(shadowBoard, move, turn);
         return shadowBoard;
     }
 
