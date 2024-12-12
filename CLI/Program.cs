@@ -17,14 +17,14 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11";
+string fen = "8/7P/6K1/k7/8/8/3p4/8 w - - 0 1";
 
 Globals globals = Globals.FenReader(fen);
 
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-int perftDepth = 2;
+int perftDepth = 6;
 RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
@@ -62,7 +62,7 @@ void Run()
 
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, Globals.MaxDepth);
 
-        MoveHandler.MakeMove(globals.ChessBoard, move);
+        MoveHandler.MakeMove(globals.ChessBoard, move, Globals.Turn);
 
         Console.Beep(800, 70);
 
@@ -253,117 +253,5 @@ void RunPerft(string fen, Globals globals, int perftDepth)
 }
 #endregion
 
-#region UCI
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////  UCI   /////////////////////////////////////////////////////////////////////////// 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-StartUCIMode();
-void StartUCIMode()
-{
-    bool uciModeActive = true;
 
-    while (uciModeActive)
-    {
-        string input = Console.ReadLine();
-        if (input == null)
-        {
-            continue; // Ignore null inputs
-        }
-
-        if (input.StartsWith("uci"))
-        {
-            Console.WriteLine("id name KChess.v6");
-            Console.WriteLine("id author Khashayar Nariman");
-            Console.WriteLine("uciok");
-        }
-        else if (input.StartsWith("isready"))
-        {
-            Console.WriteLine("readyok");
-        }
-        else if (input.StartsWith("position"))
-        {
-            HandlePositionCommand(input);
-        }
-        else if (input.StartsWith("go"))
-        {
-            HandleGoCommand(input);
-        }
-        else if (input.StartsWith("stop"))
-        {
-            Console.WriteLine($"bestmove {Globals.ConvertMoveToString(Globals.LastMoveMade)}");
-        }
-        else if (input.StartsWith("quit"))
-        {
-            uciModeActive = false;
-        }
-    }
-}
-
-void HandlePositionCommand(string input)
-{
-    if (input.StartsWith("position startpos"))
-    {
-        globals = Globals.FenReader(fen);
-    }
-    else if (input.StartsWith("position fen"))
-    {
-        string fen = input.Substring(13);
-        globals = Globals.FenReader(fen);
-        // FEN reader should correctly initialize the turn based on the FEN string
-    }
-
-    string[] parts = input.Split(' ');
-    int moveIndex = Array.IndexOf(parts, "moves");
-    if (moveIndex != -1)
-    {
-        for (int i = moveIndex + 1; i < parts.Length; i++)
-        {
-            MoveObject move = Globals.ConvertStringToMoveObject(parts[i]);
-            MoveHandler.MakeMove(globals.ChessBoard, move);
-            //Globals.Turn ^= 1; // Switch turns after each move
-        }
-    }
-}
-
-void HandleGoCommand(string input)
-{
-    // Set up time controls, etc., from the "go" command here
-    // For simplicity, we use max depth and max time as fixed
-    int maxDepth = Globals.MaxDepth;
-    TimeSpan maxTime = TimeSpan.FromSeconds(10);
-
-    if (input.Contains("depth"))
-    {
-        var parts = input.Split(' ');
-        for (int i = 0; i < parts.Length; i++)
-        {
-            if (parts[i] == "depth" && i + 1 < parts.Length && int.TryParse(parts[i + 1], out int depth))
-            {
-                maxDepth = depth;
-                break;
-            }
-        }
-    }
-
-    try
-    {
-        // Determine which side is to move based on Globals.Turn
-        MoveObject bestMove = Search.GetBestMove(globals.ChessBoard, Globals.Turn, maxDepth);
-        string bestMoveString = Globals.ConvertMoveToString(bestMove);
-
-        Console.WriteLine($"bestmove {bestMoveString}");
-        Globals.LastMoveMade = bestMove;
-
-        // Apply the move on the board
-        MoveHandler.MakeMove(globals.ChessBoard, bestMove);
-        Globals.Turn ^= 1;  // Switch turns after making a move
-        Globals.CurrentFEN = Globals.BoardToFen(globals.ChessBoard, Globals.Turn);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error during move calculation: {ex.Message}");
-    }
-}
-
-#endregion

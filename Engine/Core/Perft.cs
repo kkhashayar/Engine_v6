@@ -47,11 +47,11 @@ public static class Perft
             var targetSquare = board[move.EndSquare];
             var promotedTo = move.PromotionPiece;
 
-            MoveHandler.MakeMove(board, move);
+            MoveHandler.MakeMove(board, move, turn);
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 100, move);
+            //ShowDebugBoard(board, 400, move);
             ////////////////////////////////////   DEBUG BOARD 
             ///
             ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
