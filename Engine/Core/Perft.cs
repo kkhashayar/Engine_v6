@@ -40,24 +40,25 @@ public static class Perft
 
         foreach (MoveObject move in moves)
         {
-            // int[] shadowBoard = (int[])board.Clone();
             MoveHandler.RegisterStaticStates();
 
+            int[] shadowBoard = (int[])board.Clone();
+            
             var pieceMoving = move.pieceType;
-            var targetSquare = board[move.EndSquare];
+            var targetSquare = shadowBoard[move.EndSquare];
             var promotedTo = move.PromotionPiece;
 
-            MoveHandler.MakeMove(board, move, turn);
+            MoveHandler.MakeMove(shadowBoard, move, turn);
 
             ////////////////////////////////////   DEBUG BOARD 
             //count++;
-            //ShowDebugBoard(board, 400, move);
+            //ShowDebugBoard(shadowBoard, 100, move);
             ////////////////////////////////////   DEBUG BOARD 
             ///
-            ulong childNodes = CalculateNodes(board, depth - 1, turn ^ 1, maxDepth);
+            ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);
 
             MoveHandler.RestoreStateFromSnapshot();
-            MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
+            //MoveHandler.UndoMove(board, move, pieceMoving, targetSquare, promotedTo);
             
             nodes += childNodes;
             if (depth == maxDepth)

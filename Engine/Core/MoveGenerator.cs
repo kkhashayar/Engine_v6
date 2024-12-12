@@ -1,17 +1,16 @@
 ﻿using Engine.Core;
-using Engine.Enums;
 using Engine.PieceMotions;
 
 namespace Engine;
 
 public static class MoveGenerator
 {
-    static Globals globals = new();
     static Result result = new();
     
     //////////////////////////////////////   ENGINE CORE LOOP 
     public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
+        /// Useful information for evaluation
         int whitePieces = chessBoard.Where(p => Piece.IsWhite(p)).Count();
         int blackPieces = chessBoard.Where(p => Piece.IsBlack(p)).Count();
         int totalPiecesOnTheBoard = whitePieces + blackPieces;
@@ -58,7 +57,7 @@ public static class MoveGenerator
                             move.IsCapture = true;
 
                         }
-                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+                        //move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
                         if (move.pieceType == 1)
                         {
@@ -92,7 +91,7 @@ public static class MoveGenerator
                         {
                             move.IsCapture = true;
                         }
-                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+                        //move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
                         if (move.pieceType == 11)
                         {
@@ -180,6 +179,7 @@ public static class MoveGenerator
         return pseudoMoves;
     }
 
+    // Legacy version 
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
@@ -189,12 +189,12 @@ public static class MoveGenerator
             if (move.LongCastle)
             {
                 var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
-                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58)) return false;
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 59 || bMove.EndSquare == 58 || bMove.EndSquare == 60)) return false;
             }
             else if (move.ShortCastle)
             {
                 var blackResponseMovesonCastle = GeneratePseudoLegalMoves(shadowBoard, 1);
-                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62)) return false;
+                if (blackResponseMovesonCastle.Any(bMove => bMove.EndSquare == 61 || bMove.EndSquare == 62 || bMove.EndSquare == 60)) return false;
             }
 
             MakeMove(move, shadowBoard);
@@ -227,7 +227,10 @@ public static class MoveGenerator
 
         if (whiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
-        move.IsCheck = IsMoveCheck(move, board, turn); // Set IsCheck property
+
+
+        // In fact we don't even need this check for check :D 
+        //move.IsCheck = IsMoveCheck(move, board, turn); // Set IsCheck property
         return true;
     }
 

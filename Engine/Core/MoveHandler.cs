@@ -34,13 +34,13 @@ public static class MoveHandler
                 }
                 /////////////////////////////////// Castling   
 
-                if (move.pieceType == 99 && move.LongCastle)
+                else if (move.pieceType == 99 && move.LongCastle)
                 {
                     board[56] = 0; board[59] = 5;
                     
                 }
 
-                if (move.pieceType == 99 && move.ShortCastle)
+                else if (move.pieceType == 99 && move.ShortCastle)
                 {
                     board[63] = 0; board[61] = 5;
                     
@@ -69,12 +69,12 @@ public static class MoveHandler
                 }
 
 
-                if (move.pieceType == 109 && move.LongCastle)
+                else if (move.pieceType == 109 && move.LongCastle)
                 {
                     board[0] = 0; board[3] = 15;
                     
                 }
-                if (move.pieceType == 109 && move.ShortCastle)
+                else if (move.pieceType == 109 && move.ShortCastle)
                 {
                     board[7] = 0; board[5] = 15;
                     
@@ -96,18 +96,21 @@ public static class MoveHandler
             board[move.StartSquare] = move.pieceType;
         }
 
-        if (move.pieceType == 1)
+        else if (move.pieceType == 9)
         {
             if (move.ShortCastle)
             {
                 board[61] = 0;
+                board[62] = 0;
                 board[63] = 5;
 
             }
 
-            if (move.LongCastle)
+            else if (move.LongCastle)
             {
                 board[59] = 0;
+                board[58] = 0;
+                board[57] = 0;
                 board[56] = 5;
 
             }
@@ -115,7 +118,7 @@ public static class MoveHandler
         }
 
 
-        if (move.pieceType == 109)
+        else if (move.pieceType == 109)
         {
             if (move.LongCastle)
             {
@@ -125,7 +128,7 @@ public static class MoveHandler
 
             }
 
-            if (move.ShortCastle)
+            else if (move.ShortCastle)
             {
                 board[5] = 0;
                 board[7] = 15;
@@ -192,3 +195,14 @@ public static class MoveHandler
         Globals.Turn = StateSnapshotBase.Turn;
     }
 }
+
+/*
+       00, 01,  02,  03,  04,  05,  06,  07,
+       08, 09,  10,  11,  12,  13,  14,  15,
+       16, 17,  18,  19,  20,  21,  22,  23,
+       24, 25,  26,  27,  28,  29,  30,  31,
+       32, 33,  34,  35,  36,  37,  38,  39,
+       40, 41,  42,  43,  44,  45,  46,  47,
+       48, 49,  50,  51,  52,  53,  54,  55,
+       56, 57,  58,  59,  60,  61,  62,  63
+ */
