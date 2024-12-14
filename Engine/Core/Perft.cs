@@ -51,8 +51,8 @@ public static class Perft
             MoveHandler.MakeMove(shadowBoard, move, turn);
 
             ////////////////////////////////////   DEBUG BOARD 
-            //count++;
-            //ShowDebugBoard(shadowBoard, 100, move);
+            count++;
+            ShowDebugBoard(shadowBoard, 50, move);
             ////////////////////////////////////   DEBUG BOARD 
             ///
             ulong childNodes = CalculateNodes(shadowBoard, depth - 1, turn ^ 1, maxDepth);

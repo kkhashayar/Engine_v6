@@ -17,14 +17,14 @@ using Engine.External_Resources;
 // test fen:  8/8/3rk3/8/8/5K2/8/8 b - - 0 1      Kkr
 // test fen:  8/8/4k3/8/8/8/1B2K3/1B6 w - - 0 1   KkBB
 // Standard: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-string fen = "8/8/3k4/8/4R3/3K4/8/8 w - - 0 1";
+string fen = "8/8/8/8/1p1N4/1Bk1K3/3N4/b7 w - - 0 1";
 
 Globals globals = Globals.FenReader(fen);
 
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 4;
+//int perftDepth =5;
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
@@ -37,7 +37,7 @@ Globals.EndGameTime = 12;
 Globals.MaxDepth = 20;
 Globals.QuQuiescenceSwitch = true;
 Globals.QuiescenceDepth = 2;
-Globals.DepthBalancer = 0;
+Globals.DepthBalancer = 1;
 
 Run();
 Console.Clear();
