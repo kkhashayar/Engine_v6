@@ -24,20 +24,20 @@ Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 4;
+//int perftDepth = 7;
 //RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 
 
 ///////// SETTINGS
-Globals.OpeningTime = 5;
-Globals.MiddleGameTime = 30;
-Globals.EndGameTime = 12;
+Globals.OpeningTime = 20;
+Globals.MiddleGameTime = 35;
+Globals.EndGameTime = 20;
 Globals.MaxDepth = 20;
 Globals.QuQuiescenceSwitch = true;
 Globals.QuiescenceDepth = 2;
-Globals.DepthBalancer = 0;
+Globals.DepthBalancer = 1;
 
 Run();
 Console.Clear();

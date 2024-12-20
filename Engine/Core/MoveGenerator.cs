@@ -44,12 +44,9 @@ public static class MoveGenerator
                 for (int i = 0; i < whitePseudoMoves.Count; i++)
                 {
                     var move = whitePseudoMoves[i];
-                    // Legacy version 
+                     
                     if (IsMoveLegal(move, chessBoard, turn))
                     
-
-                    // Bitboard integration version
-                    //if (IsLegalBitboardVer(chessBoard, move, turn))
                     {
 
                         if (chessBoard[move.EndSquare] != 0)
@@ -140,9 +137,9 @@ public static class MoveGenerator
             {
                 switch (piece)
                 {
-                    case 99: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   
+                    case 99: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   // using new hard coded masks
                         break;
-                    case 3:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); 
+                    case 3:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); // using new hard coded masks
                         break;
                     case 5:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   
                         break;
@@ -160,9 +157,9 @@ public static class MoveGenerator
             {
                 switch (piece)
                 {
-                    case 109: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                    case 109: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   // using new hard coded masks
                         break;
-                    case 13:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
+                    case 13:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); // using new hard coded masks 
                         break;
                     case 15:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
                         break;
@@ -234,39 +231,7 @@ public static class MoveGenerator
         return true;
     }
 
-    private static bool IsMoveCheck(MoveObject move, int[] board, int turn)
-    {
-        int[] shadowBoard = (int[])board.Clone();
-
-        ApplyMove(shadowBoard, move, turn);
-        MoveHandler.RestoreStateFromSnapshot();
-
-        int opponentKingPosition = -1;
-
-        if (turn == 0) opponentKingPosition = Globals.GetBlackKingSquare(board);
-        else if (turn == 1) opponentKingPosition = Globals.GetWhiteKingSquare(board);
-
-        if (move.EndSquare == opponentKingPosition)
-        {
-            move.IsCheck = true;
-            return true;
-        }
-
-        var pieceMoving = move.pieceType;
-
-        if (turn == 0) opponentKingPosition = Globals.GetBlackKingSquare(shadowBoard);
-        else if (turn == 1) opponentKingPosition = Globals.GetWhiteKingSquare(shadowBoard);
-
-        var attacks = GetAllAttacksForPiece(move, shadowBoard, turn);
-
-        if (attacks.Contains(opponentKingPosition))
-        {
-            move.IsCheck = true;
-            return true;
-        }
-        return false;
-    }
-
+    
 
     internal static bool IsLegalBitboardVer(int[] chessBoard, MoveObject move, int turn)
     {
@@ -279,7 +244,7 @@ public static class MoveGenerator
         for (int square = 0; square < 64; square++)
         {
             int piece = chessBoard[square];
-            if (piece != 0) continue;
+            if (piece == 0) continue; // Fixed: Skip empty squares, not occupied ones.
 
             if (Piece.IsWhite(piece))
             {
@@ -307,12 +272,12 @@ public static class MoveGenerator
             }
         }
 
-        // current state of position"", white, and black pieces
+        // Current state of positions for all pieces
         allWhitePieces = wPawns | wKnights | wBishops | wRooks | wQueens | wKing;
         allBlackPieces = bPawns | bKnights | bBishops | bRooks | bQueens | bKing;
         allpieces = allWhitePieces | allBlackPieces;
 
-        // Make the move on the bitboards
+        // Identify the moving piece bitboard
         ulong pieceBitboard = 0;
         if (Piece.IsWhite(move.pieceType))
         {
@@ -338,30 +303,80 @@ public static class MoveGenerator
                 case 109: pieceBitboard = bKing; break;
             }
         }
+
         // Clear start square
         pieceBitboard &= ~(1UL << move.StartSquare);
         // Set end square
         pieceBitboard |= 1UL << move.EndSquare;
 
-        //update all pieces
+        // Reassign the updated piece bitboard back
+        if (Piece.IsWhite(move.pieceType))
+        {
+            switch (move.pieceType)
+            {
+                case 1: wPawns = pieceBitboard; break;
+                case 3: wKnights = pieceBitboard; break;
+                case 4: wBishops = pieceBitboard; break;
+                case 5: wRooks = pieceBitboard; break;
+                case 9: wQueens = pieceBitboard; break;
+                case 99: wKing = pieceBitboard; break;
+            }
+            allWhitePieces = wPawns | wKnights | wBishops | wRooks | wQueens | wKing;
+        }
+        else
+        {
+            switch (move.pieceType)
+            {
+                case 11: bPawns = pieceBitboard; break;
+                case 13: bKnights = pieceBitboard; break;
+                case 14: bBishops = pieceBitboard; break;
+                case 15: bRooks = pieceBitboard; break;
+                case 19: bQueens = pieceBitboard; break;
+                case 109: bKing = pieceBitboard; break;
+            }
+            allBlackPieces = bPawns | bKnights | bBishops | bRooks | bQueens | bKing;
+        }
         allpieces &= ~(1UL << move.StartSquare);
         allpieces |= 1UL << move.EndSquare;
 
+        // Update king position if it moves
+        ulong kingPosition = (turn == 0) ? wKing : bKing;
+        if (move.pieceType == 99 || move.pieceType == 109)
+        {
+            kingPosition = (1UL << move.EndSquare);
+
+            // Check if the king's destination is adjacent to the opponent's king
+            ulong opponentKing = (turn == 0) ? bKing : wKing;
+            ulong opponentKingAttacks = GenerateKingAttacks(opponentKing);
+
+            if ((kingPosition & opponentKingAttacks) != 0)
+            {
+                return false; // Move is illegal as the king moves adjacent to the opponent's king
+            }
+        }
 
         // Check if move leaves the king in check
-        ulong kingPosition = (turn == 0)? wKing : bKing;
-        bool check = IsKingInCheck(kingPosition, allpieces, allWhitePieces, allBlackPieces, turn, move, chessBoard); 
-        // if not, return true
-        if(!check) return true; 
-        //or -->
-        return false;
+        bool check = IsKingInCheck(kingPosition, allpieces, allWhitePieces, allBlackPieces, turn, move, chessBoard);
+        return !check;
     }
-
+    private static ulong GenerateKingAttacks(ulong kingPosition)
+    {
+        ulong attacks = 0;
+        attacks |= (kingPosition << 8); // Up
+        attacks |= (kingPosition >> 8); // Down
+        attacks |= (kingPosition << 1) & ~0x8080808080808080UL; // Right
+        attacks |= (kingPosition >> 1) & ~0x0101010101010101UL; // Left
+        attacks |= (kingPosition << 9) & ~0x8080808080808080UL; // Up-Right
+        attacks |= (kingPosition << 7) & ~0x0101010101010101UL; // Up-Left
+        attacks |= (kingPosition >> 7) & ~0x8080808080808080UL; // Down-Right
+        attacks |= (kingPosition >> 9) & ~0x0101010101010101UL; // Down-Left
+        return attacks;
+    }
     private static bool IsKingInCheck(ulong kingPosition, ulong allPieces, ulong whitePieces, ulong blackPieces,
                                   int turn, MoveObject move, int[] chessBoard)
     {
         // Get all attack squares in int format
-        var allAttacks = GetAllAttacksForPiece(move, chessBoard, turn);
+        var allAttacks = GetAllAttacksForPiece(move, chessBoard, 1 - turn); // Switched turn to opponent's.
 
         // Convert the attack squares to ulong format
         ulong attackBitboard = 0;
@@ -375,7 +390,8 @@ public static class MoveGenerator
     }
 
 
-    private static List<int> GetAllAttacksForPiece(MoveObject move, int[] board, int turn)
+
+    public static List<int> GetAllAttacksForPiece(MoveObject move, int[] board, int turn)
     {
         int piece = move.pieceType;
         int square = move.EndSquare;

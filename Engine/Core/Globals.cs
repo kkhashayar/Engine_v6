@@ -37,7 +37,7 @@ public sealed class Globals
     public static int InitialTurn { get; set; }
     public static bool InitialDepthAdjusted { get; set; } = false;
     public static string CurrentFEN { get; set; }
-    
+
     //////////// SEARCH SETTINGS ////////////
     public static int OpeningTime { get; set; } = 0;
     public static int MiddleGameTime { get; set; } = 0;
@@ -97,17 +97,7 @@ public sealed class Globals
         33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62
     };
 
-    public static readonly int[] BoardIndices =
-   {
-        0,  1,   2,   3,   4,   5,   6,   7,
-        8,  9,  10,  11,  12,  13,  14,  15,
-       16, 17,  18,  19,  20,  21,  22,  23,
-       24, 25,  26,  27,  28,  29,  30,  31,
-       32, 33,  34,  35,  36,  37,  38,  39,
-       40, 41,  42,  43,  44,  45,  46,  47,
-       48, 49,  50,  51,  52,  53,  54,  55,
-       56, 57,  58,  59,  60,  61,  62,  63
-   };
+
 
     public static readonly int[] PawnJumpCaptureSquares =
     {
@@ -127,7 +117,17 @@ public sealed class Globals
         "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
-
+    public static readonly int[] BoardIndices =
+    {
+        0,  1,   2,   3,   4,   5,   6,   7,
+        8,  9,  10,  11,  12,  13,  14,  15,
+       16, 17,  18,  19,  20,  21,  22,  23,
+       24, 25,  26,  27,  28,  29,  30,  31,
+       32, 33,  34,  35,  36,  37,  38,  39,
+       40, 41,  42,  43,  44,  45,  46,  47,
+       48, 49,  50,  51,  52,  53,  54,  55,
+       56, 57,  58,  59,  60,  61,  62,  63
+    };
     public static int GetBlackKingSquare(int[] board)
     {
         for (int i = 0; i < 64; i++)
@@ -504,11 +504,11 @@ public sealed class Globals
 
         return fenBuilder.ToString();
     }
-    
 
-    public static EndGames GetEndGameType(int[]board) 
-    { 
-        if(IsSingleRookOnBoard(board)) return EndGames.RookKing;
+
+    public static EndGames GetEndGameType(int[] board)
+    {
+        if (IsSingleRookOnBoard(board)) return EndGames.RookKing;
         return EndGames.None;
     }
 

@@ -30,7 +30,7 @@ public static class Search
             else Globals.Stalemate = true;
             return bestMove;
         }
-
+     
         // Iterative deepening with timing control
         for (int currentDepth = 2; currentDepth <= adjustedMaxDepth; currentDepth += 2)
         {
@@ -91,7 +91,7 @@ public static class Search
                 bestMove = currentBestMove; // Update the best move
                 principalVariation = currentPV; // Update the PV
             }
-            Console.WriteLine();
+
             Console.WriteLine($"Depth:{currentDepth} score:{alpha} Time:{stopwatch.Elapsed.TotalSeconds} PV:{string.Join(" ", principalVariation.Select(m => Globals.MoveToString(m)))}");
 
 
