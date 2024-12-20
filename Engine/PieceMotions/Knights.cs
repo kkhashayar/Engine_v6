@@ -12,7 +12,9 @@ internal static class Knights
         List<MoveObject> moves = new List<MoveObject>();
         ulong knightBitboard = 1UL << square; // Create a bitboard for the knight's position
 
-        ulong attacks = GetKnightAttacks(square);
+        //ulong attacks = GetKnightAttacks(square);
+
+        ulong attacks = Masks.Knight[square];
 
         while (attacks != 0)
         {

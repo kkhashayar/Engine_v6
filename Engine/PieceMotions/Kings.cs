@@ -107,7 +107,9 @@ internal static class Kings
         List<MoveObject> moves = new List<MoveObject>();
         ulong kingBitboard = 1UL << square; // Create a bitboard for the king's position
 
-        ulong attacks = GetKingAttacks(square);
+        //ulong attacks = GetKingAttacks(square);
+
+        ulong attacks = Masks.King[square];
 
         while (attacks != 0)
         {
@@ -194,32 +196,32 @@ internal static class Kings
 
     static List<int> GetMasksForSquare(int square)
     {
-        //List<int> squares = new();
+        List<int> squares = new();
 
-        //int[] KingDirections = new int[8] { 9, 8, 7, 1, -9, -7, -8, -1 };
+        int[] kingdirections = new int[8] { 9, 8, 7, 1, -9, -7, -8, -1 };
 
-        //int originalRank = square / 8;
-        //int originalFile = square % 8;
+        int originalrank = square / 8;
+        int originalfile = square % 8;
 
-        //foreach (int direction in KingDirections)
-        //{
-        //    int desSquare = square + direction;
+        foreach (int direction in kingdirections)
+        {
+            int dessquare = square + direction;
 
-        //    // Calculate rank and file after the move
-        //    int newRank = desSquare / 8;
-        //    int newFile = desSquare % 8;
+            // calculate rank and file after the move
+            int newrank = dessquare / 8;
+            int newfile = dessquare % 8;
 
-        //    // Check if move is within one rank/file step from the original position
-        //    if (Math.Abs(newRank - originalRank) <= 1 && Math.Abs(newFile - originalFile) <= 1)
-        //    {
-        //        if (Globals.IsValidSquare(desSquare))
-        //        {
-        //            squares.Add(desSquare);
-        //        }
-        //    }
-        //}
+            // check if move is within one rank/file step from the original position
+            if (Math.Abs(newrank - originalrank) <= 1 && Math.Abs(newfile - originalfile) <= 1)
+            {
+                if (Globals.IsValidSquare(dessquare))
+                {
+                    squares.Add(dessquare);
+                }
+            }
+        }
 
-        //return squares;
+        return squares;
         return new List<int>(KingMoves[square]); // //no difference to use hard coded or generate on the run
     }
 
