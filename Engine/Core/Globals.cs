@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using Engine.Enums;
 namespace Engine.Core;
 
@@ -28,15 +27,12 @@ public sealed class Globals
     public static bool LastMoveWasPawn { get; set; } = false;
 
     public static List<MoveObject> PrincipalVariation = new List<MoveObject>();
-    public static MoveObject? LastMoveMade { get; set; } = null;
     // Tracking enpassant 
     public static int LastEndSquare { get; set; } = -1;
 
     public static List<MoveObject> moveHistory = new List<MoveObject>();
     public static int Turn { get; set; }
     public static int InitialTurn { get; set; }
-    public static bool InitialDepthAdjusted { get; set; } = false;
-    public static string CurrentFEN { get; set; }
 
     //////////// SEARCH SETTINGS ////////////
     public static int OpeningTime { get; set; } = 0;
@@ -86,18 +82,7 @@ public sealed class Globals
         1, 2, 3, 4, 5, 6, 7, 8
     };
 
-    public static readonly int[] LightSquares =
-    {
-        0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31,
-        32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63
-    };
-    public static readonly int[] DarkSquares =
-    {
-        1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30,
-        33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62
-    };
-
-
+  
 
     public static readonly int[] PawnJumpCaptureSquares =
     {
@@ -117,6 +102,8 @@ public sealed class Globals
         "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
         "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
     };
+
+
     public static readonly int[] BoardIndices =
     {
         0,  1,   2,   3,   4,   5,   6,   7,
@@ -128,6 +115,7 @@ public sealed class Globals
        48, 49,  50,  51,  52,  53,  54,  55,
        56, 57,  58,  59,  60,  61,  62,  63
     };
+
     public static int GetBlackKingSquare(int[] board)
     {
         for (int i = 0; i < 64; i++)
@@ -165,7 +153,46 @@ public sealed class Globals
         return Coordinates[squareIndex];
     }
 
+    public static string FenWriter(int[] board, int turn)
+    {
+        StringBuilder fenBuilder = new StringBuilder();
 
+        int emptyCount = 0;
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (board[i] == 0)
+            {
+                emptyCount++;
+            }
+            else
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                fenBuilder.Append(GetFenSymbol(board[i]));
+            }
+
+            if ((i + 1) % 8 == 0)
+            {
+                if (emptyCount > 0)
+                {
+                    fenBuilder.Append(emptyCount);
+                    emptyCount = 0;
+                }
+                if (i < board.Length - 1)
+                {
+                    fenBuilder.Append('/');
+                }
+            }
+        }
+
+        fenBuilder.Append(turn == 0 ? " w " : " b ");
+        fenBuilder.Append("- - 0 1"); // Default castling rights
+
+        return fenBuilder.ToString();
+    }
     public static Globals FenReader(string fen)
     {
 
@@ -294,54 +321,6 @@ public sealed class Globals
         }
     }
 
-    public static bool IsDiagonalPathClear(int startSquare, int endSquare, int[] board)
-    {
-        int direction = GetDiagonalDirection(startSquare, endSquare);
-        int currentSquare = startSquare + direction;
-        bool pieceColor = Piece.IsBlack(board[startSquare]);
-
-        while (currentSquare != endSquare)
-        {
-            if (board[currentSquare] != 0) return false;
-            currentSquare += direction;
-        }
-
-        // The path is clear if the end square is empty or occupied by an opponent's piece
-        return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
-    }
-
-    public static int GetDiagonalDirection(int startSquare, int endSquare)
-    {
-        int rankDifference = endSquare / 8 - startSquare / 8;
-        int fileDifference = endSquare % 8 - startSquare % 8;
-
-        if (rankDifference > 0 && fileDifference > 0)
-            return 9; // Moving up-right
-        else if (rankDifference > 0 && fileDifference < 0)
-            return 7; // Moving up-left
-        else if (rankDifference < 0 && fileDifference > 0)
-            return -7; // Moving down-right
-        else
-            return -9; // Moving down-left
-    }
-
-    // Diagonal Breaks Mask
-    public static bool IsDiagBreaksMask(int square, int direction, int originalRank, int originalFile)
-    {
-        int newRank = square / 8;
-        int newFile = square % 8;
-
-        // Check if the square is outside the bounds of the board
-        if (newRank < 0 || newRank > 7 || newFile < 0 || newFile > 7)
-            return true;
-
-        // Check for diagonal consistency
-        int rankDifference = Math.Abs(newRank - originalRank);
-        int fileDifference = Math.Abs(newFile - originalFile);
-
-        return rankDifference != fileDifference;
-    }
-
     // Vertical Horizontal Breaks Mask
     public static bool IsVerHorBreaksMask(int square, int direction, int originalRank, int originalFile)
     {
@@ -388,13 +367,6 @@ public sealed class Globals
         }
     }
 
-    static List<char> Unicodes = new List<char>
-    {
-            '\u2659','\u2658','\u2657','\u2656',
-            '\u2655','\u2654','\u265F','\u265E',
-            '\u265D','\u265C','\u265B','\u265A'
-    };
-
     // Only in use with old cli version
     public static string MoveToString(MoveObject move)
     {
@@ -418,93 +390,6 @@ public sealed class Globals
 
         return moveString;
     }
-
-
-
-    // Only in use with UCI 
-    public static string ConvertMoveToString(MoveObject move)
-    {
-        int startSquare = move.StartSquare;
-        int endSquare = move.EndSquare;
-
-        char startFile = (char)('a' + startSquare % 8);
-        char startRank = (char)('1' + startSquare / 8);
-        char endFile = (char)('a' + endSquare % 8);
-        char endRank = (char)('1' + endSquare / 8);
-
-        return $"{startFile}{startRank}{endFile}{endRank}";
-    }
-
-    public static MoveObject ConvertStringToMoveObject(string move)
-    {
-        // Extract file and rank from the string
-        char startFile = move[0];
-        char startRank = move[1];
-        char endFile = move[2];
-        char endRank = move[3];
-
-        // Convert characters back to board indices
-        int startSquare = (startRank - '1') * 8 + (startFile - 'a');
-        int endSquare = (endRank - '1') * 8 + (endFile - 'a');
-
-        // Create a MoveObject with the calculated indices
-        return new MoveObject
-        {
-            StartSquare = startSquare,
-            EndSquare = endSquare,
-            pieceType = 0,
-            CapturedPiece = 0,
-            PromotionPiece = 0,
-            ShortCastle = false,
-            LongCastle = false,
-            IsCapture = false,
-            IsEnPassant = false,
-            IsPromotion = false,
-            IsCheck = false,
-            Score = 0
-        };
-    }
-    public static string BoardToFen(int[] board, int turn)
-    {
-        StringBuilder fenBuilder = new StringBuilder();
-
-        int emptyCount = 0;
-        for (int i = 0; i < board.Length; i++)
-        {
-            if (board[i] == 0)
-            {
-                emptyCount++;
-            }
-            else
-            {
-                if (emptyCount > 0)
-                {
-                    fenBuilder.Append(emptyCount);
-                    emptyCount = 0;
-                }
-                fenBuilder.Append(GetFenSymbol(board[i]));
-            }
-
-            if ((i + 1) % 8 == 0)
-            {
-                if (emptyCount > 0)
-                {
-                    fenBuilder.Append(emptyCount);
-                    emptyCount = 0;
-                }
-                if (i < board.Length - 1)
-                {
-                    fenBuilder.Append('/');
-                }
-            }
-        }
-
-        fenBuilder.Append(turn == 0 ? " w " : " b ");
-        fenBuilder.Append("- - 0 1"); // Default castling rights
-
-        return fenBuilder.ToString();
-    }
-
 
     public static EndGames GetEndGameType(int[] board)
     {
@@ -536,19 +421,7 @@ public sealed class Globals
         return rookCount == 1;
     }
 
-    // King based end games.
-    public static int ManhattanDistance(MoveObject move, int otherKingPosition)
-    {
-        int endFile = move.EndSquare % 8;
-        int endRank = move.EndSquare / 8;
 
-        int kingFile = otherKingPosition % 8;
-        int kingRank = otherKingPosition / 8;
-
-        int distance = Math.Abs(endFile - kingFile) + Math.Abs(endRank - kingRank);
-
-        return distance;
-    }
     private static char GetFenSymbol(int piece)
     {
         return PieceToFenMap.TryGetValue(piece, out char fenSymbol) ? fenSymbol : ' ';
