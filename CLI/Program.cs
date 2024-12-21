@@ -4,26 +4,24 @@ using Engine.External_Resources;
 
 #region Entry loop
 
-string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
+string fen = "8/8/3k4/8/4R3/3K4/8/8 w - - 0 1";
 
 Globals globals = Globals.FenReader(fen);
 
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-int perftDepth = 2;
-RunPerft(fen, globals, perftDepth);
+//int perftDepth = 2;
+//RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
-
-
 ///////// SETTINGS
-Globals.OpeningTime = 10;
+Globals.OpeningTime = 15;
 Globals.MiddleGameTime = 45;
-Globals.EndGameTime = 25;
+Globals.EndGameTime = 15;
 Globals.MaxDepth = 20;
 Globals.QuQuiescenceSwitch = true;
-Globals.QuiescenceDepth = 3;
+Globals.QuiescenceDepth = 2;
 Globals.DepthBalancer = 2;
 
 Run();
@@ -44,7 +42,8 @@ void Run()
     while (running)
     {
         MoveObject move = new MoveObject();
-        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn, Globals.MaxDepth);
+        move = Search.GetBestMove(globals.ChessBoard, Globals.Turn);
+        var testmove = move;
         MoveHandler.MakeMove(globals.ChessBoard, move, Globals.Turn);
 
         Console.Beep(800, 70);

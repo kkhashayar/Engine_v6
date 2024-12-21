@@ -10,7 +10,7 @@ public static class MoveGenerator
     //////////////////////////////////////   ENGINE CORE LOOP 
     public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
-        /// Useful information for evaluation
+        /// We will use them in evaluation
         int whitePieces = chessBoard.Where(p => Piece.IsWhite(p)).Count();
         int blackPieces = chessBoard.Where(p => Piece.IsBlack(p)).Count();
         int totalPiecesOnTheBoard = whitePieces + blackPieces;
@@ -46,18 +46,13 @@ public static class MoveGenerator
                     var move = whitePseudoMoves[i];
                     // Legacy version 
                     if (IsMoveLegal(move, chessBoard, turn))
-                    
-
-                    // Bitboard integration version
-                    //if (IsLegalBitboardVer(chessBoard, move, turn))
                     {
-
                         if (chessBoard[move.EndSquare] != 0)
                         {
                             move.IsCapture = true;
 
                         }
-                        //move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
                         if (move.pieceType == 1)
                         {
@@ -91,7 +86,7 @@ public static class MoveGenerator
                         {
                             move.IsCapture = true;
                         }
-                        //move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
                         if (move.pieceType == 11)
                         {
@@ -106,7 +101,6 @@ public static class MoveGenerator
                             {
                                 move.IsCapture = true;
                             }
-
                         }
 
                         result.Moves.Add(move);
@@ -122,8 +116,6 @@ public static class MoveGenerator
         }
         return result;
     }
-
-
     private static List<MoveObject> GeneratePseudoLegalMoves(int[] chessBoard, int turn)
     {
         
@@ -155,7 +147,6 @@ public static class MoveGenerator
                 }
             }
             // Generate moves for black pieces
-
             else if (turn == 1)
             {
                 switch (piece)
@@ -179,7 +170,7 @@ public static class MoveGenerator
         return pseudoMoves;
     }
 
-    // Legacy version 
+    
     private static bool IsMoveLegal(MoveObject move, int[] board, int turn)
     {
         int[] shadowBoard = (int[])board.Clone();
@@ -208,7 +199,7 @@ public static class MoveGenerator
             return true;
         }
 
-        // Black turn
+        
         if (move.LongCastle)
         {
             var whiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
@@ -227,10 +218,7 @@ public static class MoveGenerator
 
         if (whiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
-
-
-        // In fact we don't even need this check for check :D 
-        //move.IsCheck = IsMoveCheck(move, board, turn); // Set IsCheck property
+        move.IsCheck = IsMoveCheck(move, board, turn); 
         return true;
     }
 
@@ -267,114 +255,6 @@ public static class MoveGenerator
         return false;
     }
 
-
-    internal static bool IsLegalBitboardVer(int[] chessBoard, MoveObject move, int turn)
-    {
-        ulong wPawns = 0, wKnights = 0, wBishops = 0, wRooks = 0, wQueens = 0, wKing = 0;
-        ulong bPawns = 0, bKnights = 0, bBishops = 0, bRooks = 0, bQueens = 0, bKing = 0;
-
-        ulong allWhitePieces = 0, allBlackPieces = 0, allpieces = 0;
-
-        // Creates Bitboard version of the given chess board. 
-        for (int square = 0; square < 64; square++)
-        {
-            int piece = chessBoard[square];
-            if (piece != 0) continue;
-
-            if (Piece.IsWhite(piece))
-            {
-                switch (piece)
-                {
-                    case 1: wPawns |= 1UL << square; break;
-                    case 3: wKnights |= 1UL << square; break;
-                    case 4: wBishops |= 1UL << square; break;
-                    case 5: wRooks |= 1UL << square; break;
-                    case 9: wQueens |= 1UL << square; break;
-                    case 99: wKing |= 1UL << square; break;
-                }
-            }
-            else if (Piece.IsBlack(piece))
-            {
-                switch (piece)
-                {
-                    case 11: bPawns |= 1UL << square; break;
-                    case 13: bKnights |= 1UL << square; break;
-                    case 14: bBishops |= 1UL << square; break;
-                    case 15: bRooks |= 1UL << square; break;
-                    case 19: bQueens |= 1UL << square; break;
-                    case 109: bKing |= 1UL << square; break;
-                }
-            }
-        }
-
-        // current state of position"", white, and black pieces
-        allWhitePieces = wPawns | wKnights | wBishops | wRooks | wQueens | wKing;
-        allBlackPieces = bPawns | bKnights | bBishops | bRooks | bQueens | bKing;
-        allpieces = allWhitePieces | allBlackPieces;
-
-        // Make the move on the bitboards
-        ulong pieceBitboard = 0;
-        if (Piece.IsWhite(move.pieceType))
-        {
-            switch (move.pieceType)
-            {
-                case 1: pieceBitboard = wPawns; break;
-                case 3: pieceBitboard = wKnights; break;
-                case 4: pieceBitboard = wBishops; break;
-                case 5: pieceBitboard = wRooks; break;
-                case 9: pieceBitboard = wQueens; break;
-                case 99: pieceBitboard = wKing; break;
-            }
-        }
-        else if (Piece.IsBlack(move.pieceType))
-        {
-            switch (move.pieceType)
-            {
-                case 11: pieceBitboard = bPawns; break;
-                case 13: pieceBitboard = bKnights; break;
-                case 14: pieceBitboard = bBishops; break;
-                case 15: pieceBitboard = bRooks; break;
-                case 19: pieceBitboard = bQueens; break;
-                case 109: pieceBitboard = bKing; break;
-            }
-        }
-        // Clear start square
-        pieceBitboard &= ~(1UL << move.StartSquare);
-        // Set end square
-        pieceBitboard |= 1UL << move.EndSquare;
-
-        //update all pieces
-        allpieces &= ~(1UL << move.StartSquare);
-        allpieces |= 1UL << move.EndSquare;
-
-
-        // Check if move leaves the king in check
-        ulong kingPosition = (turn == 0)? wKing : bKing;
-        bool check = IsKingInCheck(kingPosition, allpieces, allWhitePieces, allBlackPieces, turn, move, chessBoard); 
-        // if not, return true
-        if(!check) return true; 
-        //or -->
-        return false;
-    }
-
-    private static bool IsKingInCheck(ulong kingPosition, ulong allPieces, ulong whitePieces, ulong blackPieces,
-                                  int turn, MoveObject move, int[] chessBoard)
-    {
-        // Get all attack squares in int format
-        var allAttacks = GetAllAttacksForPiece(move, chessBoard, turn);
-
-        // Convert the attack squares to ulong format
-        ulong attackBitboard = 0;
-        foreach (var square in allAttacks)
-        {
-            attackBitboard |= 1UL << square; // Set the corresponding bit
-        }
-
-        // Check if the king's position overlaps with attackBitboard
-        return (kingPosition & attackBitboard) != 0;
-    }
-
-
     private static List<int> GetAllAttacksForPiece(MoveObject move, int[] board, int turn)
     {
         int piece = move.pieceType;
@@ -410,9 +290,6 @@ public static class MoveGenerator
 
         return attacks;
     }
-
-
-
     // TODO: General check
     private static void MakeMove(MoveObject move, int[] board)
     {
