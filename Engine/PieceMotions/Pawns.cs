@@ -63,11 +63,11 @@ internal static class Pawns
                         if (potentialCaptureSquare == enPassantSquare)
                         {
                             int pawnBeingCapturedSquare = turn == 0 ? enPassantSquare + 8 : enPassantSquare - 8;
-                            if (board[pawnBeingCapturedSquare] == (turn == 0 ? 11 : 1))
+                            if (board[pawnBeingCapturedSquare] == (turn == 0 ? -1 : 1))
                             {
                                 MoveObject enPassantMove = new MoveObject
                                 {
-                                    pieceType = turn == 0 ? 1 : 11,
+                                    pieceType = turn == 0 ? 1 : -1,
                                     StartSquare = square,
                                     EndSquare = enPassantSquare,
                                     IsEnPassant = true
@@ -101,10 +101,10 @@ internal static class Pawns
             {
                 moves.AddRange(new[]
                 {
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = 11, IsPromotion = true, PromotionPiece = 19},
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = 11, IsPromotion = true, PromotionPiece = 15},
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = 11, IsPromotion = true, PromotionPiece = 14},
-                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = 11, IsPromotion = true, PromotionPiece = 13}
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = -1, IsPromotion = true, PromotionPiece = -9},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = -1, IsPromotion = true, PromotionPiece = -5},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = -1, IsPromotion = true, PromotionPiece = -4},
+                    new MoveObject { StartSquare = startSquare, EndSquare = endSquare, pieceType = -1, IsPromotion = true, PromotionPiece = -3}
                 });
             }
         }
@@ -113,7 +113,7 @@ internal static class Pawns
             // Regular pawn move
             moves.Add(new MoveObject
             {
-                pieceType = turn == 0 ? 1 : 11,
+                pieceType = turn == 0 ? 1 : -1,
                 StartSquare = startSquare,
                 EndSquare = endSquare
             });

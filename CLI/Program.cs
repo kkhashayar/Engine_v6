@@ -4,10 +4,15 @@ using Engine.External_Resources;
 
 #region Entry loop
 
-string fen = "";
+// fen: 6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1                mate in 3
+// fen: rn4k1/pp1r1pp1/1q1b4/5QN1/5N2/4P3/PP3PPP/3R1RK1 w - - 1 0           mate in 3
+// fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0          mate in 4
+// fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0     mate in 4
+// fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11      mate in 7
+
+string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
 
 Globals globals = Globals.FenReader(fen);
-
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
@@ -17,7 +22,7 @@ Globals globals = Globals.FenReader(fen);
 
 ///////// SETTINGS
 Globals.OpeningTime = 5;
-Globals.MiddleGameTime = 45;
+Globals.MiddleGameTime = 60;
 Globals.EndGameTime = 15;
 Globals.MaxDepth = 20;
 Globals.QuQuiescenceSwitch = true;

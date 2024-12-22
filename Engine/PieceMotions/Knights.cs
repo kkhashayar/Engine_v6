@@ -32,7 +32,7 @@ internal static class Knights
 
             moves.Add(new MoveObject
             {
-                pieceType = turn == 0 ? 3 : 13,
+                pieceType = turn == 0 ? 3 : -3,
                 StartSquare = square,
                 EndSquare = targetSquare
             });

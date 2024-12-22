@@ -28,7 +28,7 @@ internal static class Bishops
 
             moves.Add(new MoveObject
             {
-                pieceType = turn == 0 ? 4 : 14,
+                pieceType = turn == 0 ? 4 : -4,
                 StartSquare = square,
                 EndSquare = targetSquare
             });
