@@ -1,5 +1,6 @@
 ﻿using Engine.Core;
 using System.Diagnostics;
+using Engine.Enums;
 namespace Engine;
 
 public static class Search
@@ -154,8 +155,11 @@ public static class Search
 
     public static int Quiescence(int[] board, int alpha, int beta, int turn, ref List<MoveObject> pvLine, int depth)
     {
+       
         var moveGenResult = MoveGenerator.GenerateAllMoves(board, turn, true);
         int standPat = Evaluators.GetByMaterial(board, turn, moveGenResult.WhiteMovesCount, moveGenResult.BlackMovesCount, moveGenResult.GamePhase);
+
+        var captures = moveGenResult.Moves.Where(m => m.IsCapture).ToList();
 
         if (depth == 0)
         {
@@ -163,17 +167,8 @@ public static class Search
             return standPat;
         }
 
-        if (standPat >= beta)
-        {
-            return beta;
-        }
-        if (standPat > alpha)
-        {
-            alpha = standPat;
-        }
-
-
-        var captures = moveGenResult.Moves.Where(m => m.IsCapture).ToList();
+        if (standPat >= beta)  return beta;
+        if (standPat > alpha)  alpha = standPat;
 
         if (captures == null || captures.Count == 0)
         {
@@ -185,11 +180,19 @@ public static class Search
 
         foreach (var move in captures)
         {
+            
+
             MoveHandler.RegisterStaticStates();
 
             var pieceMoving = move.pieceType;
             var targetSquare = board[move.EndSquare];
             var promotedTo = move.PromotionPiece;
+
+            if (moveGenResult.GamePhase == GamePhase.Opening)
+            {
+
+                if (move.pieceType > targetSquare) continue;
+            }
             MoveHandler.MakeMove(board, move, turn);
 
             List<MoveObject> line = new List<MoveObject>();

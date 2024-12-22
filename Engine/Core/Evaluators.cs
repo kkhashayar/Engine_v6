@@ -13,54 +13,51 @@ internal static class Evaluators
         {
             int piece = chessBoard[i];
 
+
             switch (piece)
             {
-                case 1:
-                    score += 1;
-                    if (gamePhase == GamePhase.Opening) score += Pawns.GetSquareWeight(i, true);
-                    break;
-                case 3:
-                    score += 3;
-                    if (gamePhase == GamePhase.Opening) score += Knights.GetSquareWeight(i, true);
-                    break;
-                case 4:
-                    score += 3;
-                    if (gamePhase == GamePhase.Opening) score += Bishops.GetSquareWeight(i, true);
-                    break;
-                case 5:
+                case 1: score += 1;
+                    if (gamePhase == GamePhase.Opening) score += Pawns.GetSquareWeight(i, true);        break;
+                case 3: score += 3;
+                    if (gamePhase == GamePhase.Opening) score += Knights.GetSquareWeight(i, true);      break;
+                case 4: score += 3;
+                    if (gamePhase == GamePhase.Opening) score += Bishops.GetSquareWeight(i, true);      break;
+                
+                case 5: 
                     score += 5;
                     break;
-                case 9:
+                
+                case 9: 
                     score += 9;
                     break;
+                
                 case 1000:
                     score += 1000;
                     if (gamePhase == GamePhase.EndGame) score += Kings.GetEndGameWeight(i, true);
                     else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score += Kings.GetMiddleGameWeight(i, true);
                     break;
-                case -1:
-                    score -= 1;
-                    if (gamePhase == GamePhase.Opening) score -= Pawns.GetSquareWeight(i, false);
-                    break;
-                case -3:
-                    score -= 3;
-                    if (gamePhase == GamePhase.Opening) score -= Knights.GetSquareWeight(i, false);
-                    break;
-                case -4:
-                    score -= 3;
-                    if (gamePhase == GamePhase.Opening) score -= Bishops.GetSquareWeight(i, false);
-                    break;
+                
+                case -1: score -= 1;
+                    if (gamePhase == GamePhase.Opening) score -= Pawns.GetSquareWeight(i, false);       break;
+                case -3: score -= 3;
+                    if (gamePhase == GamePhase.Opening) score -= Knights.GetSquareWeight(i, false);     break;
+                case -4: score -= 3;
+                    if (gamePhase == GamePhase.Opening) score -= Bishops.GetSquareWeight(i, false);     break;
+               
                 case -5:
                     score -= 5;
                     break;
+                
                 case -9:
                     score -= 9;
                     break;
+               
                 case -1000:
                     score -= -1000;
                     if (gamePhase == GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false);
                     else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score -= Kings.GetMiddleGameWeight(i, true);
                     break;
+                
                 default:
                     break;
             }
