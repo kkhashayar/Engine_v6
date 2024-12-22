@@ -43,7 +43,9 @@ void Run()
     {
         MoveObject move = new MoveObject();
         move = Search.GetBestMove(globals.ChessBoard, Globals.Turn);
+        
         var testmove = move;
+        
         MoveHandler.MakeMove(globals.ChessBoard, move, Globals.Turn);
 
         Console.Beep(800, 70);
@@ -87,8 +89,6 @@ void Run()
 #region Board Printing and data boards
 void printBoardWhiteDown(int[] board)
 {
-    Console.ResetColor();
-    Console.ForegroundColor = ConsoleColor.Black;
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     string[] fileNames = { "A", "B", "C", "D", "E", "F", "G", "H" };
     var ranks = new int[] { 8, 7, 6, 5, 4, 3, 2, 1 };
@@ -153,7 +153,7 @@ void showBoardValuesWhite(int[] board)
         }
         Console.WriteLine();
     }
-    Console.ReadKey();
+   
 }
 
 void showBoardValuesBlack(int[] board)
