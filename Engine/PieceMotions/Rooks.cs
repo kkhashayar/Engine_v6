@@ -51,7 +51,7 @@ internal static class Rooks
 
             moves.Add(new MoveObject
             {
-                pieceType = (turn == 0) ? 5 : 15,
+                pieceType = (turn == 0) ? 5 : -5,
                 StartSquare = square,
                 EndSquare = targetSquare
             });

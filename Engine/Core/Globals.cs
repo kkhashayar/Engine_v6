@@ -26,7 +26,7 @@ public sealed class Globals
 
     public static bool LastMoveWasPawn { get; set; } = false;
 
-    
+
     // Tracking enpassant 
     public static int LastEndSquare { get; set; } = -1;
 
@@ -105,15 +105,11 @@ public sealed class Globals
         7, 6, 5, 4, 4, 5, 6, 7,
         8, 7, 6, 5, 5, 6, 7, 8
     };
-
-
-
     public static readonly int[] PawnJumpCaptureSquares =
     {
         56,48,40,32,24,16,8,0,
         63,55,47,39,31,23,15,7
     };
-
 
     public static readonly string[] Coordinates =
     {
@@ -144,7 +140,7 @@ public sealed class Globals
     {
         for (int i = 0; i < 64; i++)
         {
-            if (board[i] == 109)
+            if (board[i] == -1000)
             {
                 return i;
             }
@@ -155,7 +151,7 @@ public sealed class Globals
     {
         for (int i = 0; i < 64; i++)
         {
-            if (board[i] == 99)
+            if (board[i] == 1000)
             {
                 return i;
             }
@@ -292,25 +288,24 @@ public sealed class Globals
     private static int FenCharToPieceCode(char c)
     {
         int pieceCode;
-        switch (char.ToLower(c))
+        switch (c)
         {
-            case 'p': pieceCode = Piece.Pawn; break;
-            case 'n': pieceCode = Piece.Knight; break;
-            case 'b': pieceCode = Piece.Bishop; break;
-            case 'r': pieceCode = Piece.Rook; break;
-            case 'q': pieceCode = Piece.Queen; break;
-            case 'k': pieceCode = Piece.King; break;
+            case 'p': pieceCode = Piece.p; break;
+            case 'n': pieceCode = Piece.n; break;
+            case 'b': pieceCode = Piece.b; break;
+            case 'r': pieceCode = Piece.r; break;
+            case 'q': pieceCode = Piece.q; break;
+            case 'k': pieceCode = Piece.k; break;
+            case 'P': pieceCode = Piece.P; break;
+            case 'N': pieceCode = Piece.N; break;
+            case 'B': pieceCode = Piece.B; break;
+            case 'R': pieceCode = Piece.R; break;
+            case 'Q': pieceCode = Piece.Q; break;
+            case 'K': pieceCode = Piece.K; break;
             default: return Piece.None;
         }
+        return pieceCode;
 
-        if (char.IsUpper(c))
-        {
-            return pieceCode; // White pieces
-        }
-        else
-        {
-            return pieceCode + Piece.BlackPieceOffset; // Black pieces
-        }
     }
     public static bool IsCrossSliderPathClear(int startSquare, int endSquare, int[] board)
     {
@@ -380,13 +375,13 @@ public sealed class Globals
             case 4: return '\u2657'; // White Bishop
             case 5: return '\u2656'; // White Rook
             case 9: return '\u2655'; // White Queen
-            case 99: return '\u2654'; // White King
-            case 11: return '\u265F'; // Black Pawn
-            case 13: return '\u265E'; // Black Knight
-            case 14: return '\u265D'; // Black Bishop
-            case 15: return '\u265C'; // Black Rook
-            case 19: return '\u265B'; // Black Queen
-            case 109: return '\u265A'; // Black King
+            case 1000: return '\u2654'; // White King
+            case -1: return '\u265F'; // Black Pawn
+            case -3: return '\u265E'; // Black Knight
+            case -4: return '\u265D'; // Black Bishop
+            case -5: return '\u265C'; // Black Rook
+            case -9: return '\u265B'; // Black Queen
+            case -1000: return '\u265A'; // Black King
             default: return '.'; // Empty square
         }
     }
@@ -427,7 +422,7 @@ public sealed class Globals
 
         foreach (int piece in board)
         {
-            if (piece == 5 || piece == 15)
+            if (piece == 5 || piece == -5)
             {
                 rookCount++;
 
@@ -436,7 +431,7 @@ public sealed class Globals
                     return false;
                 }
             }
-            else if (piece != 0 && piece != 1 && piece != 109)
+            else if (piece != 0 && piece != 1000 && piece != -1000)
             {
                 return false;
             }
@@ -453,18 +448,19 @@ public sealed class Globals
 
     private static readonly Dictionary<int, char> PieceToFenMap = new Dictionary<int, char>
         {
-            { Piece.Pawn, 'P' },
-            { Piece.Knight, 'N' },
-            { Piece.Bishop, 'B' },
-            { Piece.Rook, 'R' },
-            { Piece.Queen, 'Q' },
-            { Piece.King, 'K' },
-            { Piece.Pawn + Piece.BlackPieceOffset, 'p' },
-            { Piece.Knight + Piece.BlackPieceOffset, 'n' },
-            { Piece.Bishop + Piece.BlackPieceOffset, 'b' },
-            { Piece.Rook + Piece.BlackPieceOffset, 'r' },
-            { Piece.Queen + Piece.BlackPieceOffset, 'q' },
-            { Piece.King + Piece.BlackPieceOffset, 'k' }
+            { Piece.P, 'P' },
+            { Piece.N, 'N' },
+            { Piece.B, 'B' },
+            { Piece.R, 'R' },
+            { Piece.Q, 'Q' },
+            { Piece.K, 'K' },
+
+            { Piece.p, 'p' },
+            { Piece.n, 'n' },
+            { Piece.b, 'b' },
+            { Piece.r, 'r' },
+            { Piece.q, 'q' },
+            { Piece.k, 'k' }
         };
 
 }

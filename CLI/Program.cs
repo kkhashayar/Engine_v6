@@ -4,7 +4,7 @@ using Engine.External_Resources;
 
 #region Entry loop
 
-string fen = "";
+string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
 
 Globals globals = Globals.FenReader(fen);
 
@@ -110,7 +110,7 @@ void printBoardWhiteDown(int[] board)
         Console.Write(fileName + " ");  // Print file name
     }
     Console.WriteLine();
-    //showBoardValuesWhite(board);
+    showBoardValuesWhite(board);
 }
 
 void printBoardBlackDown(int[] board)

@@ -88,7 +88,7 @@ public static class MoveGenerator
                         }
                         move.IsCheck = IsMoveCheck(move, chessBoard, turn);
 
-                        if (move.pieceType == 11)
+                        if (move.pieceType == -1)
                         {
                             var leftKillSquare = move.EndSquare + 7;
                             var rightKillSquare = move.EndSquare + 9;
@@ -132,18 +132,12 @@ public static class MoveGenerator
             {
                 switch (piece)
                 {
-                    case 99: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   
-                        break;
-                    case 3:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); 
-                        break;
-                    case 5:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   
-                        break;
-                    case 4:  pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); 
-                        break;
-                    case 9:  pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  
-                        break;
-                    case 1:  pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
-                        break;
+                    case 1:  pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));              break;
+                    case 3:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  break;
+                    case 4:  pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  break;
+                    case 5:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));    break;
+                    case 9:  pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   break;
+                    case 1000: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  break;
                 }
             }
             // Generate moves for black pieces
@@ -151,19 +145,12 @@ public static class MoveGenerator
             {
                 switch (piece)
                 {
-                    case 109: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
-                        break;
-                    case 13:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
-                        break;
-                    case 15:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
-                        break;
-                    case 14:  pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
-                        break;
-                    case 19:  pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));
-                        break;
-                    case 11:
-                        pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard));
-                        break;
+                    case -1: pseudoMoves.AddRange(Pawns.GenerateMovesForSquare(square, turn, chessBoard)); break;
+                    case -3:  pseudoMoves.AddRange(Knights.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); break;
+                    case -4: pseudoMoves.AddRange(Bishops.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); break;
+                    case -5:  pseudoMoves.AddRange(Rooks.GenerateMovesForSquareByBitboard(square, turn, chessBoard));   break;
+                    case -9:  pseudoMoves.AddRange(Queens.GenerateMovesForSquareByBitboard(square, turn, chessBoard));  break;
+                    case -1000: pseudoMoves.AddRange(Kings.GenerateMovesForSquareByBitboard(square, turn, chessBoard)); break;
                 }
             }
         }
@@ -265,22 +252,22 @@ public static class MoveGenerator
         switch (piece)
         {
             case 9:
-            case 19:
+            case -9:
                 attacks = Queens.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
                 break;
 
             case 5:
-            case 15:
+            case -5:
                 attacks = Rooks.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
                 break;
 
             case 4:
-            case 14:
+            case -4:
                 attacks = Bishops.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
                 break;
 
             case 3:
-            case 13:
+            case -3:
                 attacks = Knights.GenerateMovesForSquareByBitboard(square, turn, board).Select(m => m.EndSquare).ToList();
                 break;
 

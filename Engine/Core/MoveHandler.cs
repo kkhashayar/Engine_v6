@@ -34,13 +34,13 @@ public static class MoveHandler
                 }
                 /////////////////////////////////// Castling   
 
-                if (move.pieceType == 99 && move.LongCastle)
+                if (move.pieceType == 1000 && move.LongCastle)
                 {
                     board[56] = 0; board[59] = 5;
                     
                 }
 
-                else if (move.pieceType == 99 && move.ShortCastle)
+                else if (move.pieceType == 1000 && move.ShortCastle)
                 {
                     board[63] = 0; board[61] = 5;
                     
@@ -51,32 +51,32 @@ public static class MoveHandler
             {
 
                 /////////////////////////////////// Pawn Promotion
-                if (move.pieceType == 11 && move.IsPromotion)
+                if (move.pieceType == -1 && move.IsPromotion)
                 {
                     board[move.EndSquare] = move.PromotionPiece;
                     
                 }
 
-                if (move.pieceType == 15 && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+                if (move.pieceType == -5 && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
                 {
                     Globals.BlackQueenRookMoved = true;
                 }
 
 
-                if (move.pieceType == 15 && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
+                if (move.pieceType == -5 && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
                 {
                     Globals.BlackKingRookMoved = true;
                 }
 
 
-                if (move.pieceType == 109 && move.LongCastle)
+                if (move.pieceType == -1000 && move.LongCastle)
                 {
-                    board[0] = 0; board[3] = 15;
+                    board[0] = 0; board[3] = -5;
                     
                 }
-                else if (move.pieceType == 109 && move.ShortCastle)
+                else if (move.pieceType == -1000 && move.ShortCastle)
                 {
-                    board[7] = 0; board[5] = 15;
+                    board[7] = 0; board[5] = -5;
                     
                 }
             }
@@ -96,7 +96,7 @@ public static class MoveHandler
         //    board[move.StartSquare] = move.pieceType;
         //}
 
-        if (move.pieceType == 9)
+        if (move.pieceType == 1000)
         {
             if (move.ShortCastle)
             {
@@ -118,14 +118,14 @@ public static class MoveHandler
         }
 
 
-        else if (move.pieceType == 109)
+        else if (move.pieceType == -1000)
         {
             if (move.LongCastle)
             {
                 board[1] = 0;
                 board[2] = 0;
                 board[3] = 0;
-                board[0] = 15;
+                board[0] = -5;
 
 
             }
@@ -134,7 +134,7 @@ public static class MoveHandler
             {
                 board[6] = 0;
                 board[5] = 0;
-                board[7] = 15;
+                board[7] = -5;
 
             }
         }

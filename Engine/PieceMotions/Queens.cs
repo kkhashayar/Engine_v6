@@ -28,7 +28,7 @@ internal static class Queens
 
             moves.Add(new MoveObject
             {
-                pieceType = turn == 0 ? 9 : 19,
+                pieceType = turn == 0 ? 9 : -9,
                 StartSquare = square,
                 EndSquare = targetSquare
             });

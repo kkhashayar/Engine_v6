@@ -24,8 +24,6 @@ public static class Perft
 
         return nodes;
     }
-
-
     public static ulong CalculateNodes(int[] board, int depth, int turn, int maxDepth)
     {
         if (depth == 0) return 1;
@@ -74,8 +72,7 @@ public static class Perft
 
         return nodes;
     }
-    
-
+   
     private static string MoveToString(MoveObject move)
     {
         return $"{Globals.GetSquareCoordinate(move.StartSquare)}{Globals.GetSquareCoordinate(move.EndSquare)}";

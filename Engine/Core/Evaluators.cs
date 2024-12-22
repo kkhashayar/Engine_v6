@@ -21,7 +21,7 @@ internal static class Evaluators
                     break;
                 case 3:
                     score += 3;
-                    //if (gamePhase == GamePhase.Opening) score += Knights.GetSquareWeight(i, true);
+                    if (gamePhase == GamePhase.Opening) score += Knights.GetSquareWeight(i, true);
                     break;
                 case 4:
                     score += 3;
@@ -33,31 +33,31 @@ internal static class Evaluators
                 case 9:
                     score += 9;
                     break;
-                case 99:
-                    score += 999999;
+                case 1000:
+                    score += 1000;
                     if (gamePhase == GamePhase.EndGame) score += Kings.GetEndGameWeight(i, true);
                     else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score += Kings.GetMiddleGameWeight(i, true);
                     break;
-                case 11:
+                case -1:
                     score -= 1;
                     if (gamePhase == GamePhase.Opening) score -= Pawns.GetSquareWeight(i, false);
                     break;
-                case 13:
+                case -3:
                     score -= 3;
-                    //if (gamePhase == GamePhase.Opening) score -= Knights.GetSquareWeight(i, false);
+                    if (gamePhase == GamePhase.Opening) score -= Knights.GetSquareWeight(i, false);
                     break;
-                case 14:
+                case -4:
                     score -= 3;
                     if (gamePhase == GamePhase.Opening) score -= Bishops.GetSquareWeight(i, false);
                     break;
-                case 15:
+                case -5:
                     score -= 5;
                     break;
-                case 19:
+                case -9:
                     score -= 9;
                     break;
-                case 109:
-                    score -= 999999;
+                case -1000:
+                    score -= -1000;
                     if (gamePhase == GamePhase.EndGame) score -= Kings.GetEndGameWeight(i, false);
                     else if (gamePhase == GamePhase.Opening || gamePhase == GamePhase.MiddleGame) score -= Kings.GetMiddleGameWeight(i, true);
                     break;
