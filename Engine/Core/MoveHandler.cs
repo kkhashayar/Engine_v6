@@ -22,19 +22,19 @@ public static class MoveHandler
                     
                 }
 
-                else if (move.pieceType == 5 && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
+                if (move.pieceType == 5 && move.StartSquare == 63 && Globals.WhiteKingRookMoved is false)
                 {
                     Globals.WhiteKingRookMoved = true;
                 }
 
                 // ROOK ON LONG CASLTE 
-                else if (move.pieceType == 5 && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
+                if (move.pieceType == 5 && move.StartSquare == 56 && Globals.WhiteQueenRookMoved is false)
                 {
                     Globals.WhiteQueenRookMoved = true;
                 }
                 /////////////////////////////////// Castling   
 
-                else if (move.pieceType == 99 && move.LongCastle)
+                if (move.pieceType == 99 && move.LongCastle)
                 {
                     board[56] = 0; board[59] = 5;
                     
@@ -57,19 +57,19 @@ public static class MoveHandler
                     
                 }
 
-                else if (move.pieceType == 15 && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
+                if (move.pieceType == 15 && move.StartSquare == 0 && Globals.BlackQueenRookMoved is false)
                 {
                     Globals.BlackQueenRookMoved = true;
                 }
 
 
-                else if (move.pieceType == 15 && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
+                if (move.pieceType == 15 && move.StartSquare == 7 && Globals.BlackKingRookMoved is false)
                 {
                     Globals.BlackKingRookMoved = true;
                 }
 
 
-                else if (move.pieceType == 109 && move.LongCastle)
+                if (move.pieceType == 109 && move.LongCastle)
                 {
                     board[0] = 0; board[3] = 15;
                     
@@ -122,6 +122,8 @@ public static class MoveHandler
         {
             if (move.LongCastle)
             {
+                board[1] = 0;
+                board[2] = 0;
                 board[3] = 0;
                 board[0] = 15;
 
@@ -130,6 +132,7 @@ public static class MoveHandler
 
             else if (move.ShortCastle)
             {
+                board[6] = 0;
                 board[5] = 0;
                 board[7] = 15;
 

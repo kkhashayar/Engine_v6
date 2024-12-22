@@ -4,7 +4,7 @@ using Engine.External_Resources;
 
 #region Entry loop
 
-string fen = "8/8/3k4/8/4R3/3K4/8/8 w - - 0 1";
+string fen = "";
 
 Globals globals = Globals.FenReader(fen);
 
@@ -16,7 +16,7 @@ Globals globals = Globals.FenReader(fen);
 //////////////////   PERFT And stockfish verification
 
 ///////// SETTINGS
-Globals.OpeningTime = 15;
+Globals.OpeningTime = 5;
 Globals.MiddleGameTime = 45;
 Globals.EndGameTime = 15;
 Globals.MaxDepth = 20;
@@ -78,8 +78,7 @@ void Run()
     {
         Console.Write(Globals.MoveToString(move));
     }
-    Console.Beep(500, 150);
-    Console.Beep(500, 150);
+    
     Console.ReadKey();
 }
 #endregion
