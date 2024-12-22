@@ -90,13 +90,13 @@ public static class MoveHandler
         board[move.StartSquare] = pieceMoving;
         board[move.EndSquare] = targetSquare;
 
-        if ((move.pieceType == 1 || move.pieceType == 11) && move.IsPromotion is true)
-        {
-            board[move.EndSquare] = 0;
-            board[move.StartSquare] = move.pieceType;
-        }
+        //if ((move.pieceType == 1 || move.pieceType == 11) && move.IsPromotion is true)
+        //{
+        //    board[move.EndSquare] = 0;
+        //    board[move.StartSquare] = move.pieceType;
+        //}
 
-        else if (move.pieceType == 9)
+        if (move.pieceType == 9)
         {
             if (move.ShortCastle)
             {
