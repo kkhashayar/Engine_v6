@@ -67,7 +67,7 @@ public static class Perft
 
         if (depth == maxDepth)
         {
-            Console.WriteLine($"Nodes searched: {nodes}");
+            
         }
 
         return nodes;
