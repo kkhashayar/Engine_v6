@@ -40,7 +40,7 @@ internal static class Knights
 
         return moves;
     }
-    private static ulong GetKnightAttacks(int square)
+    public static ulong GetKnightAttacks(int square)
     {
         ulong attacks = 0;
         int originalRow = square / 8;

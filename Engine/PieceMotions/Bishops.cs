@@ -39,6 +39,8 @@ internal static class Bishops
 
     private static ulong GetBishopAttacks(int square, int[] board)
     {
+        List<int> WhiteSquares = new List<int> { 0, 2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, };
+        List<int> BlackSquares = new List<int> { 1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30, 33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62 };
         ulong attacks = 0;
         int[] directions = { 7, 9, -7, -9 }; // NorthEast, NorthWest, SouthEast, SouthWest
 
@@ -59,7 +61,11 @@ internal static class Bishops
         }
 
         return attacks;
+
+     
     }
+
+    
 
     private static bool IsSameDiagonal(int square1, int square2)
     {
@@ -67,4 +73,6 @@ internal static class Bishops
         int fileDifference = Math.Abs((square1 % 8) - (square2 % 8));
         return rankDifference == fileDifference;
     }
+
+
 }

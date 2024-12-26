@@ -135,7 +135,18 @@ public sealed class Globals
        48, 49,  50,  51,  52,  53,  54,  55,
        56, 57,  58,  59,  60,  61,  62,  63
     };
-
+    public static ulong GetBitboard(int[] board)
+    {
+        ulong bitboard = 0;
+        for (int square = 0; square < 64; square++)
+        {
+            if (board[square] != 0)
+            {
+                bitboard |= (1UL << square);
+            }
+        }
+        return bitboard;
+    }
     public static int GetBlackKingSquare(int[] board)
     {
         for (int i = 0; i < 64; i++)
@@ -307,20 +318,38 @@ public sealed class Globals
         return pieceCode;
 
     }
+    //public static bool IsCrossSliderPathClear(int startSquare, int endSquare, int[] board)
+    //{
+    //    int direction = GetCrossDirection(startSquare, endSquare);
+    //    int currentSquare = startSquare + direction;
+    //    bool pieceColor = Piece.IsBlack(board[startSquare]);
+
+    //    while (currentSquare != endSquare)
+    //    {
+    //        if (board[currentSquare] != 0) return false;
+    //        currentSquare += direction;
+    //    }
+
+    //    return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
+    //}
+
+
     public static bool IsCrossSliderPathClear(int startSquare, int endSquare, int[] board)
     {
         int direction = GetCrossDirection(startSquare, endSquare);
         int currentSquare = startSquare + direction;
         bool pieceColor = Piece.IsBlack(board[startSquare]);
 
-        while (currentSquare != endSquare)
+        while (Globals.IsValidSquare(currentSquare) && currentSquare != endSquare)
         {
             if (board[currentSquare] != 0) return false;
             currentSquare += direction;
         }
 
-        return board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor;
+        // Ensure endSquare is valid and check its value
+        return Globals.IsValidSquare(endSquare) && (board[endSquare] == 0 || Piece.IsBlack(board[endSquare]) != pieceColor);
     }
+
 
     public static int GetCrossDirection(int startSquare, int endSquare)
     {

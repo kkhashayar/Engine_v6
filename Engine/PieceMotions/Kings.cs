@@ -7,7 +7,7 @@ internal static class Kings
 {
     public static List<MoveObject> GenerateMovesForSquare(int square, int turn, int[] board)
     {
-        List<int> targetSquares = GetMasksForSquare(square);
+        List<int> targetSquares =   GetMasksForSquare(square);
 
         List<MoveObject> moves = new();
         /////////////////////////////////////////// WHITE KING ///////////////////////////////////////////
@@ -222,10 +222,9 @@ internal static class Kings
         }
 
         return squares;
-        return new List<int>(KingMoves[square]); // //no difference to use hard coded or generate on the run
     }
 
-    private static ulong GetKingAttacks(int square)
+    public static ulong GetKingAttacks(int square)
     {
         ulong attacks = 0;
         int[] KingDirections = new int[8] { 9, 8, 7, 1, -9, -7, -8, -1 };

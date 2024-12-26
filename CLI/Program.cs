@@ -9,24 +9,26 @@ using Engine.External_Resources;
 // fen: r1b1rk2/ppq3p1/2nbpp2/3pN1BQ/2PP4/7R/PP3PPP/R5K1 w - - 1 0          mate in 4
 // fen: br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0     mate in 4
 // fen: rn3rk1/pbppq1pp/1p2pb2/4N2Q/3PN3/3B4/PPP2PPP/R3K2R w KQ - 7 11      mate in 7
+// fen: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
-string fen = "br1qr1k1/b1pnnp2/p2p2p1/P4PB1/3NP2Q/2P3N1/B5PP/R3R1K1 w - - 1 0";
+// two kings:           8/8/7k/8/7K/8/8/8 w - - 0 1
+string fen = "6k1/5p1p/2Q1p1p1/5n1r/N7/1B3P1P/1PP3PK/4q3 b - - 0 1";
 
 Globals globals = Globals.FenReader(fen);
 
 //////////////////   PERFT And stockfish verification
 // Still some mistakes in positions with pawns! 
-//int perftDepth = 2;
-//RunPerft(fen, globals, perftDepth);
+int perftDepth = 4;
+RunPerft(fen, globals, perftDepth);
 //////////////////   PERFT And stockfish verification
 
 ///////// SETTINGS
 Globals.OpeningTime = 5;
-Globals.MiddleGameTime = 60;
+Globals.MiddleGameTime = 45;
 Globals.EndGameTime = 15;
 Globals.MaxDepth = 20;
 Globals.QuQuiescenceSwitch = true;
-Globals.QuiescenceDepth = 2;
+Globals.QuiescenceDepth = 4;
 Globals.DepthBalancer = 2;
 
 Run();
@@ -115,7 +117,7 @@ void printBoardWhiteDown(int[] board)
         Console.Write(fileName + " ");  // Print file name
     }
     Console.WriteLine();
-    //showBoardValuesWhite(board);
+    showBoardValuesWhite(board);
 }
 
 void printBoardBlackDown(int[] board)

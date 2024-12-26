@@ -6,7 +6,6 @@ namespace Engine;
 public static class MoveGenerator
 {
     static Result result = new();
-    
     //////////////////////////////////////   ENGINE CORE LOOP 
     public static Result GenerateAllMoves(int[] chessBoard, int turn, bool filter = false)
     {
@@ -47,13 +46,11 @@ public static class MoveGenerator
                     // Legacy version 
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
-                        if (chessBoard[move.EndSquare] != 0)
-                        {
-                            move.IsCapture = true;
+                        if (chessBoard[move.EndSquare] != 0)  move.IsCapture = true;
 
-                        }
-                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
-
+                        //move.IsCheck = IsMoveCheck(move, chessBoard, turn); // TODO: Needs more tests.
+                        
+                        // Immediate Pawns attacks
                         if (move.pieceType == 1)
                         {
                             var leftKillSquare = move.EndSquare - 7;
@@ -61,11 +58,13 @@ public static class MoveGenerator
                             if (Globals.IsValidSquare(leftKillSquare) && blackKingPosition == leftKillSquare)
                             {
                                 move.IsCapture = true;
+                                move.IsCheck = true;
                             }
 
                             if (Globals.IsValidSquare(rightKillSquare) && blackKingPosition == rightKillSquare)
                             {
                                 move.IsCapture = true;
+                                move.IsCheck = true;
                             }
 
                         }
@@ -73,20 +72,19 @@ public static class MoveGenerator
                     }
                 }
             }
+
             else
             {
                 int whiteKingPosition = Globals.GetWhiteKingSquare(chessBoard);
                 for (int i = 0; i < blackPseudoMoves.Count; i++)
                 {
                     var move = blackPseudoMoves[i];
+                    // Legacy version
                     if (IsMoveLegal(move, chessBoard, turn))
                     {
+                        if (chessBoard[move.EndSquare] != 0)  move.IsCapture = true;
 
-                        if (chessBoard[move.EndSquare] != 0)
-                        {
-                            move.IsCapture = true;
-                        }
-                        move.IsCheck = IsMoveCheck(move, chessBoard, turn);
+                        // move.IsCheck = IsMoveCheck(move, chessBoard, turn); // TODO: Needs more tests.   
 
                         if (move.pieceType == -1)
                         {
@@ -95,11 +93,13 @@ public static class MoveGenerator
                             if (Globals.IsValidSquare(leftKillSquare) && whiteKingPosition == leftKillSquare)
                             {
                                 move.IsCapture = true;
+                                move.IsCheck = true;
                             }
 
                             if (Globals.IsValidSquare(rightKillSquare) && whiteKingPosition == rightKillSquare)
                             {
                                 move.IsCapture = true;
+                                move.IsCheck = true;
                             }
                         }
 
@@ -123,7 +123,7 @@ public static class MoveGenerator
 
         for (int square = 0; square < 64; square++)
         {
-            if (!Globals.IsValidSquare(square)) continue;
+            //if (!Globals.IsValidSquare(square)) continue;
 
             int piece = chessBoard[square];
 
@@ -186,7 +186,7 @@ public static class MoveGenerator
             return true;
         }
 
-        
+        // Black turn
         if (move.LongCastle)
         {
             var whiteResponseMovesCastle = GeneratePseudoLegalMoves(shadowBoard, 0);
@@ -205,7 +205,7 @@ public static class MoveGenerator
 
         if (whiteResponseMoves.Any(wMove => wMove.EndSquare == blackKingSquare)) return false;
 
-        move.IsCheck = IsMoveCheck(move, board, turn); 
+        //move.IsCheck = IsMoveCheck(move, board, turn); 
         return true;
     }
 
@@ -280,7 +280,7 @@ public static class MoveGenerator
     // TODO: General check
     private static void MakeMove(MoveObject move, int[] board)
     {
-        if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return;
+        //if (!Globals.IsValidSquare(move.StartSquare) || !Globals.IsValidSquare(move.EndSquare)) return;
         if (move.LongCastle || move.ShortCastle)
         {
 
@@ -309,5 +309,4 @@ public static class MoveGenerator
         MoveHandler.MakeMove(shadowBoard, move, turn);
         return shadowBoard;
     }
-
 }
